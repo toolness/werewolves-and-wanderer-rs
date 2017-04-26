@@ -11,16 +11,16 @@ enum RoomId {
 }
 
 #[derive(Debug)]
-struct Map<'a> {
-  rooms: [Room<'a>; NUM_ROOMS]
+struct Map {
+  rooms: [Room; NUM_ROOMS]
 }
 
-impl<'a> Map<'a> {
+impl Map {
   pub fn new() -> Self {
     Self { rooms: [Room::new(); NUM_ROOMS] }
   }
 
-  pub fn room(&mut self, id: RoomId) -> &mut Room<'a> {
+  pub fn room(&mut self, id: RoomId) -> &mut Room {
     &mut self.rooms[id as usize]
   }
 
@@ -51,13 +51,13 @@ impl Direction {
 }
 
 #[derive(Debug, Copy, Clone)]
-struct Room<'a> {
+struct Room {
   exits: [Option<RoomId>; NUM_DIRECTIONS],
-  name: &'a str,
-  description: &'a str,
+  name: &'static str,
+  description: &'static str,
 }
 
-impl<'a> Room<'a> {
+impl Room {
   pub fn new() -> Self {
     Self {
       exits: [None; NUM_DIRECTIONS],
@@ -75,7 +75,7 @@ impl<'a> Room<'a> {
     self
   }
 
-  pub fn describe(&mut self, name: &'a str, desc: &'a str) -> &mut Self {
+  pub fn describe(&mut self, name: &'static str, desc: &'static str) -> &mut Self {
     self.name = name;
     self.description = desc;
     self
