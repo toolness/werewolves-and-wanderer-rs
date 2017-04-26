@@ -11,6 +11,18 @@ pub enum Command {
 }
 
 impl Command {
+  fn from_char(c: char) -> Option<Command> {
+    match c.to_ascii_lowercase() {
+      'q' => { return Some(Command::Quit); },
+      'n' => { return Some(Command::Go(Direction::North)); },
+      's' => { return Some(Command::Go(Direction::South)); },
+      'e' => { return Some(Command::Go(Direction::East)); },
+      'w' => { return Some(Command::Go(Direction::West)); },
+      'l' => { return Some(Command::Look); },
+      _ => { return None; },
+    }
+  }
+
   pub fn get() -> Command {
     loop {
       let mut input = String::new();
@@ -22,14 +34,8 @@ impl Command {
         Ok(_) => {
           match input.chars().next() {
             Some(k) => {
-              match k.to_ascii_lowercase() {
-                'q' => { return Command::Quit; },
-                'n' => { return Command::Go(Direction::North); },
-                's' => { return Command::Go(Direction::South); },
-                'e' => { return Command::Go(Direction::East); },
-                'w' => { return Command::Go(Direction::West); },
-                'l' => { return Command::Look; },
-                _ => {},
+              if let Some(cmd) = Self::from_char(k) {
+                return cmd;
               }
             },
             None => {}
