@@ -22,16 +22,14 @@ impl MapRoomId for RoomId {
   fn room_id(self) -> usize { self as usize }
 }
 
-fn main() {
-  let mut rooms = [Room::new(); MAX_ROOMS];
-  let mut map = Map::new(&mut rooms);
-
+fn build_world(map: &mut Map<RoomId>) {
   map.room(Hallway).describe(
     "Hallway",
     "You are in the hallway. \
      There is a door to the south. \
      Through the windows to the north you can see a secret herb garden."
   );
+
   map.room(AudienceChamber).describe(
     "Audience Chamber",
     "This is the audience chamber. \
@@ -41,6 +39,13 @@ fn main() {
   );
 
   map.connect(Hallway, South, AudienceChamber);
+}
+
+fn main() {
+  let mut rooms = [Room::new(); MAX_ROOMS];
+  let mut map = Map::new(&mut rooms);
+
+  build_world(&mut map);
 
   println!("Werewolves and Wanderer\n");
 
