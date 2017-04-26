@@ -1,12 +1,9 @@
 extern crate ww;
 
-use std::io::{self, Write};
-use std::ascii::AsciiExt;
-
 use ww::map::{Map, MapRoomId};
 use ww::room::Room;
-use ww::direction::Direction;
 use ww::direction::Direction::*;
+use ww::command::Command;
 
 use RoomId::*;
 
@@ -23,45 +20,6 @@ enum RoomId {
 // know how to do that, so...
 impl MapRoomId for RoomId {
   fn room_id(self) -> usize { self as usize }
-}
-
-#[derive(Debug)]
-enum Command {
-  Go(Direction),
-  Look,
-  Quit,
-}
-
-fn get_command() -> Command {
-  loop {
-    let mut input = String::new();
-
-    io::stdout().write(b"> ").unwrap();
-    io::stdout().flush().unwrap();
-
-    match io::stdin().read_line(&mut input) {
-      Ok(_) => {
-        match input.chars().next() {
-          Some(k) => {
-            match k.to_ascii_lowercase() {
-              'q' => { return Command::Quit; },
-              'n' => { return Command::Go(North); },
-              's' => { return Command::Go(South); },
-              'e' => { return Command::Go(East); },
-              'w' => { return Command::Go(West); },
-              'l' => { return Command::Look; },
-              _ => {},
-            }
-          },
-          None => {}
-        }
-        println!("I have no idea what you're talking about.");
-      },
-      Err(error) => {
-        println!("Error {}", error);
-      }
-    }
-  }
 }
 
 fn main() {
@@ -84,6 +42,8 @@ fn main() {
 
   map.connect(Hallway, South, AudienceChamber);
 
+  println!("Werewolves and Wanderer\n");
+
   let mut curr_room = Hallway;
   let mut show_desc = true;
 
@@ -93,7 +53,7 @@ fn main() {
       show_desc = false;
     }
 
-    match get_command() {
+    match Command::get() {
       Command::Go(dir) => {
         if let Some(room) = map.room(curr_room).get_exit(dir) {
           curr_room = room;
