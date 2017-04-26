@@ -1,6 +1,9 @@
 const NUM_DIRECTIONS: usize = 4;
 const NUM_ROOMS: usize = 2;
 
+use RoomId::*;
+use Direction::*;
+
 #[derive(Debug, Copy, Clone)]
 enum RoomId {
   Hallway,
@@ -39,10 +42,10 @@ enum Direction {
 impl Direction {
   pub fn opposite(self) -> Self {
     match self {
-      Direction::North => Direction::South,
-      Direction::South => Direction::North,
-      Direction::East => Direction::West,
-      Direction::West => Direction::East,
+      North => South,
+      South => North,
+      East => West,
+      West => East,
     }
   }
 }
@@ -82,10 +85,10 @@ impl<'a> Room<'a> {
 fn main() {
   let mut map = Map::new();
 
-  map.room(RoomId::Hallway).describe("Hallway", "");
-  map.room(RoomId::AudienceChamber).describe("Audience Chamber", "");
+  map.room(Hallway).describe("Hallway", "");
+  map.room(AudienceChamber).describe("Audience Chamber", "");
 
-  map.connect(RoomId::Hallway, Direction::South, RoomId::AudienceChamber);
+  map.connect(Hallway, South, AudienceChamber);
 
   println!("Map is {:?}", map);
 }
