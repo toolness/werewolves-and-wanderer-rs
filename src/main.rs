@@ -71,10 +71,19 @@ impl<'a> Room<'a> {
     self.exits[d as usize] = Some(r);
     self
   }
+
+  pub fn describe(&mut self, name: &'a str, desc: &'a str) -> &mut Self {
+    self.name = name;
+    self.description = desc;
+    self
+  }
 }
 
 fn main() {
   let mut map = Map::new();
+
+  map.room(RoomId::Hallway).describe("Hallway", "");
+  map.room(RoomId::AudienceChamber).describe("Audience Chamber", "");
 
   map.connect(RoomId::Hallway, Direction::South, RoomId::AudienceChamber);
 
