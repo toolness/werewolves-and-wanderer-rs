@@ -6,12 +6,12 @@ use ww::direction::Direction::*;
 
 use RoomId::*;
 
-const NUM_ROOMS: usize = 2;
+const MAX_ROOMS: usize = 20;
 
 #[derive(Debug, Copy, Clone)]
 enum RoomId {
-  Hallway,
-  AudienceChamber,
+  Hallway = 1,
+  AudienceChamber = 2,
 }
 
 impl MapRoomId for RoomId {
@@ -19,7 +19,7 @@ impl MapRoomId for RoomId {
 }
 
 fn main() {
-  let mut rooms = [Room::new(); NUM_ROOMS];
+  let mut rooms = [Room::new(); MAX_ROOMS];
   let mut map = Map::new(&mut rooms);
 
   map.room(Hallway).describe("Hallway", "");
