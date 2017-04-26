@@ -4,26 +4,16 @@ use std::io::{self, Write};
 use direction::Direction;
 
 #[derive(Debug)]
-pub enum Command {
+pub enum PrimaryCommand {
   Go(Direction),
   Look,
   Quit,
 }
 
-impl Command {
-  fn from_char(c: char) -> Option<Command> {
-    match c.to_ascii_lowercase() {
-      'q' => { return Some(Command::Quit); },
-      'n' => { return Some(Command::Go(Direction::North)); },
-      's' => { return Some(Command::Go(Direction::South)); },
-      'e' => { return Some(Command::Go(Direction::East)); },
-      'w' => { return Some(Command::Go(Direction::West)); },
-      'l' => { return Some(Command::Look); },
-      _ => { return None; },
-    }
-  }
+pub trait CommandProcessor<T> {
+  fn from_char(c: char) -> Option<T>;
 
-  pub fn get() -> Command {
+  fn get() -> T {
     loop {
       let mut input = String::new();
 
@@ -46,6 +36,20 @@ impl Command {
           println!("Error reading input: {}", error);
         }
       }
+    }
+  }
+}
+
+impl CommandProcessor<PrimaryCommand> for PrimaryCommand {
+  fn from_char(c: char) -> Option<PrimaryCommand> {
+    match c.to_ascii_lowercase() {
+      'q' => { return Some(PrimaryCommand::Quit); },
+      'n' => { return Some(PrimaryCommand::Go(Direction::North)); },
+      's' => { return Some(PrimaryCommand::Go(Direction::South)); },
+      'e' => { return Some(PrimaryCommand::Go(Direction::East)); },
+      'w' => { return Some(PrimaryCommand::Go(Direction::West)); },
+      'l' => { return Some(PrimaryCommand::Look); },
+      _ => { return None; },
     }
   }
 }

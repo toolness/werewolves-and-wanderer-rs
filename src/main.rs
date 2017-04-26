@@ -3,7 +3,7 @@ extern crate ww;
 use ww::map::{Map, MapRoomId};
 use ww::room::Room;
 use ww::direction::Direction::*;
-use ww::command::Command;
+use ww::command::{PrimaryCommand, CommandProcessor};
 
 use RoomId::*;
 
@@ -53,8 +53,8 @@ fn run_game(map: &mut Map<RoomId>) {
       show_desc = false;
     }
 
-    match Command::get() {
-      Command::Go(dir) => {
+    match PrimaryCommand::get() {
+      PrimaryCommand::Go(dir) => {
         if let Some(room) = map.room(curr_room).get_exit(dir) {
           curr_room = room;
           show_desc = true;
@@ -62,8 +62,8 @@ fn run_game(map: &mut Map<RoomId>) {
           println!("You can't go that way.");
         }
       },
-      Command::Look => { show_desc = true; }
-      Command::Quit => { break; }
+      PrimaryCommand::Look => { show_desc = true; }
+      PrimaryCommand::Quit => { break; }
     }
   }
 
