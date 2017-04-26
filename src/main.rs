@@ -14,6 +14,9 @@ enum RoomId {
   AudienceChamber = 2,
 }
 
+// Ideally we'd actually just get rid of MapRoomId and add a constraint
+// to Map<T> requiring that T be type-castable as usize, but I don't
+// know how to do that, so...
 impl MapRoomId for RoomId {
   fn room_id(self) -> usize { self as usize }
 }
