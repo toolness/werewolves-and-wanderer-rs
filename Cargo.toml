@@ -3,4 +3,7 @@ name = "werewolves-and-wanderer"
 version = "0.1.0"
 authors = ["Atul Varma <varmaa@gmail.com>"]
 
+[lib]
+name = "ww"
+
 [dependencies]
