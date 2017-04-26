@@ -17,9 +17,13 @@ impl<'a> Map<'a> {
     Self { rooms: [Room::new(); NUM_ROOMS] }
   }
 
+  pub fn room(&mut self, id: RoomId) -> &mut Room<'a> {
+    &mut self.rooms[id as usize]
+  }
+
   pub fn connect(&mut self, from: RoomId, d: Direction, to: RoomId) {
-    self.rooms[from as usize].set_exit(d, to);
-    self.rooms[to as usize].set_exit(d.opposite(), from);
+    self.room(from).set_exit(d, to);
+    self.room(to).set_exit(d.opposite(), from);
   }
 }
 
