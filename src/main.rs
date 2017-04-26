@@ -10,21 +10,31 @@ enum RoomId {
   AudienceChamber,
 }
 
-#[derive(Debug)]
-struct Map {
-  rooms: [Room; NUM_ROOMS]
+trait AsId {
+  fn id(self) -> usize;
 }
 
-impl Map {
-  pub fn new() -> Self {
-    Self { rooms: [Room::new(); NUM_ROOMS] }
+impl AsId for RoomId {
+  fn id(self) -> usize {
+    self as usize
+  }
+}
+
+#[derive(Debug)]
+struct Map<'a, T: 'a + Copy + AsId> {
+  rooms: &'a mut [Room<T>]
+}
+
+impl<'a, T: Copy + AsId> Map<'a, T> {
+  pub fn new(rooms: &'a mut [Room<T>]) -> Self {
+    Self { rooms: rooms }
   }
 
-  pub fn room(&mut self, id: RoomId) -> &mut Room {
-    &mut self.rooms[id as usize]
+  pub fn room(&mut self, r: T) -> &mut Room<T> {
+    &mut self.rooms[r.id()]
   }
 
-  pub fn connect(&mut self, from: RoomId, d: Direction, to: RoomId) -> &mut Self {
+  pub fn connect(&mut self, from: T, d: Direction, to: T) -> &mut Self {
     self.room(from).set_exit(d, to);
     self.room(to).set_exit(d.opposite(), from);
     self
@@ -51,13 +61,13 @@ impl Direction {
 }
 
 #[derive(Debug, Copy, Clone)]
-struct Room {
-  exits: [Option<RoomId>; NUM_DIRECTIONS],
+struct Room<T: Copy> {
+  exits: [Option<T>; NUM_DIRECTIONS],
   name: &'static str,
   description: &'static str,
 }
 
-impl Room {
+impl<T: Copy> Room<T> {
   pub fn new() -> Self {
     Self {
       exits: [None; NUM_DIRECTIONS],
@@ -66,11 +76,11 @@ impl Room {
     }
   }
 
-  pub fn get_exit(self, d: Direction) -> Option<RoomId> {
+  pub fn get_exit(self, d: Direction) -> Option<T> {
     self.exits[d as usize]
   }
 
-  pub fn set_exit(&mut self, d: Direction, r: RoomId) -> &mut Self {
+  pub fn set_exit(&mut self, d: Direction, r: T) -> &mut Self {
     self.exits[d as usize] = Some(r);
     self
   }
@@ -83,7 +93,8 @@ impl Room {
 }
 
 fn main() {
-  let mut map = Map::new();
+  let mut rooms = [Room::new(); NUM_ROOMS];
+  let mut map = Map::new(&mut rooms);
 
   map.room(Hallway).describe("Hallway", "");
   map.room(AudienceChamber).describe("Audience Chamber", "");
