@@ -60,18 +60,19 @@ impl CommandProcessor<PrimaryCommand> for PrimaryCommand {
       ('s', "go south"),
       ('e', "go east"),
       ('w', "go west"),
+      ('l', "look around"),
       ('q', "quit"),
     ]
   }
 
   fn from_char(c: char) -> Option<PrimaryCommand> {
     match c {
-      'q' => { return Some(PrimaryCommand::Quit); },
       'n' => { return Some(PrimaryCommand::Go(Direction::North)); },
       's' => { return Some(PrimaryCommand::Go(Direction::South)); },
       'e' => { return Some(PrimaryCommand::Go(Direction::East)); },
       'w' => { return Some(PrimaryCommand::Go(Direction::West)); },
       'l' => { return Some(PrimaryCommand::Look); },
+      'q' => { return Some(PrimaryCommand::Quit); },
       _ => { return None; },
     }
   }
