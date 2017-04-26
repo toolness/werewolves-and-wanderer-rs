@@ -21,9 +21,10 @@ impl<'a> Map<'a> {
     &mut self.rooms[id as usize]
   }
 
-  pub fn connect(&mut self, from: RoomId, d: Direction, to: RoomId) {
+  pub fn connect(&mut self, from: RoomId, d: Direction, to: RoomId) -> &mut Self {
     self.room(from).set_exit(d, to);
     self.room(to).set_exit(d.opposite(), from);
+    self
   }
 }
 
