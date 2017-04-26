@@ -1,5 +1,29 @@
 const NUM_DIRECTIONS: usize = 4;
+const NUM_ROOMS: usize = 2;
 
+#[derive(Debug, Copy, Clone)]
+enum RoomId {
+  Hallway,
+  AudienceChamber,
+}
+
+#[derive(Debug)]
+struct Map<'a> {
+  rooms: [Room<'a>; NUM_ROOMS]
+}
+
+impl<'a> Map<'a> {
+  pub fn new() -> Self {
+    Self { rooms: [Room::new(); NUM_ROOMS] }
+  }
+
+  pub fn connect(&mut self, from: RoomId, d: Direction, to: RoomId) {
+    self.rooms[from as usize].set_exit(d, to);
+    self.rooms[to as usize].set_exit(d.opposite(), from);
+  }
+}
+
+#[derive(Debug, Copy, Clone)]
 enum Direction {
   North,
   South,
@@ -7,8 +31,20 @@ enum Direction {
   West,
 }
 
+impl Direction {
+  pub fn opposite(self) -> Self {
+    match self {
+      Direction::North => Direction::South,
+      Direction::South => Direction::North,
+      Direction::East => Direction::West,
+      Direction::West => Direction::East,
+    }
+  }
+}
+
+#[derive(Debug, Copy, Clone)]
 struct Room<'a> {
-  exits: [Option<&'a Room<'a>>; NUM_DIRECTIONS],
+  exits: [Option<RoomId>; NUM_DIRECTIONS],
   name: &'a str,
   description: &'a str,
 }
@@ -16,25 +52,26 @@ struct Room<'a> {
 impl<'a> Room<'a> {
   pub fn new() -> Self {
     Self {
-      exits: [None, None, None, None],
+      exits: [None; NUM_DIRECTIONS],
       name: "",
       description: "",
     }
   }
 
-  pub fn get_exit(self, d: Direction) -> Option<&'a Room<'a>> {
+  pub fn get_exit(self, d: Direction) -> Option<RoomId> {
     self.exits[d as usize]
   }
 
-  pub fn set_exit(&mut self, d: Direction, room: &'a Room<'a>) -> &mut Self {
-    self.exits[d as usize] = Some(room);
+  pub fn set_exit(&mut self, d: Direction, r: RoomId) -> &mut Self {
+    self.exits[d as usize] = Some(r);
     self
   }
 }
 
 fn main() {
-  let mut b = Room::new();
-  let mut a = Room::new();
+  let mut map = Map::new();
 
-  a.set_exit(Direction::North, &mut b);
+  map.connect(RoomId::Hallway, Direction::South, RoomId::AudienceChamber);
+
+  println!("Map is {:?}", map);
 }
