@@ -3,8 +3,8 @@ use direction::{Direction, NUM_DIRECTIONS};
 #[derive(Debug, Copy, Clone)]
 pub struct Room<T: Copy> {
   exits: [Option<T>; NUM_DIRECTIONS],
-  name: &'static str,
-  description: &'static str,
+  pub name: &'static str,
+  pub description: &'static str,
 }
 
 impl<T: Copy> Room<T> {
