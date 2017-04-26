@@ -41,12 +41,7 @@ fn build_world(map: &mut Map<RoomId>) {
   map.connect(Hallway, South, AudienceChamber);
 }
 
-fn main() {
-  let mut rooms = [Room::new(); MAX_ROOMS];
-  let mut map = Map::new(&mut rooms);
-
-  build_world(&mut map);
-
+fn run_game(map: &mut Map<RoomId>) {
   println!("Werewolves and Wanderer\n");
 
   let mut curr_room = Hallway;
@@ -73,4 +68,12 @@ fn main() {
   }
 
   println!("Farewell.");
+}
+
+fn main() {
+  let mut rooms = [Room::new(); MAX_ROOMS];
+  let mut map = Map::new(&mut rooms);
+
+  build_world(&mut map);
+  run_game(&mut map);
 }
