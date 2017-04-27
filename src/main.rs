@@ -6,7 +6,7 @@ use ww::direction::Direction::*;
 use ww::command::{PrimaryCommand, CommandProcessor};
 
 #[cfg(target_os = "emscripten")]
-use ww::emscripten::{emscripten};
+use ww::platform::emscripten;
 
 use RoomId::*;
 
