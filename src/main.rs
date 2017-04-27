@@ -1,7 +1,6 @@
 extern crate ww;
 
-use ww::game_map::{self, RoomId, GameMap};
-use ww::room::Room;
+use ww::game_map::{RoomId, GameMap};
 use ww::platform;
 use ww::command::{PrimaryCommand, CommandProcessor};
 
@@ -77,7 +76,7 @@ impl<'a> GameState<'a> {
 }
 
 fn main() {
-  let mut rooms = [Room::new(); game_map::NUM_ROOMS];
+  let mut rooms = GameMap::create_rooms();
   let mut map = GameMap::new(&mut rooms);
 
   map.populate();

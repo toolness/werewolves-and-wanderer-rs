@@ -1,6 +1,7 @@
 use enum_primitive::FromPrimitive;
 
 use map;
+use room::Room;
 use platform::random_i32;
 use direction::Direction::*;
 
@@ -8,7 +9,7 @@ use self::RoomId::*;
 use self::RoomContents::*;
 
 const DEBUG: bool = false;
-pub const NUM_ROOMS: usize = 19;
+const NUM_ROOMS: usize = 19;
 const NUM_MONSTERS: usize = 4;
 const NUM_ROOMS_WITH_TREASURE: usize = 4;
 const NUM_ROOMS_WITH_TERROR: usize = 4;
@@ -59,6 +60,10 @@ pub enum RoomContents {
 pub type GameMap<'a> = map::Map<'a, RoomId, RoomContents>;
 
 impl<'a> GameMap<'a> {
+  pub fn create_rooms() -> [Room<RoomId, RoomContents>; NUM_ROOMS] {
+    [Room::new(); NUM_ROOMS]
+  }
+
   pub fn populate(&mut self) {
     self.describe_and_connect();
     self.allot_treasure();
