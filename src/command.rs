@@ -17,11 +17,13 @@ pub trait CommandProcessor<T> {
 
   fn get_help() -> HelpInfo;
 
+  fn prompt() -> &'static [u8] { b"> " }
+
   fn get() -> T {
     loop {
       let mut input = String::new();
 
-      io::stdout().write(b"> ").unwrap();
+      io::stdout().write(Self::prompt()).unwrap();
       io::stdout().flush().unwrap();
 
       match io::stdin().read_line(&mut input) {
