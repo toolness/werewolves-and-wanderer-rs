@@ -67,29 +67,31 @@ impl<'a> GameState<'a> {
     }
   }
 
+  pub fn tick_primary_mode(&mut self) {
+    if self.show_desc {
+      println!("{}", self.map.room(self.curr_room).description);
+      self.show_desc = false;
+    }
+
+    if let Some(cmd) = PrimaryCommand::get() {
+      match cmd {
+        PrimaryCommand::Go(dir) => {
+          if let Some(room) = self.map.room(self.curr_room).get_exit(dir) {
+            self.curr_room = room;
+            self.show_desc = true;
+          } else {
+            println!("You can't go that way.");
+          }
+        },
+        PrimaryCommand::Look => { self.show_desc = true; }
+        PrimaryCommand::Quit => { self.curr_mode = GameMode::Finished; }
+      }
+    };
+  }
+
   pub fn tick(&mut self) {
     match self.curr_mode {
-      GameMode::Primary => {
-        if self.show_desc {
-          println!("{}", self.map.room(self.curr_room).description);
-          self.show_desc = false;
-        }
-
-        if let Some(cmd) = PrimaryCommand::get() {
-          match cmd {
-            PrimaryCommand::Go(dir) => {
-              if let Some(room) = self.map.room(self.curr_room).get_exit(dir) {
-                self.curr_room = room;
-                self.show_desc = true;
-              } else {
-                println!("You can't go that way.");
-              }
-            },
-            PrimaryCommand::Look => { self.show_desc = true; }
-            PrimaryCommand::Quit => { self.curr_mode = GameMode::Finished; }
-          }
-        };
-      },
+      GameMode::Primary => { self.tick_primary_mode() },
       GameMode::Finished => {}
     }
   }
