@@ -12,13 +12,13 @@ pub const FPS: c_int = 15;
 type em_callback_func = unsafe extern fn();
 
 extern {
-    pub fn emscripten_set_main_loop(func: em_callback_func, fps: c_int, simulate_infinite_loop: c_int);
-    pub fn emscripten_cancel_main_loop();
-    pub fn emscripten_get_now() -> c_float;
-    pub fn emscripten_random() -> c_float;
-    pub fn emscripten_run_script(script: *const c_char);
-    pub fn emscripten_run_script_int(script: *const c_char) -> c_int;
-    pub fn emscripten_run_script_string(script: *const c_char) -> *const c_char;
+  pub fn emscripten_set_main_loop(func: em_callback_func, fps: c_int, simulate_infinite_loop: c_int);
+  pub fn emscripten_cancel_main_loop();
+  pub fn emscripten_get_now() -> c_float;
+  pub fn emscripten_random() -> c_float;
+  pub fn emscripten_run_script(script: *const c_char);
+  pub fn emscripten_run_script_int(script: *const c_char) -> c_int;
+  pub fn emscripten_run_script_string(script: *const c_char) -> *const c_char;
 }
 
 thread_local!(static MAIN_LOOP_CALLBACK: RefCell<*mut c_void> = RefCell::new(null_mut()));
@@ -51,16 +51,16 @@ pub fn run_script_string(script: &str) -> String {
 }
 
 pub fn set_main_loop_callback<F>(callback: F) where F: FnMut() {
-    MAIN_LOOP_CALLBACK.with(|log| {
-        *log.borrow_mut() = &callback as *const _ as *mut c_void;
+  MAIN_LOOP_CALLBACK.with(|log| {
+    *log.borrow_mut() = &callback as *const _ as *mut c_void;
+  });
+
+  unsafe { emscripten_set_main_loop(wrapper::<F>, FPS, 1); }
+
+  unsafe extern "C" fn wrapper<F>() where F: FnMut() {
+    MAIN_LOOP_CALLBACK.with(|z| {
+      let closure = *z.borrow_mut() as *mut F;
+      (*closure)();
     });
-
-    unsafe { emscripten_set_main_loop(wrapper::<F>, FPS, 1); }
-
-    unsafe extern "C" fn wrapper<F>() where F: FnMut() {
-        MAIN_LOOP_CALLBACK.with(|z| {
-            let closure = *z.borrow_mut() as *mut F;
-            (*closure)();
-        });
-    }
+  }
 }
