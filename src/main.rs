@@ -98,17 +98,14 @@ impl<'a> GameState<'a> {
       GameMode::AskName => {
         platform::show_prompt("What is your name, explorer? ");
 
-        match platform::read_input() {
-          Some(input) => {
-            if input.len() == 0 {
-              println!("Pardon me?");
-            } else {
-              self.player_name = input;
-              self.curr_mode = GameMode::Primary;
-            }
-          },
-          None => {}
-        }
+        platform::read_input().map(|input| {
+          if input.len() == 0 {
+            println!("Pardon me?");
+          } else {
+            self.player_name = input;
+            self.curr_mode = GameMode::Primary;
+          }
+        });
       },
       GameMode::Primary => { self.tick_primary_mode() },
       GameMode::Finished => {}
