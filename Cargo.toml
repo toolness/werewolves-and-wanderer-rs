@@ -6,4 +6,7 @@ authors = ["Atul Varma <varmaa@gmail.com>"]
 [lib]
 name = "ww"
 
+[target.'cfg(not(target_os = "emscripten"))'.dependencies]
+rand = "0.3"
+
 [dependencies]

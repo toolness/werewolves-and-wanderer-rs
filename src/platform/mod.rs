@@ -4,6 +4,9 @@ pub mod emscripten;
 #[cfg(not(target_os = "emscripten"))]
 use std::io::{self, Write};
 
+#[cfg(not(target_os = "emscripten"))]
+extern crate rand;
+
 #[cfg(target_os = "emscripten")]
 pub fn show_prompt(prompt: &str) {
   let script = format!("set_prompt({:?});", prompt);
@@ -48,4 +51,14 @@ pub fn sleep(ms: u64) {
 pub fn sleep(ms: u64) {
   let dur = ::std::time::Duration::from_millis(ms);
   ::std::thread::sleep(dur);
+}
+
+#[cfg(not(target_os = "emscripten"))]
+pub fn random() -> f32 {
+  rand::random::<f32>()
+}
+
+#[cfg(target_os = "emscripten")]
+pub fn random() -> f32 {
+  emscripten::random()
 }

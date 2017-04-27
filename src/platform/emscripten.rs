@@ -15,12 +15,19 @@ extern {
     pub fn emscripten_set_main_loop(func: em_callback_func, fps: c_int, simulate_infinite_loop: c_int);
     pub fn emscripten_cancel_main_loop();
     pub fn emscripten_get_now() -> c_float;
+    pub fn emscripten_random() -> c_float;
     pub fn emscripten_run_script(script: *const c_char);
     pub fn emscripten_run_script_int(script: *const c_char) -> c_int;
     pub fn emscripten_run_script_string(script: *const c_char) -> *const c_char;
 }
 
 thread_local!(static MAIN_LOOP_CALLBACK: RefCell<*mut c_void> = RefCell::new(null_mut()));
+
+pub fn random() -> f32 {
+  unsafe {
+    emscripten_random()
+  }
+}
 
 pub fn run_script(script: &str) {
   unsafe {
