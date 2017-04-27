@@ -22,14 +22,14 @@ pub trait CommandProcessor<T> {
 
   fn get_help() -> HelpInfo;
 
-  fn prompt() -> &'static [u8] { b"> " }
+  fn prompt() -> &'static str { "> " }
 
   #[cfg(target_os = "emscripten")]
   fn show_prompt() {}
 
   #[cfg(not(target_os = "emscripten"))]
   fn show_prompt() {
-    io::stdout().write(Self::prompt()).unwrap();
+    io::stdout().write(Self::prompt().as_bytes()).unwrap();
     io::stdout().flush().unwrap();
   }
 
