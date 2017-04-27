@@ -10,3 +10,4 @@ name = "ww"
 rand = "0.3"
 
 [dependencies]
+enum_primitive = "0.1.1"

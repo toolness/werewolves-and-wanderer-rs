@@ -1,18 +1,20 @@
 use direction::{Direction, NUM_DIRECTIONS};
 
 #[derive(Debug, Copy, Clone)]
-pub struct Room<T: Copy> {
+pub struct Room<T: Copy, C: Copy> {
   exits: [Option<T>; NUM_DIRECTIONS],
   pub name: &'static str,
   pub description: &'static str,
+  pub contents: Option<C>,
 }
 
-impl<T: Copy> Room<T> {
+impl<T: Copy, C: Copy> Room<T, C> {
   pub fn new() -> Self {
     Self {
       exits: [None; NUM_DIRECTIONS],
       name: "",
       description: "",
+      contents: None,
     }
   }
 

@@ -1,4 +1,8 @@
+#[macro_use] extern crate enum_primitive;
+
 extern crate ww;
+
+use enum_primitive::FromPrimitive;
 
 use ww::map::{Map, MapRoomId};
 use ww::room::Room;
@@ -10,16 +14,144 @@ use ww::command::{PrimaryCommand, CommandProcessor};
 use ww::platform::emscripten;
 
 use RoomId::*;
+use RoomContents::*;
 
-const MAX_ROOMS: usize = 20;
+const DEBUG: bool = false;
+const NUM_ROOMS: usize = 19;
+const NUM_MONSTERS: usize = 4;
+const NUM_ROOMS_WITH_TREASURE: usize = 4;
+const NUM_ROOMS_WITH_TERROR: usize = 4;
+const MIN_TREASURE_AMOUNT: u8 = 10;
+const MAX_TREASURE_AMOUNT: u8 = 110;
 
-#[derive(Debug, Copy, Clone)]
+enum_from_primitive! {
+#[derive(Debug, Copy, Clone, PartialEq)]
 enum RoomId {
-  Hallway = 1,
-  AudienceChamber = 2,
+  Hallway = 0,
+  AudienceChamber = 1,
+  GreatHall = 2,
+  PrivateMeeting = 3,
+  InnerHallway = 4,
+  Entrance = 5,
+  Kitchen = 6,
+  StoreRoom = 7,
+  Lift = 8,
+  RearVestibule = 9,
+  Exit = 10,
+  Dungeon = 11,
+  Guardroom = 12,
+  MasterBedroom = 13,
+  UpperHallway = 14,
+  Treasury = 15,
+  ChambermaidsBedroom = 16,
+  DressingChamber = 17,
+  SmallRoom = 18,
+}
 }
 
-fn build_world(map: &mut Map<RoomId>) {
+enum_from_primitive! {
+#[derive(Debug, Copy, Clone)]
+enum MonsterId {
+  Werewolf = 0,
+  Fleshgorger = 1,
+  Maldemer = 2,
+  Dragon = 3,
+}
+}
+
+#[derive(Debug, Copy, Clone)]
+enum RoomContents {
+  Treasure(u8),
+  Terror(MonsterId),
+}
+
+type GameMap<'a> = Map<'a, RoomId, RoomContents>;
+
+fn random_i32(min: i32, max: i32) -> i32 {
+  let range = max - min;
+
+  min + (platform::random() * range as f32) as i32
+}
+
+fn random_room_id() -> RoomId {
+  loop {
+    let r = random_i32(0, NUM_ROOMS as i32);
+    match RoomId::from_i32(r) {
+      Some(room_id) => { return room_id; },
+      None => {}
+    }
+  }
+}
+
+fn random_monster_id() -> MonsterId {
+  loop {
+    let r = random_i32(0, NUM_MONSTERS as i32);
+    match MonsterId::from_i32(r) {
+      Some(monster_id) => { return monster_id; },
+      None => {}
+    }
+  }
+}
+
+fn random_treasure_amount() -> u8 {
+  random_i32(MIN_TREASURE_AMOUNT as i32, MAX_TREASURE_AMOUNT as i32) as u8
+}
+
+fn allot_terror(map: &mut GameMap) {
+  for _ in 0..NUM_ROOMS_WITH_TERROR {
+    loop {
+      let room_id = random_room_id();
+      if room_id != Entrance && room_id != Exit {
+        let room = map.room(room_id);
+        if room.contents.is_none() {
+          let monster_id = random_monster_id();
+          if DEBUG {
+            println!("DEBUG: Placing {:?} in {:?}.", monster_id, room_id);
+          }
+          room.contents = Some(Terror(monster_id));
+          break;
+        }
+      }
+    }
+  }
+}
+
+fn allot_treasure(map: &mut GameMap) {
+  for _ in 0..NUM_ROOMS_WITH_TREASURE {
+    loop {
+      let room_id = random_room_id();
+      if room_id != Entrance && room_id != Exit {
+        let room = map.room(room_id);
+        if room.contents.is_none() {
+          let amount = random_treasure_amount();
+          if DEBUG {
+            println!("DEBUG: Placing ${} in {:?}.", amount, room_id);
+          }
+          room.contents = Some(Treasure(amount));
+          break;
+        }
+      }
+    }
+  }
+}
+
+fn ensure_treasure(map: &mut GameMap) {
+  for &room_id in [Treasury, PrivateMeeting].iter() {
+    let amount = random_treasure_amount();
+    if DEBUG {
+      println!("DEBUG: Placing ${} in {:?}.", amount, room_id);
+    }
+    map.room(room_id).contents = Some(Treasure(amount));
+  }
+}
+
+fn build_world(map: &mut GameMap) {
+  map.room(Entrance).describe(
+    "Entrance",
+    "You are at the entrance to a forbidding-looking \
+     stone castle. You are facing east."
+  );
+
   map.room(Hallway).describe(
     "Hallway",
     "You are in the hallway. \
@@ -35,6 +167,7 @@ fn build_world(map: &mut Map<RoomId>) {
      Doors leave this room to the north, east, and south."
   );
 
+  map.connect(Entrance, East, Hallway);
   map.connect(Hallway, South, AudienceChamber);
 }
 
@@ -53,7 +186,7 @@ enum GameMode {
 }
 
 struct GameState<'a> {
-  map: &'a mut Map<'a, RoomId>,
+  map: &'a mut GameMap<'a>,
   pub curr_mode: GameMode,
   player_name: String,
   curr_room: RoomId,
@@ -61,12 +194,12 @@ struct GameState<'a> {
 }
 
 impl<'a> GameState<'a> {
-  pub fn new(map: &'a mut Map<'a, RoomId>) -> Self {
+  pub fn new(map: &'a mut GameMap<'a>) -> Self {
     Self {
       map: map,
       player_name: String::from(""),
       curr_mode: GameMode::AskName,
-      curr_room: Hallway,
+      curr_room: Entrance,
       show_desc: true,
     }
   }
@@ -114,10 +247,13 @@ impl<'a> GameState<'a> {
 }
 
 fn main() {
-  let mut rooms = [Room::new(); MAX_ROOMS];
+  let mut rooms = [Room::new(); NUM_ROOMS];
   let mut map = Map::new(&mut rooms);
 
   build_world(&mut map);
+  allot_treasure(&mut map);
+  allot_terror(&mut map);
+  ensure_treasure(&mut map);
 
   let mut state = GameState::new(&mut map);
 

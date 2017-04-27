@@ -6,16 +6,16 @@ pub trait MapRoomId {
 }
 
 #[derive(Debug)]
-pub struct Map<'a, T: 'a + Copy + MapRoomId> {
-  rooms: &'a mut [Room<T>]
+pub struct Map<'a, T: 'a + Copy + MapRoomId, C: 'a + Copy> {
+  rooms: &'a mut [Room<T, C>]
 }
 
-impl<'a, T: Copy + MapRoomId> Map<'a, T> {
-  pub fn new(rooms: &'a mut [Room<T>]) -> Self {
+impl<'a, T: Copy + MapRoomId, C: Copy> Map<'a, T, C> {
+  pub fn new(rooms: &'a mut [Room<T, C>]) -> Self {
     Self { rooms: rooms }
   }
 
-  pub fn room(&mut self, r: T) -> &mut Room<T> {
+  pub fn room(&mut self, r: T) -> &mut Room<T, C> {
     &mut self.rooms[r.room_id()]
   }
 
