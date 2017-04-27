@@ -22,6 +22,10 @@ impl MapRoomId for RoomId {
   fn room_id(self) -> usize { self as usize }
 }
 
+enum GameMode {
+  Primary,
+}
+
 fn build_world(map: &mut Map<RoomId>) {
   map.room(Hallway).describe(
     "Hallway",
@@ -44,26 +48,31 @@ fn build_world(map: &mut Map<RoomId>) {
 fn run_game(map: &mut Map<RoomId>) {
   println!("Werewolves and Wanderer\n");
 
+  let mut curr_mode = GameMode::Primary;
   let mut curr_room = Hallway;
   let mut show_desc = true;
 
   loop {
-    if show_desc {
-      println!("{}", map.room(curr_room).description);
-      show_desc = false;
-    }
-
-    match PrimaryCommand::get() {
-      PrimaryCommand::Go(dir) => {
-        if let Some(room) = map.room(curr_room).get_exit(dir) {
-          curr_room = room;
-          show_desc = true;
-        } else {
-          println!("You can't go that way.");
+    match curr_mode {
+      GameMode::Primary => {
+        if show_desc {
+          println!("{}", map.room(curr_room).description);
+          show_desc = false;
         }
-      },
-      PrimaryCommand::Look => { show_desc = true; }
-      PrimaryCommand::Quit => { break; }
+
+        match PrimaryCommand::get() {
+          PrimaryCommand::Go(dir) => {
+            if let Some(room) = map.room(curr_room).get_exit(dir) {
+              curr_room = room;
+              show_desc = true;
+            } else {
+              println!("You can't go that way.");
+            }
+          },
+          PrimaryCommand::Look => { show_desc = true; }
+          PrimaryCommand::Quit => { break; }
+        }
+      }
     }
   }
 
