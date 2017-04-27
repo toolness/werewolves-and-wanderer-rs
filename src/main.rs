@@ -107,6 +107,8 @@ fn main() {
 
   println!("Werewolves and Wanderer\n");
 
+  ::ww::platform::sleep(500);
+
   #[cfg(target_os = "emscripten")]
   emscripten::set_main_loop_callback(|| state.tick());
 

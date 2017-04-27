@@ -70,13 +70,28 @@ const _originalFetch = window.fetch;
 
 let _currentInput = null;
 let _currentPrompt = promptEl.textContent;
+let _currentPromise = Promise.resolve();
 
 window.fetch = file => _originalFetch(`${BASE_PATH}/deps/${file}`);
 
+window.sleep = ms => {
+  _currentPromise = _currentPromise.then(() => {
+    inputEl.disabled = true;
+    return new Promise(resolve => {
+      window.setTimeout(() => {
+        inputEl.disabled = false;
+        resolve();
+      }, ms);
+    });
+  });
+};
+
 window.set_prompt = prompt => {
-  if (prompt !== _currentPrompt) {
-    promptEl.textContent = _currentPrompt = prompt;
-  }
+  _currentPromise.then(() => {
+    if (prompt !== _currentPrompt) {
+      promptEl.textContent = _currentPrompt = prompt;
+    }
+  });
 };
 
 window.has_input = () => {
@@ -84,7 +99,9 @@ window.has_input = () => {
 };
 
 window.set_input = val => {
-  _currentInput = val;
+  _currentPromise.then(() => {
+    _currentInput = val;
+  });
 };
 
 window.get_input = () => {
@@ -99,9 +116,11 @@ window.scroll_output = () => {
 
 window.Module = {
   print(msg) {
-    const textNode = document.createTextNode(msg + '\n');
-    outputEl.appendChild(textNode);
-    window.scroll_output();
+    _currentPromise.then(() => {
+      const textNode = document.createTextNode(msg + '\n');
+      outputEl.appendChild(textNode);
+      window.scroll_output();
+    });
   }
 };
 

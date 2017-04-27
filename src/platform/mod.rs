@@ -37,3 +37,15 @@ pub fn read_input() -> Option<String> {
     },
   }
 }
+
+#[cfg(target_os = "emscripten")]
+pub fn sleep(ms: u64) {
+  let script = format!("sleep({});", ms);
+  emscripten::run_script(script.as_str());
+}
+
+#[cfg(not(target_os = "emscripten"))]
+pub fn sleep(ms: u64) {
+  let dur = ::std::time::Duration::from_millis(ms);
+  ::std::thread::sleep(dur);
+}
