@@ -1,39 +1,123 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
+<style>
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 8px;
+  font-family: monospace;
+  color: white;
+  background-color: black;
+}
+
+#output .prompt-response {
+  padding: 1em 0;
+  color: gray;
+}
+
+#output {
+  flex: 1;
+  white-space: pre-wrap;
+  overflow-y: scroll;
+}
+
+#form {
+  display: flex;
+  align-items: center;
+  padding-top: 8px;
+}
+
+#prompt {
+  white-space: pre;
+}
+
+label, input {
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+  background: inherit;
+}
+
+#input {
+  flex: 1;
+  border: none;
+}
+</style>
 <title>Werewolves and Wanderer</title>
-<h1>Werewolves and Wanderer</h1>
+<body>
+<div id="output"></div>
+<form id="form"><label id="prompt" for="input"></label><input id="input" autofocus></input></form>
 <script>
+"use strict";
+
 const TARGET_MODE = 'debug';
 const BASE_PATH = `target/wasm32-unknown-emscripten/${TARGET_MODE}`;
+
+const outputEl = document.getElementById('output');
+const promptEl = document.getElementById('prompt');
+const inputEl = document.getElementById('input');
+const formEl = document.getElementById('form');
 const _originalFetch = window.fetch;
+
+let _currentInput = null;
+let _currentPrompt = promptEl.textContent;
 
 window.fetch = file => _originalFetch(`${BASE_PATH}/deps/${file}`);
 
-window.input = null;
-
 window.set_prompt = prompt => {
-  console.log("Setting prompt to", prompt);
+  if (prompt !== _currentPrompt) {
+    promptEl.textContent = _currentPrompt = prompt;
+  }
 };
 
 window.has_input = () => {
-  return window.input === null ? 0 : 1;
+  return _currentInput === null ? 0 : 1;
 };
 
 window.set_input = val => {
-  window.input = val;
+  _currentInput = val;
 };
 
 window.get_input = () => {
-  let input = window.input;
-  window.set_input(null);
+  const input = _currentInput;
+  _currentInput = null;
   return input;
+};
+
+window.scroll_output = () => {
+  outputEl.scrollTop = outputEl.scrollHeight;
 };
 
 window.Module = {
   print(msg) {
-    console.log("PRINT", msg);
+    const textNode = document.createTextNode(msg + '\n');
+    outputEl.appendChild(textNode);
+    window.scroll_output();
   }
 };
+
+formEl.addEventListener('submit', e => {
+  e.preventDefault();
+
+  const el = document.createElement('div');
+
+  el.setAttribute('class', 'prompt-response');
+  el.textContent = `${_currentPrompt}${inputEl.value}`;
+  outputEl.appendChild(el);
+  window.scroll_output();
+
+  window.set_input(inputEl.value);
+  inputEl.value = "";
+});
 
 window.addEventListener('DOMContentLoaded', () => {
   const script = document.createElement('script');
@@ -43,3 +127,4 @@ window.addEventListener('DOMContentLoaded', () => {
   console.log(`Loading program in ${TARGET_MODE} mode.`);
 });
 </script>
+</body>
