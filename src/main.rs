@@ -22,9 +22,53 @@ impl MapRoomId for RoomId {
   fn room_id(self) -> usize { self as usize }
 }
 
+#[derive(Debug, PartialEq, Copy, Clone)]
 enum GameMode {
   Primary,
   Finished,
+}
+
+struct GameState<'a> {
+  map: &'a mut Map<'a, RoomId>,
+  pub curr_mode: GameMode,
+  curr_room: RoomId,
+  show_desc: bool,
+}
+
+impl<'a> GameState<'a> {
+  pub fn new(map: &'a mut Map<'a, RoomId>) -> Self {
+    Self {
+      map: map,
+      curr_mode: GameMode::Primary,
+      curr_room: Hallway,
+      show_desc: true,
+    }
+  }
+
+  pub fn tick(&mut self) {
+    match self.curr_mode {
+      GameMode::Primary => {
+        if self.show_desc {
+          println!("{}", self.map.room(self.curr_room).description);
+          self.show_desc = false;
+        }
+
+        match PrimaryCommand::get() {
+          PrimaryCommand::Go(dir) => {
+            if let Some(room) = self.map.room(self.curr_room).get_exit(dir) {
+              self.curr_room = room;
+              self.show_desc = true;
+            } else {
+              println!("You can't go that way.");
+            }
+          },
+          PrimaryCommand::Look => { self.show_desc = true; }
+          PrimaryCommand::Quit => { self.curr_mode = GameMode::Finished; }
+        }
+      },
+      GameMode::Finished => {}
+    }
+  }
 }
 
 fn build_world(map: &mut Map<RoomId>) {
@@ -46,45 +90,19 @@ fn build_world(map: &mut Map<RoomId>) {
   map.connect(Hallway, South, AudienceChamber);
 }
 
-fn run_game(map: &mut Map<RoomId>) {
-  println!("Werewolves and Wanderer\n");
-
-  let mut curr_mode = GameMode::Primary;
-  let mut curr_room = Hallway;
-  let mut show_desc = true;
-
-  loop {
-    match curr_mode {
-      GameMode::Primary => {
-        if show_desc {
-          println!("{}", map.room(curr_room).description);
-          show_desc = false;
-        }
-
-        match PrimaryCommand::get() {
-          PrimaryCommand::Go(dir) => {
-            if let Some(room) = map.room(curr_room).get_exit(dir) {
-              curr_room = room;
-              show_desc = true;
-            } else {
-              println!("You can't go that way.");
-            }
-          },
-          PrimaryCommand::Look => { show_desc = true; }
-          PrimaryCommand::Quit => { curr_mode = GameMode::Finished; }
-        }
-      },
-      GameMode::Finished => { break; }
-    }
-  }
-
-  println!("Farewell.");
-}
-
 fn main() {
   let mut rooms = [Room::new(); MAX_ROOMS];
   let mut map = Map::new(&mut rooms);
 
   build_world(&mut map);
-  run_game(&mut map);
+
+  let mut state = GameState::new(&mut map);
+
+  println!("Werewolves and Wanderer\n");
+
+  while state.curr_mode != GameMode::Finished {
+    state.tick();
+  }
+
+  println!("Farewell.");
 }
