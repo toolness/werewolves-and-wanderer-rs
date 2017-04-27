@@ -2,7 +2,7 @@
 
 #[cfg(target_os = "emscripten")]
 pub mod emscripten {
-    use std::ffi::CString;
+    use std::ffi::{CString, CStr};
     use std::cell::RefCell;
     use std::ptr::null_mut;
     use std::os::raw::{c_int, c_void, c_float, c_char};
@@ -15,6 +15,7 @@ pub mod emscripten {
         pub fn emscripten_cancel_main_loop();
         pub fn emscripten_get_now() -> c_float;
         pub fn emscripten_run_script_int(script: *const c_char) -> c_int;
+        pub fn emscripten_run_script_string(script: *const c_char) -> *const c_char;
     }
 
     thread_local!(static MAIN_LOOP_CALLBACK: RefCell<*mut c_void> = RefCell::new(null_mut()));
@@ -22,6 +23,15 @@ pub mod emscripten {
     pub fn run_script_int(script: &str) -> c_int {
       unsafe {
         emscripten_run_script_int(CString::new(script).unwrap().as_ptr())
+      }
+    }
+
+    pub fn run_script_string(script: &str) -> String {
+      unsafe {
+        let r = emscripten_run_script_string(CString::new(script).unwrap().as_ptr());
+        let s = CStr::from_ptr(r);
+        let our_string = String::from(s.to_string_lossy());
+        return our_string;
       }
     }
 

@@ -1,7 +1,12 @@
 use std::ascii::AsciiExt;
+
+#[cfg(not(target_os = "emscripten"))]
 use std::io::{self, Write};
 
 use direction::Direction;
+
+#[cfg(target_os = "emscripten")]
+use emscripten::{emscripten};
 
 #[derive(Debug)]
 pub enum PrimaryCommand {
@@ -19,36 +24,63 @@ pub trait CommandProcessor<T> {
 
   fn prompt() -> &'static [u8] { b"> " }
 
-  fn get() -> T {
-    loop {
-      let mut input = String::new();
+  #[cfg(target_os = "emscripten")]
+  fn show_prompt() {}
 
-      io::stdout().write(Self::prompt()).unwrap();
-      io::stdout().flush().unwrap();
+  #[cfg(not(target_os = "emscripten"))]
+  fn show_prompt() {
+    io::stdout().write(Self::prompt()).unwrap();
+    io::stdout().flush().unwrap();
+  }
 
-      match io::stdin().read_line(&mut input) {
-        Ok(_) => {
-          match input.chars().next() {
-            Some(k) => {
-              let k = k.to_ascii_lowercase();
-              if k == 'h' || k == '?' {
-                println!("Available commands:");
+  #[cfg(target_os = "emscripten")]
+  fn read_input() -> Option<String> {
+    if emscripten::run_script_int("has_input()") == 0 {
+      None
+    } else {
+      Some(emscripten::run_script_string("get_input()"))
+    }
+  }
 
-                for &(ch, desc) in Self::get_help().iter() {
-                  println!("{} - {}", ch, desc);
-                }
-                continue;
-              } else if let Some(cmd) = Self::from_char(k) {
-                return cmd;
+  #[cfg(not(target_os = "emscripten"))]
+  fn read_input() -> Option<String> {
+    let mut input = String::new();
+
+    match io::stdin().read_line(&mut input) {
+      Ok(_) => { return Some(input); },
+      Err(error) => {
+        println!("Error reading input: {}", error);
+        return None;
+      },
+    }
+  }
+
+  fn get() -> Option<T> {
+    Self::show_prompt();
+
+    match Self::read_input() {
+      Some(input) => {
+        match input.chars().next() {
+          Some(k) => {
+            let k = k.to_ascii_lowercase();
+            if k == 'h' || k == '?' {
+              println!("Available commands:");
+
+              for &(ch, desc) in Self::get_help().iter() {
+                println!("{} - {}", ch, desc);
               }
-            },
-            None => {}
-          }
-          println!("I have no idea what you're talking about.");
-        },
-        Err(error) => {
-          println!("Error reading input: {}", error);
+              return None;
+            } else if let Some(cmd) = Self::from_char(k) {
+              return Some(cmd);
+            }
+          },
+          None => {}
         }
+        println!("I have no idea what you're talking about.");
+        return None;
+      },
+      None => {
+        return None;
       }
     }
   }

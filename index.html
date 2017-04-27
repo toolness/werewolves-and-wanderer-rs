@@ -7,10 +7,20 @@ let originalFetch = window.fetch;
 
 window.fetch = file => originalFetch(`target/wasm32-unknown-emscripten/debug/deps/${file}`);
 
-window.is_input_available = false;
+window.input = null;
 
 window.has_input = () => {
-  return window.is_input_available ? 1 : 0;
+  return window.input === null ? 0 : 1;
+};
+
+window.set_input = val => {
+  window.input = val;
+};
+
+window.get_input = () => {
+  let input = window.input;
+  window.set_input(null);
+  return input;
 };
 
 window.Module = {

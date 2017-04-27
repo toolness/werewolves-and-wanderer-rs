@@ -5,6 +5,9 @@ use ww::room::Room;
 use ww::direction::Direction::*;
 use ww::command::{PrimaryCommand, CommandProcessor};
 
+#[cfg(target_os = "emscripten")]
+use ww::emscripten::{emscripten};
+
 use RoomId::*;
 
 const MAX_ROOMS: usize = 20;
@@ -72,26 +75,25 @@ impl<'a> GameState<'a> {
           self.show_desc = false;
         }
 
-        match PrimaryCommand::get() {
-          PrimaryCommand::Go(dir) => {
-            if let Some(room) = self.map.room(self.curr_room).get_exit(dir) {
-              self.curr_room = room;
-              self.show_desc = true;
-            } else {
-              println!("You can't go that way.");
-            }
-          },
-          PrimaryCommand::Look => { self.show_desc = true; }
-          PrimaryCommand::Quit => { self.curr_mode = GameMode::Finished; }
-        }
+        if let Some(cmd) = PrimaryCommand::get() {
+          match cmd {
+            PrimaryCommand::Go(dir) => {
+              if let Some(room) = self.map.room(self.curr_room).get_exit(dir) {
+                self.curr_room = room;
+                self.show_desc = true;
+              } else {
+                println!("You can't go that way.");
+              }
+            },
+            PrimaryCommand::Look => { self.show_desc = true; }
+            PrimaryCommand::Quit => { self.curr_mode = GameMode::Finished; }
+          }
+        };
       },
       GameMode::Finished => {}
     }
   }
 }
-
-#[cfg(target_os = "emscripten")]
-pub mod emscripten;
 
 fn main() {
   let mut rooms = [Room::new(); MAX_ROOMS];
@@ -104,17 +106,7 @@ fn main() {
   println!("Werewolves and Wanderer\n");
 
   #[cfg(target_os = "emscripten")]
-  {
-    use emscripten::{emscripten};
-    let tick = || {
-      if emscripten::run_script_int("has_input()") != 0 {
-        println!("YAY");
-      } else {
-        println!("TICK");
-      }
-    };
-    emscripten::set_main_loop_callback(tick);
-  }
+  emscripten::set_main_loop_callback(|| state.tick());
 
   #[cfg(not(target_os = "emscripten"))]
   while state.curr_mode != GameMode::Finished {
