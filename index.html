@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Werewolves and Wanderer</title>
+<h1>Werewolves and Wanderer</h1>
+<script>
+let originalFetch = window.fetch;
+
+window.fetch = file => originalFetch(`target/wasm32-unknown-emscripten/debug/deps/${file}`);
+
+window.is_input_available = false;
+
+window.has_input = () => {
+  return window.is_input_available ? 1 : 0;
+};
+
+window.Module = {
+  print(msg) {
+    console.log("PRINT", msg);
+  }
+};
+</script>
+<script src="target/wasm32-unknown-emscripten/debug/werewolves-and-wanderer.js"></script>

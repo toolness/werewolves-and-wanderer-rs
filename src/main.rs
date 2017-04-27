@@ -90,6 +90,9 @@ impl<'a> GameState<'a> {
   }
 }
 
+#[cfg(target_os = "emscripten")]
+pub mod emscripten;
+
 fn main() {
   let mut rooms = [Room::new(); MAX_ROOMS];
   let mut map = Map::new(&mut rooms);
@@ -100,6 +103,20 @@ fn main() {
 
   println!("Werewolves and Wanderer\n");
 
+  #[cfg(target_os = "emscripten")]
+  {
+    use emscripten::{emscripten};
+    let tick = || {
+      if emscripten::run_script_int("has_input()") != 0 {
+        println!("YAY");
+      } else {
+        println!("TICK");
+      }
+    };
+    emscripten::set_main_loop_callback(tick);
+  }
+
+  #[cfg(not(target_os = "emscripten"))]
   while state.curr_mode != GameMode::Finished {
     state.tick();
   }
