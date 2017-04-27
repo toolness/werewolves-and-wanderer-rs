@@ -138,24 +138,22 @@ impl<'a> GameMap<'a> {
   }
 }
 
-fn random_room_id() -> RoomId {
+fn random_enum<T: FromPrimitive>(size: usize) -> T {
   loop {
-    let r = random_i32(0, NUM_ROOMS as i32);
-    match RoomId::from_i32(r) {
-      Some(room_id) => { return room_id; },
+    let r = random_i32(0, size as i32);
+    match T::from_i32(r) {
+      Some(t) => { return t; },
       None => {}
     }
   }
 }
 
+fn random_room_id() -> RoomId {
+  random_enum(NUM_ROOMS)
+}
+
 fn random_monster_id() -> MonsterId {
-  loop {
-    let r = random_i32(0, NUM_MONSTERS as i32);
-    match MonsterId::from_i32(r) {
-      Some(monster_id) => { return monster_id; },
-      None => {}
-    }
-  }
+  random_enum(NUM_MONSTERS)
 }
 
 fn random_treasure_amount() -> u8 {
