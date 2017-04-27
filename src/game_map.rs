@@ -71,18 +71,20 @@ impl<'a> GameMap<'a> {
     self.ensure_treasure();
   }
 
-  fn allot_terror(&mut self) {
-    for _ in 0..NUM_ROOMS_WITH_TERROR {
+  fn allot<F>(&mut self, num_rooms: usize, allotter: F)
+    where F: Fn() -> RoomContents
+  {
+    for _ in 0..num_rooms {
       loop {
         let room_id = random_room_id();
         if room_id != Entrance && room_id != Exit {
           let room = self.room(room_id);
           if room.contents.is_none() {
-            let monster_id = random_monster_id();
+            let contents = allotter();
             if DEBUG {
-              println!("DEBUG: Placing {:?} in {:?}.", monster_id, room_id);
+              println!("DEBUG: Placing {:?} in {:?}.", contents, room_id);
             }
-            room.contents = Some(Terror(monster_id));
+            room.contents = Some(contents);
             break;
           }
         }
@@ -90,23 +92,13 @@ impl<'a> GameMap<'a> {
     }
   }
 
+  fn allot_terror(&mut self) {
+    self.allot(NUM_ROOMS_WITH_TERROR, || Terror(random_monster_id()))
+  }
+
   fn allot_treasure(&mut self) {
-    for _ in 0..NUM_ROOMS_WITH_TREASURE {
-      loop {
-        let room_id = random_room_id();
-        if room_id != Entrance && room_id != Exit {
-          let room = self.room(room_id);
-          if room.contents.is_none() {
-            let amount = random_treasure_amount();
-            if DEBUG {
-              println!("DEBUG: Placing ${} in {:?}.", amount, room_id);
-            }
-            room.contents = Some(Treasure(amount));
-            break;
-          }
-        }
-      }
-    }
+    self.allot(NUM_ROOMS_WITH_TREASURE,
+               || Treasure(random_treasure_amount()))
   }
 
   fn ensure_treasure(&mut self) {
