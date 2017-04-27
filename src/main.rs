@@ -15,6 +15,25 @@ enum RoomId {
   AudienceChamber = 2,
 }
 
+fn build_world(map: &mut Map<RoomId>) {
+  map.room(Hallway).describe(
+    "Hallway",
+    "You are in the hallway. \
+     There is a door to the south. \
+     Through the windows to the north you can see a secret herb garden."
+  );
+
+  map.room(AudienceChamber).describe(
+    "Audience Chamber",
+    "This is the audience chamber. \
+     There is a window to the west. By looking to the right \
+     through it you can see the entrance to the castle. \
+     Doors leave this room to the north, east, and south."
+  );
+
+  map.connect(Hallway, South, AudienceChamber);
+}
+
 // Ideally we'd actually just get rid of MapRoomId and add a constraint
 // to Map<T> requiring that T be type-castable as usize, but I don't
 // know how to do that, so...
@@ -69,25 +88,6 @@ impl<'a> GameState<'a> {
       GameMode::Finished => {}
     }
   }
-}
-
-fn build_world(map: &mut Map<RoomId>) {
-  map.room(Hallway).describe(
-    "Hallway",
-    "You are in the hallway. \
-     There is a door to the south. \
-     Through the windows to the north you can see a secret herb garden."
-  );
-
-  map.room(AudienceChamber).describe(
-    "Audience Chamber",
-    "This is the audience chamber. \
-     There is a window to the west. By looking to the right \
-     through it you can see the entrance to the castle. \
-     Doors leave this room to the north, east, and south."
-  );
-
-  map.connect(Hallway, South, AudienceChamber);
 }
 
 fn main() {
