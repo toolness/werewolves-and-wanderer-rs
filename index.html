@@ -100,7 +100,7 @@ window.has_input = () => {
 
 window.set_input = val => {
   _currentPromise.then(() => {
-    _currentInput = val;
+    _currentInput = typeof(val) === 'string' ? val.trim() : val;
   });
 };
 

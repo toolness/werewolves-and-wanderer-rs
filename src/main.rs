@@ -2,6 +2,7 @@ extern crate ww;
 
 use ww::map::{Map, MapRoomId};
 use ww::room::Room;
+use ww::platform;
 use ww::direction::Direction::*;
 use ww::command::{PrimaryCommand, CommandProcessor};
 
@@ -46,6 +47,7 @@ impl MapRoomId for RoomId {
 
 #[derive(Debug, PartialEq, Copy, Clone)]
 enum GameMode {
+  AskName,
   Primary,
   Finished,
 }
@@ -53,6 +55,7 @@ enum GameMode {
 struct GameState<'a> {
   map: &'a mut Map<'a, RoomId>,
   pub curr_mode: GameMode,
+  player_name: String,
   curr_room: RoomId,
   show_desc: bool,
 }
@@ -61,7 +64,8 @@ impl<'a> GameState<'a> {
   pub fn new(map: &'a mut Map<'a, RoomId>) -> Self {
     Self {
       map: map,
-      curr_mode: GameMode::Primary,
+      player_name: String::from(""),
+      curr_mode: GameMode::AskName,
       curr_room: Hallway,
       show_desc: true,
     }
@@ -91,6 +95,21 @@ impl<'a> GameState<'a> {
 
   pub fn tick(&mut self) {
     match self.curr_mode {
+      GameMode::AskName => {
+        platform::show_prompt("What is your name, explorer? ");
+
+        match platform::read_input() {
+          Some(input) => {
+            if input.len() == 0 {
+              println!("Pardon me?");
+            } else {
+              self.player_name = input;
+              self.curr_mode = GameMode::Primary;
+            }
+          },
+          None => {}
+        }
+      },
       GameMode::Primary => { self.tick_primary_mode() },
       GameMode::Finished => {}
     }

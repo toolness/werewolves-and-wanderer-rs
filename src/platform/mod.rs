@@ -30,10 +30,10 @@ pub fn read_input() -> Option<String> {
   let mut input = String::new();
 
   match io::stdin().read_line(&mut input) {
-    Ok(_) => { return Some(input); },
+    Ok(_) => { Some(String::from(input.trim())) },
     Err(error) => {
       println!("Error reading input: {}", error);
-      return None;
+      None
     },
   }
 }
