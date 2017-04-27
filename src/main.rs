@@ -24,6 +24,7 @@ impl MapRoomId for RoomId {
 
 enum GameMode {
   Primary,
+  Finished,
 }
 
 fn build_world(map: &mut Map<RoomId>) {
@@ -70,9 +71,10 @@ fn run_game(map: &mut Map<RoomId>) {
             }
           },
           PrimaryCommand::Look => { show_desc = true; }
-          PrimaryCommand::Quit => { break; }
+          PrimaryCommand::Quit => { curr_mode = GameMode::Finished; }
         }
-      }
+      },
+      GameMode::Finished => { break; }
     }
   }
 
