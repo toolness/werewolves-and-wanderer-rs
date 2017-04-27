@@ -27,7 +27,7 @@ pub trait CommandProcessor<T> {
   #[cfg(target_os = "emscripten")]
   fn show_prompt() {
     let script = format!("set_prompt({:?});", Self::prompt());
-    emscripten::run_script_int(script.as_str());
+    emscripten::run_script(script.as_str());
   }
 
   #[cfg(not(target_os = "emscripten"))]
