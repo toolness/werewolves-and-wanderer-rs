@@ -6,6 +6,8 @@ use std::cell::RefCell;
 use std::ptr::null_mut;
 use std::os::raw::{c_int, c_void, c_float, c_char};
 
+pub const FPS: c_int = 15;
+
 #[allow(non_camel_case_types)]
 type em_callback_func = unsafe extern fn();
 
@@ -46,7 +48,7 @@ pub fn set_main_loop_callback<F>(callback: F) where F: FnMut() {
         *log.borrow_mut() = &callback as *const _ as *mut c_void;
     });
 
-    unsafe { emscripten_set_main_loop(wrapper::<F>, 0, 1); }
+    unsafe { emscripten_set_main_loop(wrapper::<F>, FPS, 1); }
 
     unsafe extern "C" fn wrapper<F>() where F: FnMut() {
         MAIN_LOOP_CALLBACK.with(|z| {
