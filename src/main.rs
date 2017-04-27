@@ -67,15 +67,9 @@ enum RoomContents {
 
 type GameMap<'a> = Map<'a, RoomId, RoomContents>;
 
-fn random_i32(min: i32, max: i32) -> i32 {
-  let range = max - min;
-
-  min + (platform::random() * range as f32) as i32
-}
-
 fn random_room_id() -> RoomId {
   loop {
-    let r = random_i32(0, NUM_ROOMS as i32);
+    let r = platform::random_i32(0, NUM_ROOMS as i32);
     match RoomId::from_i32(r) {
       Some(room_id) => { return room_id; },
       None => {}
@@ -85,7 +79,7 @@ fn random_room_id() -> RoomId {
 
 fn random_monster_id() -> MonsterId {
   loop {
-    let r = random_i32(0, NUM_MONSTERS as i32);
+    let r = platform::random_i32(0, NUM_MONSTERS as i32);
     match MonsterId::from_i32(r) {
       Some(monster_id) => { return monster_id; },
       None => {}
@@ -94,7 +88,8 @@ fn random_monster_id() -> MonsterId {
 }
 
 fn random_treasure_amount() -> u8 {
-  random_i32(MIN_TREASURE_AMOUNT as i32, MAX_TREASURE_AMOUNT as i32) as u8
+  platform::random_i32(MIN_TREASURE_AMOUNT as i32,
+                       MAX_TREASURE_AMOUNT as i32) as u8
 }
 
 fn allot_terror(map: &mut GameMap) {

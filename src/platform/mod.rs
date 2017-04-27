@@ -62,3 +62,9 @@ pub fn random() -> f32 {
 pub fn random() -> f32 {
   emscripten::random()
 }
+
+pub fn random_i32(min: i32, max: i32) -> i32 {
+  let range = max - min;
+
+  min + (random() * range as f32) as i32
+}
