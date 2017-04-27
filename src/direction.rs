@@ -1,4 +1,4 @@
-pub const NUM_DIRECTIONS: usize = 4;
+pub const NUM_DIRECTIONS: usize = 6;
 
 use self::Direction::*;
 
@@ -8,6 +8,8 @@ pub enum Direction {
   South,
   East,
   West,
+  Up,
+  Down,
 }
 
 impl Direction {
@@ -17,6 +19,8 @@ impl Direction {
       South => North,
       East => West,
       West => East,
+      Up => Down,
+      Down => Up,
     }
   }
 }
