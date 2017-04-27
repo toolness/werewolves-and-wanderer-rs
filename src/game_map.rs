@@ -16,6 +16,16 @@ const NUM_ROOMS_WITH_TERROR: usize = 4;
 const MIN_TREASURE_AMOUNT: u8 = 10;
 const MAX_TREASURE_AMOUNT: u8 = 110;
 
+// There doesn't seem to be a convenient way to get the "size" or
+// "range" of an enum's possible values, so we'll make a trait for
+// that here.
+//
+// Ideally we could populate it automatically through a macro, but
+// for now we'll just implement it manually for all our enums.
+trait SizedEnum {
+  fn size() -> usize;
+}
+
 enum_from_primitive! {
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub enum RoomId {
@@ -41,6 +51,10 @@ pub enum RoomId {
 }
 }
 
+impl SizedEnum for RoomId {
+  fn size() -> usize { NUM_ROOMS }
+}
+
 enum_from_primitive! {
 #[derive(Debug, Copy, Clone)]
 pub enum MonsterId {
@@ -49,6 +63,10 @@ pub enum MonsterId {
   Maldemer = 2,
   Dragon = 3,
 }
+}
+
+impl SizedEnum for MonsterId {
+  fn size() -> usize { NUM_MONSTERS }
 }
 
 #[derive(Debug, Copy, Clone)]
@@ -76,7 +94,7 @@ impl<'a> GameMap<'a> {
   {
     for _ in 0..num_rooms {
       loop {
-        let room_id = random_room_id();
+        let room_id = random_enum::<RoomId>();
         if room_id != Entrance && room_id != Exit {
           let room = self.room(room_id);
           if room.contents.is_none() {
@@ -93,7 +111,7 @@ impl<'a> GameMap<'a> {
   }
 
   fn allot_terror(&mut self) {
-    self.allot(NUM_ROOMS_WITH_TERROR, || Terror(random_monster_id()))
+    self.allot(NUM_ROOMS_WITH_TERROR, || Terror(random_enum::<MonsterId>()))
   }
 
   fn allot_treasure(&mut self) {
@@ -138,22 +156,14 @@ impl<'a> GameMap<'a> {
   }
 }
 
-fn random_enum<T: FromPrimitive>(size: usize) -> T {
+fn random_enum<T: FromPrimitive + SizedEnum>() -> T {
   loop {
-    let r = random_i32(0, size as i32);
+    let r = random_i32(0, T::size() as i32);
     match T::from_i32(r) {
       Some(t) => { return t; },
       None => {}
     }
   }
-}
-
-fn random_room_id() -> RoomId {
-  random_enum(NUM_ROOMS)
-}
-
-fn random_monster_id() -> MonsterId {
-  random_enum(NUM_MONSTERS)
 }
 
 fn random_treasure_amount() -> u8 {
