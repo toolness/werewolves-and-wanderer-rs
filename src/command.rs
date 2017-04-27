@@ -1,4 +1,3 @@
-use std::vec::Vec;
 use std::ascii::AsciiExt;
 use std::io::{self, Write};
 
@@ -11,7 +10,7 @@ pub enum PrimaryCommand {
   Quit,
 }
 
-type HelpInfo = Vec<(char, &'static str)>;
+type HelpInfo = &'static [(char, &'static str)];
 
 pub trait CommandProcessor<T> {
   fn from_char(c: char) -> Option<T>;
@@ -53,17 +52,17 @@ pub trait CommandProcessor<T> {
   }
 }
 
+static PRIMARY_COMMAND_HELP: HelpInfo = &[
+  ('n', "go north"),
+  ('s', "go south"),
+  ('e', "go east"),
+  ('w', "go west"),
+  ('l', "look around"),
+  ('q', "quit"),
+];
+
 impl CommandProcessor<PrimaryCommand> for PrimaryCommand {
-  fn get_help() -> HelpInfo {
-    vec![
-      ('n', "go north"),
-      ('s', "go south"),
-      ('e', "go east"),
-      ('w', "go west"),
-      ('l', "look around"),
-      ('q', "quit"),
-    ]
-  }
+  fn get_help() -> HelpInfo { PRIMARY_COMMAND_HELP }
 
   fn from_char(c: char) -> Option<PrimaryCommand> {
     match c {
