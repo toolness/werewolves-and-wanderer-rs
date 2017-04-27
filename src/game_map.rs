@@ -59,6 +59,13 @@ pub enum RoomContents {
 pub type GameMap<'a> = map::Map<'a, RoomId, RoomContents>;
 
 impl<'a> GameMap<'a> {
+  pub fn populate(&mut self) {
+    self.describe_and_connect();
+    self.allot_treasure();
+    self.allot_terror();
+    self.ensure_treasure();
+  }
+
   fn allot_terror(&mut self) {
     for _ in 0..NUM_ROOMS_WITH_TERROR {
       loop {
@@ -163,11 +170,4 @@ fn random_treasure_amount() -> u8 {
 // know how to do that, so...
 impl map::MapRoomId for RoomId {
   fn room_id(self) -> usize { self as usize }
-}
-
-pub fn init(mut map: &mut GameMap) {
-  map.describe_and_connect();
-  map.allot_treasure();
-  map.allot_terror();
-  map.ensure_treasure();
 }
