@@ -68,3 +68,9 @@ pub fn random_i32(min: i32, max: i32) -> i32 {
 
   min + (random() * range as f32) as i32
 }
+
+#[cfg(not(target_os = "emscripten"))]
+pub fn is_browser() -> bool { false }
+
+#[cfg(target_os = "emscripten")]
+pub fn is_browser() -> bool { true }

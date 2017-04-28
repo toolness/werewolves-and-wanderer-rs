@@ -49,7 +49,13 @@ impl<'a> GameState<'a> {
           }
         },
         PrimaryCommand::Look => { self.show_desc = true; }
-        PrimaryCommand::Quit => { self.curr_mode = GameMode::Finished; }
+        PrimaryCommand::Quit => {
+          if platform::is_browser() {
+            println!("If you want to quit, close your browser.");
+          } else {
+            self.curr_mode = GameMode::Finished;
+          }
+        }
       }
     };
   }
