@@ -14,10 +14,14 @@ body {
   display: flex;
   flex-direction: column;
   margin: 0;
-  padding: 8px;
+  padding: 0;
   font-family: monospace;
   color: white;
   background-color: black;
+}
+
+#output-wrapper, #form-wrapper {
+  padding: 0 8px;
 }
 
 #output .prompt-response {
@@ -25,16 +29,24 @@ body {
   color: gray;
 }
 
-#output {
+#output-wrapper {
   flex: 1;
+  overflow-y: hidden;
+}
+
+#output, #form {
+  max-width: 40em;
+  margin: 0 auto;
+}
+
+#output {
   white-space: pre-wrap;
-  overflow-y: scroll;
 }
 
 #form {
   display: flex;
   align-items: center;
-  padding-top: 8px;
+  padding: 8px 0;
 }
 
 #prompt {
@@ -51,16 +63,18 @@ label, input {
 #input {
   flex: 1;
   border: none;
+  outline: none;
 }
 </style>
 <title>Werewolves and Wanderer</title>
 <body>
-<div id="output"></div>
-<form id="form"><label id="prompt" for="input"></label><input id="input" autofocus></form>
+<div id="output-wrapper"><div id="output"></div></div>
+<div id="form-wrapper"><form id="form"><label id="prompt" for="input"></label><input id="input" autofocus autocomplete="off"></form></div>
 <script>
 "use strict";
 
 const outputEl = document.getElementById('output');
+const outputWrapperEl = document.getElementById('output-wrapper');
 const promptEl = document.getElementById('prompt');
 const inputEl = document.getElementById('input');
 const formEl = document.getElementById('form');
@@ -121,7 +135,7 @@ window.get_input = () => {
 };
 
 window.scroll_output = () => {
-  outputEl.scrollTop = outputEl.scrollHeight;
+  outputWrapperEl.scrollTop = outputWrapperEl.scrollHeight;
 };
 
 window.Module = {
