@@ -26,7 +26,7 @@ cargo run
 If you want to try the web version, you can install [Emscripten][] and run:
 
 ```
-cargo build --target=wasm32-unknown-emscripten
+bash build-emscripten.sh
 python -m SimpleHTTPServer
 ```
 

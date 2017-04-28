@@ -55,18 +55,14 @@ label, input {
 <title>Werewolves and Wanderer</title>
 <body>
 <div id="output"></div>
-<form id="form"><label id="prompt" for="input"></label><input id="input" autofocus></input></form>
+<form id="form"><label id="prompt" for="input"></label><input id="input" autofocus></form>
 <script>
 "use strict";
-
-const TARGET_MODE = 'debug';
-const BASE_PATH = `target/wasm32-unknown-emscripten/${TARGET_MODE}`;
 
 const outputEl = document.getElementById('output');
 const promptEl = document.getElementById('prompt');
 const inputEl = document.getElementById('input');
 const formEl = document.getElementById('form');
-const _originalFetch = window.fetch;
 
 let _currentInput = null;
 let _currentPrompt = promptEl.textContent;
@@ -78,8 +74,6 @@ let _currentPrompt = promptEl.textContent;
 // reality, however, the program is running without actually sleeping,
 // unlike its synchronous command-line counterpart.
 let _currentPromise = Promise.resolve();
-
-window.fetch = file => _originalFetch(`${BASE_PATH}/deps/${file}`);
 
 // This is called from Rust when the program wants to sleep. See above
 // for an explanation of how we fake this.
@@ -157,10 +151,15 @@ formEl.addEventListener('submit', e => {
 
 window.addEventListener('DOMContentLoaded', () => {
   const script = document.createElement('script');
+  const scriptName = 'werewolves-and-wanderer';
+  let suffix = '.js';
 
-  script.setAttribute('src', `${BASE_PATH}/werewolves-and-wanderer.js`);
+  if (!window.WebAssembly) {
+    suffix = '.asm.js';
+  }
+
+  script.setAttribute('src', scriptName + suffix);
   document.body.appendChild(script);
-  console.log(`Loading program in ${TARGET_MODE} mode.`);
 });
 </script>
 </body>
