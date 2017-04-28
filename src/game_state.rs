@@ -2,6 +2,8 @@ use game_map::{RoomId, GameMap};
 use platform;
 use command::{PrimaryCommand, CommandProcessor};
 
+const PAUSE_MS: u64 = 1000;
+
 #[derive(Debug, PartialEq, Copy, Clone)]
 enum GameMode {
   AskName,
@@ -34,7 +36,32 @@ impl<'a> GameState<'a> {
 
   pub fn tick_primary_mode(&mut self) {
     if self.show_desc {
-      println!("{}", self.map.room(self.curr_room).description);
+      match self.curr_room {
+        RoomId::Lift => {
+          println!("You have entered the lift...");
+          platform::sleep(PAUSE_MS);
+          println!("It slowly descends...");
+          platform::sleep(PAUSE_MS);
+          self.curr_room = RoomId::RearVestibule;
+          return;
+        },
+        RoomId::Exit => {
+          println!("\nYou've done it!!");
+          platform::sleep(PAUSE_MS);
+          println!("That was the exit from the castle.");
+          platform::sleep(PAUSE_MS);
+          println!("\nYou have succeeded, {}!", self.player_name);
+          println!("\nYou managed to get out of the castle.");
+          platform::sleep(PAUSE_MS);
+          println!("\nWell done!");
+          platform::sleep(PAUSE_MS);
+          self.curr_mode = GameMode::Finished;
+          return;
+        },
+        _ => {
+          println!("{}", self.map.room(self.curr_room).description);
+        }
+      }
       self.show_desc = false;
     }
 
