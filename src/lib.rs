@@ -6,3 +6,4 @@ pub mod room;
 pub mod command;
 pub mod platform;
 pub mod game_map;
+pub mod game_state;
