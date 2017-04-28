@@ -151,8 +151,17 @@ impl<'a> GameMap<'a> {
        Doors leave this room to the north, east, and south."
     );
 
+    self.room(GreatHall).describe(
+      "Great Hall",
+      "You are in the great hall, an L-shaped room. \
+       There are doors to the east and to the north. \
+       In the alcove is a door to the west."
+    );
+
     self.connect(Entrance, East, Hallway);
     self.connect(Hallway, South, AudienceChamber);
+    self.connect(GreatHall, North, AudienceChamber);
+    self.connect(GreatHall, West, AudienceChamber);
   }
 }
 
