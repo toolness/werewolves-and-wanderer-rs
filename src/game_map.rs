@@ -173,6 +173,13 @@ impl<'a> GameMap<'a> {
        windows to the south."
     );
 
+    self.room(Kitchen).describe(
+      "Kitchen",
+      "This is the castle's kitchen. Through windows in \
+       the north wall you can see a secret herb garden. \
+       A door leaves the kitchen to the south."
+    );
+
     self.connect(Entrance, East, Hallway);
     self.connect(Hallway, South, AudienceChamber);
     self.connect(GreatHall, North, AudienceChamber);
@@ -180,6 +187,7 @@ impl<'a> GameMap<'a> {
     self.connect(PrivateMeeting, South, InnerHallway);
     self.connect(InnerHallway, West, GreatHall);
     self.connect(InnerHallway, Up, UpperHallway);
+    self.connect(Kitchen, South, StoreRoom);
   }
 }
 
