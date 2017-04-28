@@ -70,6 +70,13 @@ const _originalFetch = window.fetch;
 
 let _currentInput = null;
 let _currentPrompt = promptEl.textContent;
+
+// This is a hack that allows us to make it seem as though the program
+// is "sleeping" when it wants to: because delays are only used for dramatic
+// effect, we'll use a promise to buffer I/O and prevent the user from
+// seeing any output (or sending any input) until time has passed. In
+// reality, however, the program is running without actually sleeping,
+// unlike its synchronous command-line counterpart.
 let _currentPromise = Promise.resolve();
 
 window.fetch = file => _originalFetch(`${BASE_PATH}/deps/${file}`);
