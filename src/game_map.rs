@@ -180,6 +180,23 @@ impl<'a> GameMap<'a> {
        A door leaves the kitchen to the south."
     );
 
+    self.room(StoreRoom).describe(
+      "Store Room",
+      "You are in the store room, amidst spices, \
+       vegetables, and vast sacks of flour and \
+       other provisions. There is a door to the north \
+       and one to the south."
+    );
+
+    self.room(RearVestibule).describe(
+      "Rear Vestibule",
+      "You are in the rear vestibule. \
+       There are windows to the south from which \
+       you can see the ornamental lake. \
+       There is an exit to the east, and \
+       one to the north."
+    );
+
     self.connect(Entrance, East, Hallway);
     self.connect(Hallway, South, AudienceChamber);
     self.connect(GreatHall, North, AudienceChamber);
@@ -188,6 +205,8 @@ impl<'a> GameMap<'a> {
     self.connect(InnerHallway, West, GreatHall);
     self.connect(InnerHallway, Up, UpperHallway);
     self.connect(Kitchen, South, StoreRoom);
+    self.connect(StoreRoom, South, RearVestibule);
+    self.connect(RearVestibule, East, Exit);
   }
 }
 
