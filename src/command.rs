@@ -55,6 +55,8 @@ static PRIMARY_COMMAND_HELP: HelpInfo = &[
   ('s', "go south"),
   ('e', "go east"),
   ('w', "go west"),
+  ('u', "go up"),
+  ('d', "go down"),
   ('l', "look around"),
   ('q', "quit"),
 ];
@@ -68,6 +70,8 @@ impl CommandProcessor<PrimaryCommand> for PrimaryCommand {
       's' => { return Some(PrimaryCommand::Go(Direction::South)); },
       'e' => { return Some(PrimaryCommand::Go(Direction::East)); },
       'w' => { return Some(PrimaryCommand::Go(Direction::West)); },
+      'u' => { return Some(PrimaryCommand::Go(Direction::Up)); },
+      'd' => { return Some(PrimaryCommand::Go(Direction::Down)); },
       'l' => { return Some(PrimaryCommand::Look); },
       'q' => { return Some(PrimaryCommand::Quit); },
       _ => { return None; },
