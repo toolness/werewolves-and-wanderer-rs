@@ -23,6 +23,7 @@ impl<T: Copy, C: Copy> Room<T, C> {
   }
 
   pub fn set_exit(&mut self, d: Direction, r: T) -> &mut Self {
+    assert!(self.exits[d as usize].is_none());
     self.exits[d as usize] = Some(r);
     self
   }
