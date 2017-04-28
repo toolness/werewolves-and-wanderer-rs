@@ -89,15 +89,16 @@ let _currentPrompt = promptEl.textContent;
 // reality, however, the program is running without actually sleeping,
 // unlike its synchronous command-line counterpart.
 let _currentPromise = Promise.resolve();
+let _isSleeping = false;
 
 // This is called from Rust when the program wants to sleep. See above
 // for an explanation of how we fake this.
 window.sleep = ms => {
   _currentPromise = _currentPromise.then(() => {
-    inputEl.disabled = true;
+    _isSleeping = true;
     return new Promise(resolve => {
       window.setTimeout(() => {
-        inputEl.disabled = false;
+        _isSleeping = false;
         resolve();
       }, ms);
     });
@@ -152,6 +153,8 @@ window.Module = {
 
 formEl.addEventListener('submit', e => {
   e.preventDefault();
+
+  if (_isSleeping) return;
 
   const el = document.createElement('div');
 
