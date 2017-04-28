@@ -29,6 +29,7 @@ impl<T: Copy, C: Copy> Room<T, C> {
   }
 
   pub fn describe(&mut self, name: &'static str, desc: &'static str) -> &mut Self {
+    assert_eq!(self.name, "");
     self.name = name;
     self.description = desc;
     self
