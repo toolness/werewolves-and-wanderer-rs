@@ -81,6 +81,8 @@ let _currentPromise = Promise.resolve();
 
 window.fetch = file => _originalFetch(`${BASE_PATH}/deps/${file}`);
 
+// This is called from Rust when the program wants to sleep. See above
+// for an explanation of how we fake this.
 window.sleep = ms => {
   _currentPromise = _currentPromise.then(() => {
     inputEl.disabled = true;
@@ -93,6 +95,7 @@ window.sleep = ms => {
   });
 };
 
+// Called from Rust code when it wants to prompt the user for input.
 window.set_prompt = prompt => {
   _currentPromise.then(() => {
     if (prompt !== _currentPrompt) {
@@ -101,6 +104,8 @@ window.set_prompt = prompt => {
   });
 };
 
+// Called from Rust code when it wants to know if the user has
+// typed a line of input and pressed return.
 window.has_input = () => {
   return _currentInput === null ? 0 : 1;
 };
@@ -111,6 +116,9 @@ window.set_input = val => {
   });
 };
 
+// Called from Rust code when it wants to retrieve the user's line
+// of input. This is a destructive operation, in that subsequent calls
+// will return `null` until the user enters another line of input.
 window.get_input = () => {
   const input = _currentInput;
   _currentInput = null;
@@ -122,6 +130,8 @@ window.scroll_output = () => {
 };
 
 window.Module = {
+  // This is ultimately called by any Rust code that writes to
+  // stdout.
   print(msg) {
     _currentPromise.then(() => {
       const textNode = document.createTextNode(msg + '\n');
