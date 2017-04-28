@@ -158,10 +158,28 @@ impl<'a> GameMap<'a> {
        In the alcove is a door to the west."
     );
 
+    self.room(PrivateMeeting).describe(
+      "Private Meeting Room",
+      "This is the monarch's private meeting room. \
+       There is a single exit to the south."
+    );
+
+    self.room(InnerHallway).describe(
+      "Inner Hallway",
+      "This inner hallway contains a door to the north, \
+       and one to the west, and a circular stairwell \
+       passes through the room. \
+       You can see an ornamental lake through the \
+       windows to the south."
+    );
+
     self.connect(Entrance, East, Hallway);
     self.connect(Hallway, South, AudienceChamber);
     self.connect(GreatHall, North, AudienceChamber);
     self.connect(GreatHall, West, AudienceChamber);
+    self.connect(PrivateMeeting, South, InnerHallway);
+    self.connect(InnerHallway, West, GreatHall);
+    self.connect(InnerHallway, Up, UpperHallway);
   }
 }
 
