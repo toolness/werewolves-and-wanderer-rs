@@ -2,7 +2,7 @@ use game_map::{RoomId, GameMap};
 use platform;
 use command::{PrimaryCommand, CommandProcessor};
 
-const PAUSE_MS: u64 = 3000;
+const PAUSE_MS: u64 = 2500;
 
 #[derive(Debug, PartialEq, Copy, Clone)]
 enum GameMode {
