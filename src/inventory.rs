@@ -34,7 +34,7 @@ impl CommandProcessor<InventoryCommand> for InventoryCommand {
   fn get_help() -> Vec<HelpInfo> {
     let buy = |item: Item| format!("buy {} (${})", item, item.price());
 
-    HelpInfo::string_list(vec![
+    HelpInfo::list(vec![
       ('1', buy(Item::Torch)),
       ('0', String::from("continue adventure")),
     ])

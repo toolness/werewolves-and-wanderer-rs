@@ -17,7 +17,7 @@ pub enum PrimaryCommand {
 
 impl CommandProcessor<PrimaryCommand> for PrimaryCommand {
   fn get_help() -> Vec<HelpInfo> {
-    HelpInfo::str_list(vec![
+    HelpInfo::list(vec![
       ('n', "go north"),
       ('s', "go south"),
       ('e', "go east"),

@@ -8,15 +8,9 @@ pub struct HelpInfo {
 }
 
 impl HelpInfo {
-  pub fn string_list(v: Vec<(char, String)>) -> Vec<Self> {
+  pub fn list<T: AsRef<str>>(v: Vec<(char, T)>) -> Vec<Self> {
     v.into_iter().map(|(key, desc)| {
-      Self {key: key, desc: desc}
-    }).collect()
-  }
-
-  pub fn str_list(v: Vec<(char, &'static str)>) -> Vec<Self> {
-    v.into_iter().map(|(key, desc)| {
-      Self {key: key, desc: String::from(desc)}
+      Self {key: key, desc: String::from(desc.as_ref())}
     }).collect()
   }
 }
