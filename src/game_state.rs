@@ -59,7 +59,9 @@ impl<'a> GameState<'a> {
           return;
         },
         _ => {
-          println!("{}", self.map.room(self.curr_room).description);
+          platform::writeln_with_wrapping(
+            self.map.room(self.curr_room).description
+          );
         }
       }
       self.show_desc = false;

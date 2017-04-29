@@ -5,6 +5,9 @@ pub mod emscripten;
 pub mod windows;
 
 #[cfg(not(target_os = "emscripten"))]
+pub mod word_wrap;
+
+#[cfg(not(target_os = "emscripten"))]
 use std::io::{self, Write};
 
 #[cfg(not(target_os = "emscripten"))]
@@ -90,4 +93,15 @@ pub fn clear_screen() {
 #[cfg(target_os = "emscripten")]
 pub fn clear_screen() {
   emscripten::run_script("clear_screen()");
+}
+
+#[cfg(not(target_os = "emscripten"))]
+pub fn writeln_with_wrapping(s: &str) {
+  word_wrap::writeln_with_wrapping(s)
+}
+
+#[cfg(target_os = "emscripten")]
+pub fn writeln_with_wrapping(s: &str) {
+  // The browser will take care of line-wrapping for us.
+  println!("{}", s)
 }
