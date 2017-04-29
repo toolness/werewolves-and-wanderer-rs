@@ -3,6 +3,8 @@ use std::fmt;
 use game_state::{GameState, GameMode};
 use command::{CommandProcessor, HelpInfo};
 
+use self::Item::*;
+
 pub enum Item {
   Torch,
 }
@@ -10,7 +12,7 @@ pub enum Item {
 impl Item {
   pub fn price(&self) -> i32 {
     match *self {
-      Item::Torch => 15
+      Torch => 15
     }
   }
 }
@@ -18,7 +20,7 @@ impl Item {
 impl fmt::Display for Item {
   fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
     write!(f, "{}", match *self {
-      Item::Torch => "a flaming torch",
+      Torch => "a flaming torch",
     })
   }
 }
@@ -35,14 +37,14 @@ impl CommandProcessor<InventoryCommand> for InventoryCommand {
     let buy = |item: Item| format!("buy {} (${})", item, item.price());
 
     HelpInfo::list(vec![
-      ('1', buy(Item::Torch)),
+      ('1', buy(Torch)),
       ('0', String::from("continue adventure")),
     ])
   }
 
   fn from_char(c: char) -> Option<InventoryCommand> {
     match c {
-      '1' => Some(InventoryCommand::Buy(Item::Torch)),
+      '1' => Some(InventoryCommand::Buy(Torch)),
       _ => Some(InventoryCommand::Quit),
     }
   }
@@ -70,7 +72,7 @@ impl<'a> GameState<'a> {
             println!("You bought {}.", item);
             self.print_wealth();
             match item {
-              Item::Torch => self.light = true,
+              Torch => self.light = true,
             }
           }
           println!("");
