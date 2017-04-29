@@ -105,6 +105,14 @@ window.sleep = ms => {
   });
 };
 
+// Called from Rust code when it wants to clear the screen.
+window.clear_screen = () => {
+  _currentPromise.then(() => {
+    outputEl.textContent = "";
+    window.scroll_output();
+  });
+};
+
 // Called from Rust code when it wants to prompt the user for input.
 window.set_prompt = prompt => {
   _currentPromise.then(() => {

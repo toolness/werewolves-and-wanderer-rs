@@ -1,6 +1,9 @@
 #[cfg(target_os = "emscripten")]
 pub mod emscripten;
 
+#[cfg(target_os = "windows")]
+pub mod windows;
+
 #[cfg(not(target_os = "emscripten"))]
 use std::io::{self, Write};
 
@@ -74,3 +77,17 @@ pub fn is_browser() -> bool { false }
 
 #[cfg(target_os = "emscripten")]
 pub fn is_browser() -> bool { true }
+
+#[cfg(not(target_os = "emscripten"))]
+pub fn clear_screen() {
+  // Clear the screen.
+  print!("{}[2J", 27 as char);
+
+  // Move the cursor to the home position.
+  print!("{}[H", 27 as char);
+}
+
+#[cfg(target_os = "emscripten")]
+pub fn clear_screen() {
+  emscripten::run_script("clear_screen()");
+}

@@ -9,5 +9,9 @@ name = "ww"
 [target.'cfg(not(target_os = "emscripten"))'.dependencies]
 rand = "0.3"
 
+[target.'cfg(target_os = "windows")'.dependencies]
+winapi = "0.2.8"
+kernel32-sys = "0.2.2"
+
 [dependencies]
 enum_primitive = "0.1.1"
