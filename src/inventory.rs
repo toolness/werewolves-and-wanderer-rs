@@ -32,10 +32,10 @@ impl CommandProcessor<InventoryCommand> for InventoryCommand {
   fn prompt() -> &'static str { "What do you want to buy? " }
 
   fn get_help() -> Vec<HelpInfo> {
-    let desc = |item: Item| format!("buy {} (${})", item, item.price());
+    let buy = |item: Item| format!("buy {} (${})", item, item.price());
 
     HelpInfo::string_list(vec![
-      ('1', desc(Item::Torch)),
+      ('1', buy(Item::Torch)),
       ('0', String::from("continue adventure")),
     ])
   }
