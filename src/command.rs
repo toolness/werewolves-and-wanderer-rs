@@ -90,16 +90,16 @@ impl CommandProcessor<PrimaryCommand> for PrimaryCommand {
 
   fn from_char(c: char) -> Option<PrimaryCommand> {
     match c {
-      'n' => { return Some(PrimaryCommand::Go(Direction::North)); },
-      's' => { return Some(PrimaryCommand::Go(Direction::South)); },
-      'e' => { return Some(PrimaryCommand::Go(Direction::East)); },
-      'w' => { return Some(PrimaryCommand::Go(Direction::West)); },
-      'u' => { return Some(PrimaryCommand::Go(Direction::Up)); },
-      'd' => { return Some(PrimaryCommand::Go(Direction::Down)); },
-      'i' => { return Some(PrimaryCommand::Inventory); },
-      'l' => { return Some(PrimaryCommand::Look); },
-      'q' => { return Some(PrimaryCommand::Quit); },
-      _ => { return None; },
+      'n' => Some(PrimaryCommand::Go(Direction::North)),
+      's' => Some(PrimaryCommand::Go(Direction::South)),
+      'e' => Some(PrimaryCommand::Go(Direction::East)),
+      'w' => Some(PrimaryCommand::Go(Direction::West)),
+      'u' => Some(PrimaryCommand::Go(Direction::Up)),
+      'd' => Some(PrimaryCommand::Go(Direction::Down)),
+      'i' => Some(PrimaryCommand::Inventory),
+      'l' => Some(PrimaryCommand::Look),
+      'q' => Some(PrimaryCommand::Quit),
+      _ => None,
     }
   }
 }
