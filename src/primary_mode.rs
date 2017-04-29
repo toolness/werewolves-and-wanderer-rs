@@ -15,20 +15,20 @@ pub enum PrimaryCommand {
   Quit,
 }
 
-static PRIMARY_COMMAND_HELP: HelpInfo = &[
-  ('n', "go north"),
-  ('s', "go south"),
-  ('e', "go east"),
-  ('w', "go west"),
-  ('u', "go up"),
-  ('d', "go down"),
-  ('i', "inventory/buy provisions"),
-  ('l', "look around"),
-  ('q', "quit"),
-];
-
 impl CommandProcessor<PrimaryCommand> for PrimaryCommand {
-  fn get_help() -> HelpInfo { PRIMARY_COMMAND_HELP }
+  fn get_help() -> Vec<HelpInfo> {
+    HelpInfo::str_list(vec![
+      ('n', "go north"),
+      ('s', "go south"),
+      ('e', "go east"),
+      ('w', "go west"),
+      ('u', "go up"),
+      ('d', "go down"),
+      ('i', "inventory/buy provisions"),
+      ('l', "look around"),
+      ('q', "quit"),
+    ])
+  }
 
   fn from_char(c: char) -> Option<PrimaryCommand> {
     match c {

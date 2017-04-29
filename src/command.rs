@@ -2,18 +2,35 @@ use std::ascii::AsciiExt;
 
 use platform;
 
-pub type HelpInfo = &'static [(char, &'static str)];
+pub struct HelpInfo {
+  key: char,
+  desc: String,
+}
+
+impl HelpInfo {
+  pub fn string_list(v: Vec<(char, String)>) -> Vec<Self> {
+    v.into_iter().map(|(key, desc)| {
+      Self {key: key, desc: desc}
+    }).collect()
+  }
+
+  pub fn str_list(v: Vec<(char, &'static str)>) -> Vec<Self> {
+    v.into_iter().map(|(key, desc)| {
+      Self {key: key, desc: String::from(desc)}
+    }).collect()
+  }
+}
 
 pub trait CommandProcessor<T> {
   fn from_char(c: char) -> Option<T>;
 
-  fn get_help() -> HelpInfo;
+  fn get_help() -> Vec<HelpInfo>;
 
   fn prompt() -> &'static str { "What do you want to do? " }
 
   fn show_help() {
-    for &(ch, desc) in Self::get_help().iter() {
-      println!("  {} - {}", ch, desc);
+    for info in Self::get_help().iter() {
+      println!("  {} - {}", info.key, info.desc);
     }
   }
 

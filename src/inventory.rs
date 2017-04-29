@@ -18,7 +18,7 @@ impl Item {
 impl fmt::Display for Item {
   fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
     write!(f, "{}", match *self {
-      Item::Torch => "a torch",
+      Item::Torch => "a flaming torch",
     })
   }
 }
@@ -28,15 +28,17 @@ pub enum InventoryCommand {
   Quit,
 }
 
-static INVENTORY_COMMAND_HELP: HelpInfo = &[
-  ('1', "buy a flaming torch ($15)"),
-  ('0', "continue adventure"),
-];
-
 impl CommandProcessor<InventoryCommand> for InventoryCommand {
   fn prompt() -> &'static str { "What do you want to buy? " }
 
-  fn get_help() -> HelpInfo { INVENTORY_COMMAND_HELP }
+  fn get_help() -> Vec<HelpInfo> {
+    let desc = |item: Item| format!("buy {} (${})", item, item.price());
+
+    HelpInfo::string_list(vec![
+      ('1', desc(Item::Torch)),
+      ('0', String::from("continue adventure")),
+    ])
+  }
 
   fn from_char(c: char) -> Option<InventoryCommand> {
     match c {
