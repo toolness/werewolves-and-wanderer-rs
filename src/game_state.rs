@@ -1,7 +1,7 @@
 use util;
 use game_map::{RoomId, GameMap};
 use platform;
-use command::{PrimaryCommand, CommandProcessor};
+use command::{PrimaryCommand, InventoryCommand, Item, CommandProcessor};
 
 const PAUSE_MS: u64 = 2500;
 
@@ -9,6 +9,7 @@ const PAUSE_MS: u64 = 2500;
 enum GameMode {
   AskName,
   Primary,
+  Inventory,
   Finished,
 }
 
@@ -53,9 +54,7 @@ impl<'a> GameState<'a> {
 
   fn print_status_report(&self) {
     println!("{}, your strength is {}.", self.player_name, self.strength);
-    if self.wealth > 0 {
-      println!("You have ${}.", self.wealth);
-    }
+    self.print_wealth();
     if self.food > 0 {
       println!("Your provisions sack holds {} unit{} of food.",
                self.food, if self.food == 1 { "" } else { "s" });
@@ -67,6 +66,15 @@ impl<'a> GameState<'a> {
     if item_names.len() > 0 {
       println!("You are carrying {}.",
                util::friendly_join(self.get_item_names()));
+    }
+  }
+
+  fn print_wealth(&self) {
+    print!("You have ");
+    if self.wealth > 0 {
+      println!("${}.", self.wealth);
+    } else {
+      println!("no money.");
     }
   }
 
@@ -94,6 +102,37 @@ impl<'a> GameState<'a> {
 
   pub fn is_finished(&self) -> bool {
     self.curr_mode == GameMode::Finished
+  }
+
+  pub fn tick_inventory_mode(&mut self) {
+    if self.show_desc {
+      println!("Provisions & inventory\n");
+      self.print_wealth();
+      println!("");
+      InventoryCommand::show_help();
+      self.show_desc = false;
+    }
+
+    if let Some(cmd) = InventoryCommand::get() {
+      match cmd {
+        InventoryCommand::Buy(item, price) => {
+          if price > self.wealth {
+            println!("You don't have enough money to buy that.");
+          } else {
+            self.wealth -= price;
+            println!("You bought {}.", item);
+            self.print_wealth();
+            match item {
+              Item::Torch => self.light = true,
+            }
+          }
+        },
+        InventoryCommand::Quit => {
+          self.show_desc = true;
+          self.curr_mode = GameMode::Primary;
+        }
+      }
+    }
   }
 
   pub fn tick_primary_mode(&mut self) {
@@ -146,6 +185,10 @@ impl<'a> GameState<'a> {
             println!("You can't go that way.");
           }
         },
+        PrimaryCommand::Inventory => {
+          self.show_desc = true;
+          self.curr_mode = GameMode::Inventory;
+        },
         PrimaryCommand::Look => { self.show_desc = true; }
         PrimaryCommand::Quit => {
           self.finish_game();
@@ -170,6 +213,7 @@ impl<'a> GameState<'a> {
         });
       },
       GameMode::Primary => { self.tick_primary_mode() },
+      GameMode::Inventory => { self.tick_inventory_mode() },
       GameMode::Finished => {}
     }
   }
