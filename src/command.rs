@@ -24,6 +24,7 @@ pub trait CommandProcessor<T> {
 
     match platform::read_input() {
       Some(input) => {
+        platform::hide_prompt();
         match input.chars().next() {
           Some(k) => {
             let k = k.to_ascii_lowercase();

@@ -163,6 +163,7 @@ impl<'a> GameState<'a> {
           if input.len() == 0 {
             println!("Pardon me?");
           } else {
+            platform::hide_prompt();
             self.player_name = input;
             self.curr_mode = GameMode::Primary;
           }

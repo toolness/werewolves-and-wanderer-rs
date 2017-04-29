@@ -179,6 +179,7 @@ formEl.addEventListener('submit', e => {
   outputEl.appendChild(el);
   window.scroll_output();
 
+  window.set_prompt("");
   window.set_input(inputEl.value);
   inputEl.value = "";
 });

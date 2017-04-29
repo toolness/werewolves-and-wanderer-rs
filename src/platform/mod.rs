@@ -25,6 +25,10 @@ pub fn show_prompt(prompt: &str) {
   io::stdout().flush().unwrap();
 }
 
+pub fn hide_prompt() {
+  show_prompt("");
+}
+
 #[cfg(target_os = "emscripten")]
 pub fn read_input() -> Option<String> {
   if emscripten::run_script_int("has_input()") == 0 {
