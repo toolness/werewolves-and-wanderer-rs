@@ -64,10 +64,7 @@ impl<'a> GameState<'a> {
           }
           println!("");
         },
-        InventoryCommand::Quit => {
-          self.show_desc = true;
-          self.curr_mode = GameMode::Primary;
-        }
+        InventoryCommand::Quit => { self.set_mode(GameMode::Primary) },
       }
     }
   }

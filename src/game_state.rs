@@ -48,6 +48,11 @@ impl<'a> GameState<'a> {
     }
   }
 
+  pub fn set_mode(&mut self, mode: GameMode) {
+    self.show_desc = true;
+    self.curr_mode = mode;
+  }
+
   pub fn print_wealth(&self) {
     print!("You have ");
     if self.wealth > 0 {
@@ -75,21 +80,23 @@ impl<'a> GameState<'a> {
     self.curr_mode == GameMode::Finished
   }
 
+  fn tick_ask_name_mode(&mut self) {
+    platform::show_prompt("What is your name, explorer? ");
+
+    platform::read_input().map(|input| {
+      if input.len() == 0 {
+        println!("Pardon me?");
+      } else {
+        platform::hide_prompt();
+        self.player_name = input;
+        self.set_mode(GameMode::Primary);
+      }
+    });
+  }
+
   pub fn tick(&mut self) {
     match self.curr_mode {
-      GameMode::AskName => {
-        platform::show_prompt("What is your name, explorer? ");
-
-        platform::read_input().map(|input| {
-          if input.len() == 0 {
-            println!("Pardon me?");
-          } else {
-            platform::hide_prompt();
-            self.player_name = input;
-            self.curr_mode = GameMode::Primary;
-          }
-        });
-      },
+      GameMode::AskName => { self.tick_ask_name_mode() },
       GameMode::Primary => { self.tick_primary_mode() },
       GameMode::Inventory => { self.tick_inventory_mode() },
       GameMode::Finished => {}

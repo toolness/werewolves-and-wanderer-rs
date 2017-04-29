@@ -123,14 +123,9 @@ impl<'a> GameState<'a> {
             println!("You can't go that way.");
           }
         },
-        PrimaryCommand::Inventory => {
-          self.show_desc = true;
-          self.curr_mode = GameMode::Inventory;
-        },
-        PrimaryCommand::Look => { self.show_desc = true; }
-        PrimaryCommand::Quit => {
-          self.finish_game();
-        }
+        PrimaryCommand::Inventory => { self.set_mode(GameMode::Inventory) },
+        PrimaryCommand::Look => { self.show_desc = true }
+        PrimaryCommand::Quit => { self.finish_game() }
       }
     };
   }
