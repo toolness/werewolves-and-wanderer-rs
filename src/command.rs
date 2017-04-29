@@ -110,6 +110,8 @@ static INVENTORY_COMMAND_HELP: HelpInfo = &[
 ];
 
 impl CommandProcessor<InventoryCommand> for InventoryCommand {
+  fn prompt() -> &'static str { "What do you want to buy? " }
+
   fn get_help() -> HelpInfo { INVENTORY_COMMAND_HELP }
 
   fn from_char(c: char) -> Option<InventoryCommand> {

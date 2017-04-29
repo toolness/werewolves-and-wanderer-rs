@@ -110,6 +110,7 @@ impl<'a> GameState<'a> {
       self.print_wealth();
       println!("");
       InventoryCommand::show_help();
+      println!("");
       self.show_desc = false;
     }
 
@@ -122,6 +123,7 @@ impl<'a> GameState<'a> {
             self.wealth -= price;
             println!("You bought {}.", item);
             self.print_wealth();
+            println!("");
             match item {
               Item::Torch => self.light = true,
             }
