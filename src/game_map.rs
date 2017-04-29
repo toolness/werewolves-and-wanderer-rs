@@ -197,6 +197,75 @@ impl<'a> GameMap<'a> {
        one to the north."
     );
 
+    self.room(Dungeon).describe(
+      "Dungeon",
+      "You are in the dank, dark dungeon. \
+       There is a single exit, a small hole in \
+       the wall towards the west."
+    );
+
+    self.room(Guardroom).describe(
+      "Guardroom",
+      "You are in the prison guardroom, in the \
+       basement of the castle. The stairwell \
+       ends in this room. There is one other \
+       exit, a small hole in the east wall."
+    );
+
+    self.room(MasterBedroom).describe(
+      "Master Bedroom",
+      "You are in the master bedroom on the upper \
+       level of the castle.... \
+       Looking down from the window to the west you \
+       can see the entrance to the castle, while the \
+       secret herb garden is visible below the north \
+       window. There are doors to the east and \
+       to the south...."
+    );
+
+    self.room(UpperHallway).describe(
+      "Upper Hallway",
+      "This is the L-shaped upper hallway. \
+       To the north is a door, and there is a \
+       stairwell in the hall as well. You can see \
+       the lake through the south windows."
+    );
+
+    self.room(Treasury).describe(
+      "Treasury",
+      "This room was used as the castle treasury in \
+       by-gone years.... \
+       There are no windows, just exits to the \
+       north and to the east."
+    );
+
+    self.room(ChambermaidsBedroom).describe(
+      "Chambermaids' Bedroom",
+      "Ooooh.... You are in the chambermaids' bedroom. \
+       There is an exit to the west and a door \
+       to the south...."
+      // There's also a door to the north, but the book's
+      // original description of this room doesn't include it.
+      // Not sure if this means that it's meant to be a secret
+      // or just a copy error.
+    );
+
+    self.room(DressingChamber).describe(
+      "Dressing Chamber",
+      "This tiny room on the upper level is the \
+       dressing chamber. There is a window to the \
+       north, with a view of the herb garden down \
+       below. A door leaves to the south."
+    );
+
+    self.room(SmallRoom).describe(
+      "Small Room",
+      "This is the small room outside the castle \
+       lift which can be entered by a door to the north. \
+       Another door leads to the west. You can see \
+       the lake through the southern windows."
+    );
+
     self.connect(Entrance, East, Hallway);
     self.connect(Hallway, South, AudienceChamber);
     self.connect(GreatHall, North, AudienceChamber);
@@ -207,6 +276,14 @@ impl<'a> GameMap<'a> {
     self.connect(Kitchen, South, StoreRoom);
     self.connect(StoreRoom, South, RearVestibule);
     self.connect(RearVestibule, East, Exit);
+    self.connect(Dungeon, West, Guardroom);
+    self.connect(Guardroom, Up, InnerHallway);
+    self.connect(MasterBedroom, South, UpperHallway);
+    self.connect(MasterBedroom, East, ChambermaidsBedroom);
+    self.connect(Treasury, North, ChambermaidsBedroom);
+    self.connect(Treasury, East, SmallRoom);
+    self.connect(ChambermaidsBedroom, North, DressingChamber);
+    self.connect(SmallRoom, North, Lift);
   }
 }
 
