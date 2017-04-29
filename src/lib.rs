@@ -7,4 +7,5 @@ pub mod command;
 pub mod platform;
 pub mod game_map;
 pub mod game_state;
+pub mod inventory;
 pub mod util;

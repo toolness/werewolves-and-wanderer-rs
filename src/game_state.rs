@@ -1,12 +1,12 @@
 use util;
 use game_map::{RoomId, GameMap};
 use platform;
-use command::{PrimaryCommand, InventoryCommand, Item, CommandProcessor};
+use command::{PrimaryCommand, CommandProcessor};
 
 const PAUSE_MS: u64 = 2500;
 
 #[derive(Debug, PartialEq, Copy, Clone)]
-enum GameMode {
+pub enum GameMode {
   AskName,
   Primary,
   Inventory,
@@ -15,20 +15,20 @@ enum GameMode {
 
 pub struct GameState<'a> {
   map: &'a mut GameMap<'a>,
-  curr_mode: GameMode,
-  player_name: String,
-  strength: i32,
-  wealth: i32,
-  food: i32,
-  tally: i32,
-  monsters_killed: i32,
-  sword: bool,
-  amulet: bool,
-  axe: bool,
-  suit: bool,
-  light: bool,
-  curr_room: RoomId,
-  show_desc: bool,
+  pub curr_mode: GameMode,
+  pub player_name: String,
+  pub strength: i32,
+  pub wealth: i32,
+  pub food: i32,
+  pub tally: i32,
+  pub monsters_killed: i32,
+  pub sword: bool,
+  pub amulet: bool,
+  pub axe: bool,
+  pub suit: bool,
+  pub light: bool,
+  pub curr_room: RoomId,
+  pub show_desc: bool,
 }
 
 impl<'a> GameState<'a> {
@@ -69,7 +69,7 @@ impl<'a> GameState<'a> {
     }
   }
 
-  fn print_wealth(&self) {
+  pub fn print_wealth(&self) {
     print!("You have ");
     if self.wealth > 0 {
       println!("${}.", self.wealth);
@@ -102,39 +102,6 @@ impl<'a> GameState<'a> {
 
   pub fn is_finished(&self) -> bool {
     self.curr_mode == GameMode::Finished
-  }
-
-  pub fn tick_inventory_mode(&mut self) {
-    if self.show_desc {
-      println!("Provisions & inventory\n");
-      self.print_wealth();
-      println!("");
-      InventoryCommand::show_help();
-      println!("");
-      self.show_desc = false;
-    }
-
-    if let Some(cmd) = InventoryCommand::get() {
-      match cmd {
-        InventoryCommand::Buy(item, price) => {
-          if price > self.wealth {
-            println!("You don't have enough money to buy that.");
-          } else {
-            self.wealth -= price;
-            println!("You bought {}.", item);
-            self.print_wealth();
-            match item {
-              Item::Torch => self.light = true,
-            }
-          }
-          println!("");
-        },
-        InventoryCommand::Quit => {
-          self.show_desc = true;
-          self.curr_mode = GameMode::Primary;
-        }
-      }
-    }
   }
 
   pub fn tick_primary_mode(&mut self) {
