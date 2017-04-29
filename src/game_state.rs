@@ -1,3 +1,4 @@
+use util;
 use game_map::{RoomId, GameMap};
 use platform;
 use command::{PrimaryCommand, CommandProcessor};
@@ -15,6 +16,16 @@ pub struct GameState<'a> {
   map: &'a mut GameMap<'a>,
   curr_mode: GameMode,
   player_name: String,
+  strength: i32,
+  wealth: i32,
+  food: i32,
+  tally: i32,
+  monsters_killed: i32,
+  sword: bool,
+  amulet: bool,
+  axe: bool,
+  suit: bool,
+  light: bool,
   curr_room: RoomId,
   show_desc: bool,
 }
@@ -26,8 +37,59 @@ impl<'a> GameState<'a> {
       player_name: String::from(""),
       curr_mode: GameMode::AskName,
       curr_room: RoomId::Entrance,
+      strength: 100,
+      wealth: 75,
+      food: 0,
+      tally: 0,
+      monsters_killed: 0,
+      sword: false,
+      amulet: false,
+      axe: false,
+      suit: false,
+      light: false,
       show_desc: true,
     }
+  }
+
+  fn print_status_report(&self) {
+    println!("{}, your strength is {}.", self.player_name, self.strength);
+    if self.wealth > 0 {
+      println!("You have ${}.", self.wealth);
+    }
+    if self.food > 0 {
+      println!("Your provisions sack holds {} unit{} of food.",
+               self.food, if self.food == 1 { "" } else { "s" });
+    }
+    if self.suit {
+      println!("You are wearing armor.");
+    }
+    let item_names = self.get_item_names();
+    if item_names.len() > 0 {
+      println!("You are carrying {}.",
+               util::friendly_join(self.get_item_names()));
+    }
+  }
+
+  fn get_item_names(&self) -> Vec<&str> {
+    let mut items = Vec::new();
+    if self.axe { items.push("an axe") }
+    if self.sword { items.push("a sword") }
+    if self.amulet { items.push("the magic amulet") }
+    items
+  }
+
+  fn get_score(&self) -> i32 {
+    3  * self.tally +
+    5  * self.strength +
+    2  * self.wealth +
+    1  * self.food +
+    30 * self.monsters_killed
+  }
+
+  fn finish_game(&mut self) {
+    self.curr_mode = GameMode::Finished;
+    println!("Your score is {}.\n", self.get_score());
+    println!("Farewell.");
   }
 
   pub fn is_finished(&self) -> bool {
@@ -55,13 +117,20 @@ impl<'a> GameState<'a> {
           platform::sleep(PAUSE_MS);
           println!("\nWell done!");
           platform::sleep(PAUSE_MS);
-          self.curr_mode = GameMode::Finished;
+          self.finish_game();
           return;
         },
         _ => {
-          platform::writeln_with_wrapping(
-            self.map.room(self.curr_room).description
-          );
+          platform::clear_screen();
+          self.print_status_report();
+          println!("");
+          if self.curr_room != RoomId::Entrance && !self.light {
+            println!("It is too dark to see anything.");
+          } else {
+            platform::writeln_with_wrapping(
+              self.map.room(self.curr_room).description
+            );
+          }
         }
       }
       self.show_desc = false;
@@ -79,11 +148,7 @@ impl<'a> GameState<'a> {
         },
         PrimaryCommand::Look => { self.show_desc = true; }
         PrimaryCommand::Quit => {
-          if platform::is_browser() {
-            println!("If you want to quit, close your browser.");
-          } else {
-            self.curr_mode = GameMode::Finished;
-          }
+          self.finish_game();
         }
       }
     };

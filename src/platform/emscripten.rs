@@ -50,6 +50,11 @@ pub fn run_script_string(script: &str) -> String {
   }
 }
 
+pub fn terminate_program() {
+  run_script("terminate_program()");
+  unsafe { emscripten_cancel_main_loop() }
+}
+
 pub fn set_main_loop_callback<F>(callback: F) where F: FnMut() {
   MAIN_LOOP_CALLBACK.with(|log| {
     *log.borrow_mut() = &callback as *const _ as *mut c_void;

@@ -18,12 +18,16 @@ fn main() {
   platform::clear_screen();
 
   #[cfg(target_os = "emscripten")]
-  platform::emscripten::set_main_loop_callback(|| state.tick());
+  platform::emscripten::set_main_loop_callback(|| {
+    if state.is_finished() {
+      platform::emscripten::terminate_program();
+    } else {
+      state.tick()
+    }
+  });
 
   #[cfg(not(target_os = "emscripten"))]
   while !state.is_finished() {
     state.tick();
   }
-
-  println!("Farewell.");
 }

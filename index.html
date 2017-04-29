@@ -142,6 +142,15 @@ window.get_input = () => {
   return input;
 };
 
+// Called from Rust code when the program has terminated.
+window.terminate_program = () => {
+  _currentPromise.then(() => {
+    window.set_prompt("");
+    inputEl.value = "";
+    inputEl.disabled = true;
+  });
+};
+
 window.scroll_output = () => {
   outputWrapperEl.scrollTop = outputWrapperEl.scrollHeight;
 };
