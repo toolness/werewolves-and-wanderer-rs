@@ -7,6 +7,14 @@ pub enum Item {
   Torch,
 }
 
+impl Item {
+  pub fn price(&self) -> i32 {
+    match *self {
+      Item::Torch => 15
+    }
+  }
+}
+
 impl fmt::Display for Item {
   fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
     write!(f, "{}", match *self {
@@ -16,7 +24,7 @@ impl fmt::Display for Item {
 }
 
 pub enum InventoryCommand {
-  Buy(Item, i32),
+  Buy(Item),
   Quit,
 }
 
@@ -32,7 +40,7 @@ impl CommandProcessor<InventoryCommand> for InventoryCommand {
 
   fn from_char(c: char) -> Option<InventoryCommand> {
     match c {
-      '1' => Some(InventoryCommand::Buy(Item::Torch, 15)),
+      '1' => Some(InventoryCommand::Buy(Item::Torch)),
       _ => Some(InventoryCommand::Quit),
     }
   }
@@ -51,7 +59,8 @@ impl<'a> GameState<'a> {
 
     if let Some(cmd) = InventoryCommand::get() {
       match cmd {
-        InventoryCommand::Buy(item, price) => {
+        InventoryCommand::Buy(item) => {
+          let price = item.price();
           if price > self.wealth {
             println!("You don't have enough money to buy that.");
           } else {
