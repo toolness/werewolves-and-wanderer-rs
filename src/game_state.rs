@@ -172,6 +172,7 @@ impl<'a> GameState<'a> {
               self.map.room(self.curr_room).description
             );
           }
+          println!("");
         }
       }
       self.show_desc = false;
