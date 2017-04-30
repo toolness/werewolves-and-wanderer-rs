@@ -55,30 +55,35 @@ impl<'a> GameState<'a> {
       match cmd {
         Buy(item) => {
           let price = item.price();
-          if price > self.wealth {
-            println!("You don't have enough money to buy that.");
+          if match item {
+            Torch => self.light,
+            Axe => self.axe,
+            Sword => self.sword,
+            Food => false,
+            Amulet => self.amulet,
+            Armor => self.suit,
+          } {
+            println!("You already own {}.", item);
+          } else if self.wealth < price {
+            println!("YOU HAVE TRIED TO CHEAT ME!");
+            self.wealth = 0;
+            self.light = false;
+            self.axe = false;
+            self.sword = false;
+            self.food = self.food / 4;
+            self.amulet = false;
+            self.suit = false;
           } else {
-            if match item {
-              Torch => self.light,
-              Axe => self.axe,
-              Sword => self.sword,
-              Food => false,
-              Amulet => self.amulet,
-              Armor => self.suit,
-            } {
-              println!("You already own {}.", item);
-            } else {
-              self.wealth -= price;
-              println!("You bought {}.", item);
-              self.print_wealth();
-              match item {
-                Torch => self.light = true,
-                Axe => self.axe = true,
-                Sword => self.sword = true,
-                Food => self.food += 1,
-                Amulet => self.amulet = true,
-                Armor => self.suit = true,
-              }
+            self.wealth -= price;
+            println!("You bought {}.", item);
+            self.print_wealth();
+            match item {
+              Torch => self.light = true,
+              Axe => self.axe = true,
+              Sword => self.sword = true,
+              Food => self.food += 1,
+              Amulet => self.amulet = true,
+              Armor => self.suit = true,
             }
           }
           println!("");
