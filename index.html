@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 8px 0;
+  font-family: Consolas, Monaco, monospace;
+}
+
+body, label, input {
+  color: white;
+  background: black;
+}
+
+#output-wrapper, #form-wrapper {
+  padding: 0 8px;
+}
+
+#output .prompt-response {
+  color: gray;
+}
+
+#output, #form {
+  max-width: 40em;
+  margin: 0 auto;
+}
+
+#output {
+  white-space: pre-wrap;
+}
+
+#form {
+  display: flex;
+  align-items: center;
+}
+
+#prompt {
+  white-space: pre;
+}
+
+label, input {
+  font-family: inherit;
+  font-size: inherit;
+}
+
+#input {
+  flex: 1;
+  border: none;
+  outline: none;
+}
+</style>
+<title>Werewolves and Wanderer</title>
+<body>
+<div id="output-wrapper"><div id="output">Loading&hellip;<noscript>Alas, you need JavaScript enabled to play this game.</noscript></div></div>
+<div id="form-wrapper"><form id="form"><label id="prompt" for="input"></label><input id="input" autofocus autocomplete="off"></form></div>
+<script>
+if (!('Promise' in window)) {
+  document.write('<script src="promise.js"></' + 'script>');
+}
+</script>
+<script src="main.js"></script>
+</body>
