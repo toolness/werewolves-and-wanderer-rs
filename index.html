@@ -59,11 +59,32 @@ label, input {
   border: none;
   outline: none;
 }
+
+a.github {
+  position: fixed;
+  bottom: 8px;
+  right: 8px;
+  opacity: 0.5;
+  transition: opacity 0.25s;
+}
+
+a.github:hover {
+  opacity: 0.8;
+}
+
+a.github:focus {
+  opacity: 1.0;
+}
+
+a.github img {
+  width: 2em;
+}
 </style>
 <title>Werewolves and Wanderer</title>
 <body>
 <div id="output-wrapper"><div id="output">Loading&hellip;<noscript>Alas, you need JavaScript enabled to play this game.</noscript></div></div>
 <div id="form-wrapper"><form id="form"><label id="prompt" for="input"></label><input id="input" autofocus autocomplete="off"></form></div>
+<a href="https://github.com/toolness/werewolves-and-wanderer-rs#readme" class="github" target="_blank"><img src="GitHub-Mark-Light-120px-plus.png" alt="Learn more about this project on GitHub"></a>
 <script>
 if (!('Promise' in window)) {
   document.write('<script src="promise.js"></' + 'script>');
