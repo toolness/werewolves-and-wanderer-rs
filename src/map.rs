@@ -15,13 +15,17 @@ impl<'a, T: Copy + MapRoomId, C: Copy> Map<'a, T, C> {
     Self { rooms: rooms }
   }
 
-  pub fn room(&mut self, r: T) -> &mut Room<T, C> {
+  pub fn room(&self, r: T) -> &Room<T, C> {
+    &self.rooms[r.room_id()]
+  }
+
+  pub fn mut_room(&mut self, r: T) -> &mut Room<T, C> {
     &mut self.rooms[r.room_id()]
   }
 
   pub fn connect(&mut self, from: T, d: Direction, to: T) -> &mut Self {
-    self.room(from).set_exit(d, to);
-    self.room(to).set_exit(d.opposite(), from);
+    self.mut_room(from).set_exit(d, to);
+    self.mut_room(to).set_exit(d.opposite(), from);
     self
   }
 }

@@ -144,6 +144,7 @@ impl<'a> GameState<'a> {
               },
               RoomContents::Terror(monster_id) => {
                 println!("\nDanger... There is a monster here....");
+                self.pause();
                 // TODO: Finish this.
               },
             });

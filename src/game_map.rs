@@ -86,7 +86,7 @@ impl<'a> GameMap<'a> {
         let room_id = RoomId::random();
         if room_id != Entrance && room_id != Exit &&
            room_id != Lift {
-          let room = self.room(room_id);
+          let room = self.mut_room(room_id);
           if room.contents.is_none() {
             let contents = allotter();
             if DEBUG {
@@ -115,25 +115,25 @@ impl<'a> GameMap<'a> {
       if DEBUG {
         println!("DEBUG: Placing ${} in {:?}.", amount, room_id);
       }
-      self.room(room_id).contents = Some(Treasure(amount));
+      self.mut_room(room_id).contents = Some(Treasure(amount));
     }
   }
 
   fn describe_and_connect(&mut self) {
-    self.room(Entrance).describe(
+    self.mut_room(Entrance).describe(
       "Entrance",
       "You are at the entrance to a forbidding-looking \
        stone castle. You are facing east."
     );
 
-    self.room(Hallway).describe(
+    self.mut_room(Hallway).describe(
       "Hallway",
       "You are in the hallway. \
        There is a door to the south. \
        Through the windows to the north you can see a secret herb garden."
     );
 
-    self.room(AudienceChamber).describe(
+    self.mut_room(AudienceChamber).describe(
       "Audience Chamber",
       "This is the audience chamber. \
        There is a window to the west. By looking to the right \
@@ -141,20 +141,20 @@ impl<'a> GameMap<'a> {
        Doors leave this room to the north, east, and south."
     );
 
-    self.room(GreatHall).describe(
+    self.mut_room(GreatHall).describe(
       "Great Hall",
       "You are in the great hall, an L-shaped room. \
        There are doors to the east and to the north. \
        In the alcove is a door to the west."
     );
 
-    self.room(PrivateMeeting).describe(
+    self.mut_room(PrivateMeeting).describe(
       "Private Meeting Room",
       "This is the monarch's private meeting room. \
        There is a single exit to the south."
     );
 
-    self.room(InnerHallway).describe(
+    self.mut_room(InnerHallway).describe(
       "Inner Hallway",
       "This inner hallway contains a door to the north, \
        and one to the west, and a circular stairwell \
@@ -163,14 +163,14 @@ impl<'a> GameMap<'a> {
        windows to the south."
     );
 
-    self.room(Kitchen).describe(
+    self.mut_room(Kitchen).describe(
       "Kitchen",
       "This is the castle's kitchen. Through windows in \
        the north wall you can see a secret herb garden. \
        A door leaves the kitchen to the south."
     );
 
-    self.room(StoreRoom).describe(
+    self.mut_room(StoreRoom).describe(
       "Store Room",
       "You are in the store room, amidst spices, \
        vegetables, and vast sacks of flour and \
@@ -178,7 +178,7 @@ impl<'a> GameMap<'a> {
        and one to the south."
     );
 
-    self.room(RearVestibule).describe(
+    self.mut_room(RearVestibule).describe(
       "Rear Vestibule",
       "You are in the rear vestibule. \
        There are windows to the south from which \
@@ -187,14 +187,14 @@ impl<'a> GameMap<'a> {
        one to the north."
     );
 
-    self.room(Dungeon).describe(
+    self.mut_room(Dungeon).describe(
       "Dungeon",
       "You are in the dank, dark dungeon. \
        There is a single exit, a small hole in \
        the wall towards the west."
     );
 
-    self.room(Guardroom).describe(
+    self.mut_room(Guardroom).describe(
       "Guardroom",
       "You are in the prison guardroom, in the \
        basement of the castle. The stairwell \
@@ -202,7 +202,7 @@ impl<'a> GameMap<'a> {
        exit, a small hole in the east wall."
     );
 
-    self.room(MasterBedroom).describe(
+    self.mut_room(MasterBedroom).describe(
       "Master Bedroom",
       "You are in the master bedroom on the upper \
        level of the castle.... \
@@ -213,7 +213,7 @@ impl<'a> GameMap<'a> {
        to the south...."
     );
 
-    self.room(UpperHallway).describe(
+    self.mut_room(UpperHallway).describe(
       "Upper Hallway",
       "This is the L-shaped upper hallway. \
        To the north is a door, and there is a \
@@ -221,7 +221,7 @@ impl<'a> GameMap<'a> {
        the lake through the south windows."
     );
 
-    self.room(Treasury).describe(
+    self.mut_room(Treasury).describe(
       "Treasury",
       "This room was used as the castle treasury in \
        by-gone years.... \
@@ -229,7 +229,7 @@ impl<'a> GameMap<'a> {
        north and to the east."
     );
 
-    self.room(ChambermaidsBedroom).describe(
+    self.mut_room(ChambermaidsBedroom).describe(
       "Chambermaids' Bedroom",
       "Ooooh.... You are in the chambermaids' bedroom. \
        There is an exit to the west and a door \
@@ -240,7 +240,7 @@ impl<'a> GameMap<'a> {
       // or just a copy error.
     );
 
-    self.room(DressingChamber).describe(
+    self.mut_room(DressingChamber).describe(
       "Dressing Chamber",
       "This tiny room on the upper level is the \
        dressing chamber. There is a window to the \
@@ -248,7 +248,7 @@ impl<'a> GameMap<'a> {
        below. A door leaves to the south."
     );
 
-    self.room(SmallRoom).describe(
+    self.mut_room(SmallRoom).describe(
       "Small Room",
       "This is the small room outside the castle \
        lift which can be entered by a door to the north. \
