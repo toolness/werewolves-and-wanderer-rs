@@ -2,7 +2,7 @@ use game_map::RoomId;
 use direction::Direction;
 use game_state::{GameState, GameMode};
 use command::{CommandProcessor, HelpInfo};
-use inventory::Item;
+use items::Item;
 use platform;
 use util;
 
