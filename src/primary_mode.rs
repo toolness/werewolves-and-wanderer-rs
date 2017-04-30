@@ -8,6 +8,10 @@ use util;
 
 use self::PrimaryCommand::*;
 
+const TALLY_PER_MOVE: i32 = 1;
+const STRENGTH_LOSS_PER_MOVE: i32 = 5;
+const MIN_STRENGTH_WARNING: i32 = 10;
+
 #[derive(Debug)]
 pub enum PrimaryCommand {
   Go(Direction),
@@ -52,7 +56,7 @@ impl CommandProcessor<PrimaryCommand> for PrimaryCommand {
 
 impl<'a> GameState<'a> {
   fn print_status_report(&self) {
-    if self.strength <= 10 {
+    if self.strength <= MIN_STRENGTH_WARNING {
       println!("Warning, {}! Your strength is running low.\n",
                self.player_name);
     }
@@ -124,8 +128,8 @@ impl<'a> GameState<'a> {
           if let Some(room) = self.map.room(self.curr_room).get_exit(dir) {
             self.curr_room = room;
             self.show_desc = true;
-            self.tally += 1;
-            self.strength -= 5;
+            self.tally += TALLY_PER_MOVE;
+            self.strength -= STRENGTH_LOSS_PER_MOVE;
           } else {
             println!("You can't go that way.");
           }

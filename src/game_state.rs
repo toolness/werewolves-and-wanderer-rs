@@ -2,6 +2,10 @@ use game_map::{RoomId, GameMap};
 use platform;
 
 const PAUSE_MS: u64 = 2500;
+const CHEATING_FOOD_DIVISOR: i32 = 4;
+const INITIAL_STRENGTH: i32 = 100;
+const INITIAL_WEALTH: i32 = 75;
+const STRENGTH_PER_FOOD: i32 = 5;
 
 #[derive(Debug, PartialEq, Copy, Clone)]
 pub enum GameMode {
@@ -37,8 +41,8 @@ impl<'a> GameState<'a> {
       player_name: String::from(""),
       curr_mode: GameMode::AskName,
       curr_room: RoomId::Entrance,
-      strength: 100,
-      wealth: 75,
+      strength: INITIAL_STRENGTH,
+      wealth: INITIAL_WEALTH,
       food: 0,
       tally: 0,
       monsters_killed: 0,
@@ -94,7 +98,7 @@ impl<'a> GameState<'a> {
     self.light = false;
     self.axe = false;
     self.sword = false;
-    self.food = self.food / 4;
+    self.food = self.food / CHEATING_FOOD_DIVISOR;
     self.amulet = false;
     self.suit = false;
     self.pause();
@@ -150,7 +154,7 @@ impl<'a> GameState<'a> {
             platform::hide_prompt();
             println!("After some munching, you feel stronger.");
             self.food -= amount;
-            self.strength += amount * 5;
+            self.strength += amount * STRENGTH_PER_FOOD;
             self.set_mode(GameMode::Primary);
             self.pause();
           }
