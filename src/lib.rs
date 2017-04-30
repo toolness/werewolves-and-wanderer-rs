@@ -11,3 +11,4 @@ pub mod primary_mode;
 pub mod items;
 pub mod inventory;
 pub mod util;
+pub mod sized_enum;

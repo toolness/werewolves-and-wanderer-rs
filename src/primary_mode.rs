@@ -1,4 +1,5 @@
-use game_map::{SizedEnum, RoomId};
+use game_map::RoomId;
+use sized_enum::SizedEnum;
 use direction::Direction;
 use game_state::{GameState, GameMode};
 use command::{CommandProcessor, HelpInfo};
