@@ -3,9 +3,11 @@ use command::{CommandProcessor, HelpInfo};
 use items::Item;
 use items::Item::*;
 
+use self::InventoryCommand::*;
+
 pub enum InventoryCommand {
   Buy(Item),
-  Quit,
+  Leave,
 }
 
 impl CommandProcessor<InventoryCommand> for InventoryCommand {
@@ -27,13 +29,13 @@ impl CommandProcessor<InventoryCommand> for InventoryCommand {
 
   fn from_char(c: char) -> Option<InventoryCommand> {
     match c {
-      '1' => Some(InventoryCommand::Buy(Torch)),
-      '2' => Some(InventoryCommand::Buy(Axe)),
-      '3' => Some(InventoryCommand::Buy(Sword)),
-      '4' => Some(InventoryCommand::Buy(Food)),
-      '5' => Some(InventoryCommand::Buy(Amulet)),
-      '6' => Some(InventoryCommand::Buy(Armor)),
-      _ => Some(InventoryCommand::Quit),
+      '1' => Some(Buy(Torch)),
+      '2' => Some(Buy(Axe)),
+      '3' => Some(Buy(Sword)),
+      '4' => Some(Buy(Food)),
+      '5' => Some(Buy(Amulet)),
+      '6' => Some(Buy(Armor)),
+      _ => Some(Leave),
     }
   }
 }
@@ -51,7 +53,7 @@ impl<'a> GameState<'a> {
 
     if let Some(cmd) = InventoryCommand::get() {
       match cmd {
-        InventoryCommand::Buy(item) => {
+        Buy(item) => {
           let price = item.price();
           if price > self.wealth {
             println!("You don't have enough money to buy that.");
@@ -70,7 +72,7 @@ impl<'a> GameState<'a> {
           }
           println!("");
         },
-        InventoryCommand::Quit => { self.set_mode(GameMode::Primary) },
+        Leave => { self.set_mode(GameMode::Primary) },
       }
     }
   }
