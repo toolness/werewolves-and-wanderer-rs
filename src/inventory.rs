@@ -35,7 +35,8 @@ impl CommandProcessor<InventoryCommand> for InventoryCommand {
       '4' => Some(Buy(Food)),
       '5' => Some(Buy(Amulet)),
       '6' => Some(Buy(Armor)),
-      _ => Some(Leave),
+      '0' | 'q' => Some(Leave),
+      _ => None,
     }
   }
 }
