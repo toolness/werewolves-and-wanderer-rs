@@ -2,6 +2,7 @@ use game_map::RoomId;
 use sized_enum::SizedEnum;
 use direction::Direction;
 use game_state::{GameState, GameMode};
+use game_map::RoomContents;
 use command::{CommandProcessor, HelpInfo};
 use items::Item;
 use platform;
@@ -135,9 +136,17 @@ impl<'a> GameState<'a> {
           if self.curr_room != RoomId::Entrance && !self.light {
             println!("It is too dark to see anything.");
           } else {
-            platform::writeln_with_wrapping(
-              self.map.room(self.curr_room).description
-            );
+            let room = self.map.room(self.curr_room);
+            platform::writeln_with_wrapping(room.description);
+            room.contents.map(|c| match c {
+              RoomContents::Treasure(amount) => {
+                println!("\nThere is treasure here worth ${}.", amount);
+              },
+              RoomContents::Terror(monster_id) => {
+                println!("\nDanger... There is a monster here....");
+                // TODO: Finish this.
+              },
+            });
           }
           println!("");
         }
