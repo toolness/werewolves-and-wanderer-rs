@@ -15,8 +15,3 @@ kernel32-sys = "0.2.2"
 
 [dependencies]
 enum_primitive = "0.1.1"
-
-[features]
-default = ["debug"]
-
-debug = []

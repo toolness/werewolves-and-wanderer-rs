@@ -32,6 +32,12 @@ python -m SimpleHTTPServer
 
 Then visit http://localhost:8000/ in your browser.
 
+## Debug mode
+
+On non-release builds, a debug menu is included to aid in debugging.
+Press the backtick key in the game's primary exploration mode to
+enter it.
+
 [cagyc]: http://www.atariarchives.org/adventure/
 [Rust]: https://www.rust-lang.org/
 [Emscripten]: http://emscripten.org/

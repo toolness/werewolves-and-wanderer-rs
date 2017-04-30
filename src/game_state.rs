@@ -17,7 +17,7 @@ pub enum GameMode {
   EatFood,
   Finished,
 
-  #[cfg(feature = "debug")]
+  #[cfg(debug_assertions)]
   Debug,
 }
 
@@ -191,7 +191,7 @@ impl<'a> GameState<'a> {
       GameMode::EatFood => { self.tick_eat_food_mode() },
       GameMode::Finished => {},
 
-      #[cfg(feature = "debug")]
+      #[cfg(debug_assertions)]
       GameMode::Debug => { self.tick_debug_mode() },
     }
   }

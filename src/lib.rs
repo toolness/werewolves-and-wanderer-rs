@@ -13,5 +13,5 @@ pub mod inventory;
 pub mod util;
 pub mod sized_enum;
 
-#[cfg(feature = "debug")]
+#[cfg(debug_assertions)]
 pub mod debug_mode;
