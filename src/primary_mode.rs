@@ -52,6 +52,10 @@ impl CommandProcessor<PrimaryCommand> for PrimaryCommand {
 
 impl<'a> GameState<'a> {
   fn print_status_report(&self) {
+    if self.strength <= 10 {
+      println!("Warning, {}! Your strength is running low.\n",
+               self.player_name);
+    }
     println!("{}, your strength is {}.", self.player_name, self.strength);
     self.print_wealth();
     if self.food > 0 { self.print_food(); }
@@ -120,6 +124,7 @@ impl<'a> GameState<'a> {
           if let Some(room) = self.map.room(self.curr_room).get_exit(dir) {
             self.curr_room = room;
             self.show_desc = true;
+            self.strength -= 5;
           } else {
             println!("You can't go that way.");
           }

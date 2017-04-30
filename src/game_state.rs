@@ -105,6 +105,12 @@ impl<'a> GameState<'a> {
     platform::sleep(PAUSE_MS);
   }
 
+  fn die(&mut self) {
+    println!("You have died.........");
+    self.pause();
+    self.finish_game();
+  }
+
   fn tick_ask_name_mode(&mut self) {
     platform::show_prompt("What is your name, explorer? ");
 
@@ -158,6 +164,8 @@ impl<'a> GameState<'a> {
   }
 
   pub fn tick(&mut self) {
+    if self.strength < 1 { self.die() }
+
     match self.curr_mode {
       GameMode::AskName => { self.tick_ask_name_mode() },
       GameMode::Primary => { self.tick_primary_mode() },
