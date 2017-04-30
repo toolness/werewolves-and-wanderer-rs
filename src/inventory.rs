@@ -58,16 +58,27 @@ impl<'a> GameState<'a> {
           if price > self.wealth {
             println!("You don't have enough money to buy that.");
           } else {
-            self.wealth -= price;
-            println!("You bought {}.", item);
-            self.print_wealth();
-            match item {
-              Torch => self.light = true,
-              Axe => self.axe = true,
-              Sword => self.sword = true,
-              Food => self.food += 1,
-              Amulet => self.amulet = true,
-              Armor => self.suit = true,
+            if match item {
+              Torch => self.light,
+              Axe => self.axe,
+              Sword => self.sword,
+              Food => false,
+              Amulet => self.amulet,
+              Armor => self.suit,
+            } {
+              println!("You already own {}.", item);
+            } else {
+              self.wealth -= price;
+              println!("You bought {}.", item);
+              self.print_wealth();
+              match item {
+                Torch => self.light = true,
+                Axe => self.axe = true,
+                Sword => self.sword = true,
+                Food => self.food += 1,
+                Amulet => self.amulet = true,
+                Armor => self.suit = true,
+              }
             }
           }
           println!("");
