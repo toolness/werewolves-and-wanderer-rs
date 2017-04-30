@@ -29,10 +29,14 @@ If you want to try the web version, you can install [Emscripten][] and
 ```
 npm install
 bash build-emscripten.sh
+cd static
 python -m SimpleHTTPServer
 ```
 
 Then visit http://localhost:8000/ in your browser.
+
+You can also deploy the `static/` directory to any webserver that
+hosts static files.
 
 ## Debug mode
 

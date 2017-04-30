@@ -4,6 +4,7 @@
     "noImplicitAny": true,
     "strictNullChecks": true,
     "alwaysStrict": true,
+    "outDir": "static",
     "lib": ["dom", "es2015", "es5", "es6"]
   },
   "include": [
