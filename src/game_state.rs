@@ -1,11 +1,14 @@
 use game_map::{RoomId, GameMap};
 use platform;
 
+pub const PAUSE_MS: u64 = 2500;
+
 #[derive(Debug, PartialEq, Copy, Clone)]
 pub enum GameMode {
   AskName,
   Primary,
   Inventory,
+  EatFood,
   Finished,
 }
 
@@ -62,6 +65,11 @@ impl<'a> GameState<'a> {
     }
   }
 
+  pub fn print_food(&self) {
+    println!("Your provisions sack holds {} unit{} of food.",
+             self.food, if self.food == 1 { "" } else { "s" });
+  }
+
   fn get_score(&self) -> i32 {
     3  * self.tally +
     5  * self.strength +
@@ -80,6 +88,18 @@ impl<'a> GameState<'a> {
     self.curr_mode == GameMode::Finished
   }
 
+  pub fn accuse_player_of_cheating(&mut self) {
+    println!("YOU HAVE TRIED TO CHEAT ME!");
+    self.wealth = 0;
+    self.light = false;
+    self.axe = false;
+    self.sword = false;
+    self.food = self.food / 4;
+    self.amulet = false;
+    self.suit = false;
+    platform::sleep(PAUSE_MS);
+  }
+
   fn tick_ask_name_mode(&mut self) {
     platform::show_prompt("What is your name, explorer? ");
 
@@ -94,11 +114,50 @@ impl<'a> GameState<'a> {
     });
   }
 
+  fn tick_eat_food_mode(&mut self) {
+    if self.show_desc {
+      self.print_food();
+      println!("");
+      self.show_desc = false;
+    }
+
+    platform::show_prompt("How many do you want to eat? ");
+
+    platform::read_input().map(|input| {
+      match input.parse::<i32>() {
+        Ok(amount) => {
+          if amount < 0 {
+            println!("GIVE ME A POSITIVE INTEGER.");
+          } else if amount == 0 {
+            println!("Fine, be that way.");
+            platform::sleep(PAUSE_MS);
+            self.set_mode(GameMode::Primary);
+          } else if amount > self.food {
+            self.accuse_player_of_cheating();
+            self.set_mode(GameMode::Primary);
+          } else {
+            platform::hide_prompt();
+            println!("After some munching, you feel stronger.");
+            self.food -= amount;
+            self.strength += amount * 5;
+            self.set_mode(GameMode::Primary);
+            platform::sleep(PAUSE_MS);
+          }
+        },
+        Err(_) => {
+          println!("That does not even look like a number, {}.",
+                   self.player_name);
+        }
+      }
+    });
+  }
+
   pub fn tick(&mut self) {
     match self.curr_mode {
       GameMode::AskName => { self.tick_ask_name_mode() },
       GameMode::Primary => { self.tick_primary_mode() },
       GameMode::Inventory => { self.tick_inventory_mode() },
+      GameMode::EatFood => { self.tick_eat_food_mode() },
       GameMode::Finished => {}
     }
   }

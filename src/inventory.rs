@@ -65,14 +65,7 @@ impl<'a> GameState<'a> {
           } {
             println!("You already own {}.", item);
           } else if self.wealth < price {
-            println!("YOU HAVE TRIED TO CHEAT ME!");
-            self.wealth = 0;
-            self.light = false;
-            self.axe = false;
-            self.sword = false;
-            self.food = self.food / 4;
-            self.amulet = false;
-            self.suit = false;
+            self.accuse_player_of_cheating();
           } else {
             self.wealth -= price;
             println!("You bought {}.", item);

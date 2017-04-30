@@ -1,6 +1,6 @@
 use game_map::RoomId;
 use direction::Direction;
-use game_state::{GameState, GameMode};
+use game_state::{GameState, GameMode, PAUSE_MS};
 use command::{CommandProcessor, HelpInfo};
 use items::Item;
 use platform;
@@ -8,13 +8,12 @@ use util;
 
 use self::PrimaryCommand::*;
 
-const PAUSE_MS: u64 = 2500;
-
 #[derive(Debug)]
 pub enum PrimaryCommand {
   Go(Direction),
   Inventory,
   Look,
+  EatFood,
   Quit,
 }
 
@@ -27,6 +26,7 @@ impl CommandProcessor<PrimaryCommand> for PrimaryCommand {
       ('w', "go west"),
       ('u', "go up"),
       ('d', "go down"),
+      ('c', "consume food"),
       ('i', "inventory/buy provisions"),
       ('l', "look around"),
       ('q', "quit"),
@@ -41,6 +41,7 @@ impl CommandProcessor<PrimaryCommand> for PrimaryCommand {
       'w' => Some(Go(Direction::West)),
       'u' => Some(Go(Direction::Up)),
       'd' => Some(Go(Direction::Down)),
+      'c' => Some(EatFood),
       'i' => Some(Inventory),
       'l' => Some(Look),
       'q' => Some(Quit),
@@ -53,10 +54,7 @@ impl<'a> GameState<'a> {
   fn print_status_report(&self) {
     println!("{}, your strength is {}.", self.player_name, self.strength);
     self.print_wealth();
-    if self.food > 0 {
-      println!("Your provisions sack holds {} unit{} of food.",
-               self.food, if self.food == 1 { "" } else { "s" });
-    }
+    if self.food > 0 { self.print_food(); }
     if self.suit {
       println!("You are wearing armor.");
     }
@@ -127,7 +125,14 @@ impl<'a> GameState<'a> {
           }
         },
         Inventory => { self.set_mode(GameMode::Inventory) },
-        Look => { self.show_desc = true }
+        Look => { self.show_desc = true },
+        EatFood => {
+          if self.food == 0 {
+            println!("You have no food!");
+          } else {
+            self.set_mode(GameMode::EatFood);
+          }
+        },
         Quit => { self.finish_game() }
       }
     };
