@@ -8,6 +8,7 @@ export WASM32_ROOT_DIR=target/${WASM32_TARGET}/debug
 echo "Compiling TypeScript..."
 
 node_modules/.bin/tsc
+cp node_modules/promise-polyfill/promise.js .
 
 echo "Building for ${WASM32_TARGET}..."
 

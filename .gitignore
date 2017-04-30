@@ -3,3 +3,4 @@ node_modules
 werewolves_and_wanderer*.wasm
 werewolves-and-wanderer*.js
 main.js
+promise.js

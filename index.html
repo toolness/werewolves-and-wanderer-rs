@@ -16,8 +16,11 @@ body {
   margin: 0;
   padding: 8px 0;
   font-family: Consolas, Monaco, monospace;
+}
+
+body, label, input {
   color: white;
-  background-color: black;
+  background: black;
 }
 
 #output-wrapper, #form-wrapper {
@@ -49,8 +52,6 @@ body {
 label, input {
   font-family: inherit;
   font-size: inherit;
-  color: inherit;
-  background: inherit;
 }
 
 #input {
@@ -63,5 +64,10 @@ label, input {
 <body>
 <div id="output-wrapper"><div id="output">Loading&hellip;<noscript>Alas, you need JavaScript enabled to play this game.</noscript></div></div>
 <div id="form-wrapper"><form id="form"><label id="prompt" for="input"></label><input id="input" autofocus autocomplete="off"></form></div>
+<script>
+if (!('Promise' in window)) {
+  document.write('<script src="promise.js"></' + 'script>');
+}
+</script>
 <script src="main.js"></script>
 </body>
