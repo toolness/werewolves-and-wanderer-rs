@@ -8,6 +8,7 @@
   "author": "Atul Varma <varmaa@gmail.com>",
   "license": "CC0-1.0",
   "dependencies": {
+    "promise-polyfill": "^6.0.2",
     "typescript": "2.3.2"
   }
 }
