@@ -124,6 +124,7 @@ impl<'a> GameState<'a> {
           if let Some(room) = self.map.room(self.curr_room).get_exit(dir) {
             self.curr_room = room;
             self.show_desc = true;
+            self.tally += 1;
             self.strength -= 5;
           } else {
             println!("You can't go that way.");
