@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "alwaysStrict": true,
+    "lib": ["dom", "es2015", "es5", "es6"]
+  },
+  "include": [
+    "main.ts"
+  ]
+}

@@ -5,6 +5,10 @@ set -e
 export WASM32_TARGET=wasm32-unknown-emscripten
 export WASM32_ROOT_DIR=target/${WASM32_TARGET}/debug
 
+echo "Compiling TypeScript..."
+
+node_modules/.bin/tsc
+
 echo "Building for ${WASM32_TARGET}..."
 
 cargo build --target=${WASM32_TARGET}

@@ -23,9 +23,11 @@ Install Rust, clone the project and run:
 cargo run
 ```
 
-If you want to try the web version, you can install [Emscripten][] and run:
+If you want to try the web version, you can install [Emscripten][] and
+[NodeJS][] and run:
 
 ```
+npm install
 bash build-emscripten.sh
 python -m SimpleHTTPServer
 ```
@@ -41,3 +43,4 @@ enter it.
 [cagyc]: http://www.atariarchives.org/adventure/
 [Rust]: https://www.rust-lang.org/
 [Emscripten]: http://emscripten.org/
+[NodeJS]: http://nodejs.org/

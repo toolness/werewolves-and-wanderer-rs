@@ -1,0 +1,13 @@
+{
+  "name": "werewolves-and-wanderer",
+  "version": "1.0.0",
+  "description": "An implementation of _Werewolves and Wanderer_, the first project in Tim Hartnell's _Creating Adventure Games on Your Computer_, in Rust.",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Atul Varma <varmaa@gmail.com>",
+  "license": "CC0-1.0",
+  "dependencies": {
+    "typescript": "2.3.2"
+  }
+}
