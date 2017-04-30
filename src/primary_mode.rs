@@ -21,6 +21,9 @@ pub enum PrimaryCommand {
   MagicAmulet,
   PickUpTreasure,
   Quit,
+
+  #[cfg(feature = "debug")]
+  Debug,
 }
 
 impl CommandProcessor<PrimaryCommand> for PrimaryCommand {
@@ -38,6 +41,9 @@ impl CommandProcessor<PrimaryCommand> for PrimaryCommand {
       ('p', "pick up treasure"),
       ('l', "look around"),
       ('q', "quit"),
+
+      #[cfg(feature = "debug")]
+      ('`', "debug menu"),
     ])
   }
 
@@ -55,6 +61,10 @@ impl CommandProcessor<PrimaryCommand> for PrimaryCommand {
       'p' => Some(PickUpTreasure),
       'l' => Some(Look),
       'q' => Some(Quit),
+
+      #[cfg(feature = "debug")]
+      '`' => Some(Debug),
+
       _ => None,
     }
   }
@@ -192,7 +202,10 @@ impl<'a> GameState<'a> {
           }
         },
         MagicAmulet => { self.use_amulet() },
-        Quit => { self.finish_game() }
+        Quit => { self.finish_game() },
+
+        #[cfg(feature = "debug")]
+        Debug => { self.set_mode(GameMode::Debug) },
       }
     };
   }

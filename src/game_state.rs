@@ -16,6 +16,9 @@ pub enum GameMode {
   Inventory,
   EatFood,
   Finished,
+
+  #[cfg(feature = "debug")]
+  Debug,
 }
 
 pub struct GameState<'a> {
@@ -186,7 +189,10 @@ impl<'a> GameState<'a> {
       GameMode::Primary => { self.tick_primary_mode() },
       GameMode::Inventory => { self.tick_inventory_mode() },
       GameMode::EatFood => { self.tick_eat_food_mode() },
-      GameMode::Finished => {}
+      GameMode::Finished => {},
+
+      #[cfg(feature = "debug")]
+      GameMode::Debug => { self.tick_debug_mode() },
     }
   }
 }

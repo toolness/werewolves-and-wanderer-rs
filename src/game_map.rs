@@ -7,7 +7,6 @@ use sized_enum::SizedEnum;
 use self::RoomId::*;
 use self::RoomContents::*;
 
-const DEBUG: bool = false;
 const NUM_ROOMS: usize = 19;
 const NUM_MONSTERS: usize = 4;
 const NUM_ROOMS_WITH_TREASURE: usize = 4;
@@ -89,9 +88,6 @@ impl<'a> GameMap<'a> {
           let room = self.mut_room(room_id);
           if room.contents.is_none() {
             let contents = allotter();
-            if DEBUG {
-              println!("DEBUG: Placing {:?} in {:?}.", contents, room_id);
-            }
             room.contents = Some(contents);
             break;
           }
@@ -112,9 +108,6 @@ impl<'a> GameMap<'a> {
   fn ensure_treasure(&mut self) {
     for &room_id in [Treasury, PrivateMeeting].iter() {
       let amount = random_treasure_amount();
-      if DEBUG {
-        println!("DEBUG: Placing ${} in {:?}.", amount, room_id);
-      }
       self.mut_room(room_id).contents = Some(Treasure(amount));
     }
   }

@@ -12,3 +12,6 @@ pub mod items;
 pub mod inventory;
 pub mod util;
 pub mod sized_enum;
+
+#[cfg(feature = "debug")]
+pub mod debug_mode;
