@@ -19,6 +19,7 @@ pub enum PrimaryCommand {
   Look,
   EatFood,
   MagicAmulet,
+  PickUpTreasure,
   Quit,
 }
 
@@ -34,6 +35,7 @@ impl CommandProcessor<PrimaryCommand> for PrimaryCommand {
       ('c', "consume food"),
       ('m', "use magic amulet (if equipped)"),
       ('i', "inventory/buy provisions"),
+      ('p', "pick up treasure"),
       ('l', "look around"),
       ('q', "quit"),
     ])
@@ -50,6 +52,7 @@ impl CommandProcessor<PrimaryCommand> for PrimaryCommand {
       'c' => Some(EatFood),
       'm' => Some(MagicAmulet),
       'i' => Some(Inventory),
+      'p' => Some(PickUpTreasure),
       'l' => Some(Look),
       'q' => Some(Quit),
       _ => None,
@@ -167,6 +170,9 @@ impl<'a> GameState<'a> {
           }
         },
         Inventory => { self.set_mode(GameMode::Inventory) },
+        PickUpTreasure => {
+          // TODO: Finish this.
+        },
         Look => { self.show_desc = true },
         EatFood => {
           if self.food == 0 {
