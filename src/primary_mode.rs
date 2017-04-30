@@ -6,6 +6,8 @@ use items::Item;
 use platform;
 use util;
 
+use self::PrimaryCommand::*;
+
 const PAUSE_MS: u64 = 2500;
 
 #[derive(Debug)]
@@ -33,15 +35,15 @@ impl CommandProcessor<PrimaryCommand> for PrimaryCommand {
 
   fn from_char(c: char) -> Option<PrimaryCommand> {
     match c {
-      'n' => Some(PrimaryCommand::Go(Direction::North)),
-      's' => Some(PrimaryCommand::Go(Direction::South)),
-      'e' => Some(PrimaryCommand::Go(Direction::East)),
-      'w' => Some(PrimaryCommand::Go(Direction::West)),
-      'u' => Some(PrimaryCommand::Go(Direction::Up)),
-      'd' => Some(PrimaryCommand::Go(Direction::Down)),
-      'i' => Some(PrimaryCommand::Inventory),
-      'l' => Some(PrimaryCommand::Look),
-      'q' => Some(PrimaryCommand::Quit),
+      'n' => Some(Go(Direction::North)),
+      's' => Some(Go(Direction::South)),
+      'e' => Some(Go(Direction::East)),
+      'w' => Some(Go(Direction::West)),
+      'u' => Some(Go(Direction::Up)),
+      'd' => Some(Go(Direction::Down)),
+      'i' => Some(Inventory),
+      'l' => Some(Look),
+      'q' => Some(Quit),
       _ => None,
     }
   }
@@ -116,7 +118,7 @@ impl<'a> GameState<'a> {
 
     if let Some(cmd) = PrimaryCommand::get() {
       match cmd {
-        PrimaryCommand::Go(dir) => {
+        Go(dir) => {
           if let Some(room) = self.map.room(self.curr_room).get_exit(dir) {
             self.curr_room = room;
             self.show_desc = true;
@@ -124,9 +126,9 @@ impl<'a> GameState<'a> {
             println!("You can't go that way.");
           }
         },
-        PrimaryCommand::Inventory => { self.set_mode(GameMode::Inventory) },
-        PrimaryCommand::Look => { self.show_desc = true }
-        PrimaryCommand::Quit => { self.finish_game() }
+        Inventory => { self.set_mode(GameMode::Inventory) },
+        Look => { self.show_desc = true }
+        Quit => { self.finish_game() }
       }
     };
   }
