@@ -18,7 +18,7 @@ echo "Copying files from ${OUTPUT_DIR}/ to ${DEPLOY_DIR}/..."
 cd ${DEPLOY_DIR}
 git rm *
 cp ../${OUTPUT_DIR}/* .
-git add *.html *.js *.wasm
+git add *.html *.js *.wasm *.png
 
 echo "Committing changed files to git..."
 git commit -m "Update deployment."
