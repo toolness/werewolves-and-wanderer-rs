@@ -2,6 +2,10 @@ This is an implementation of _Werewolves and Wanderer_, the first
 project in Tim Hartnell's [Creating Adventure Games on Your Computer][cagyc],
 in Rust.
 
+You can [try it in your browser][play].
+
+Alternatively, it can also be run as a command-line program.
+
 ## Motivation
 
 CAGYC is probably the oldest book I've continuously owned and taken
@@ -45,6 +49,7 @@ Press the backtick key in the game's primary exploration mode to
 enter it.
 
 [cagyc]: http://www.atariarchives.org/adventure/
+[play]: https://toolness.github.io/werewolves-and-wanderer-rs/
 [Rust]: https://www.rust-lang.org/
 [Emscripten]: http://emscripten.org/
 [NodeJS]: http://nodejs.org/
