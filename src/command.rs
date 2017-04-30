@@ -10,6 +10,7 @@ pub struct HelpInfo {
 impl HelpInfo {
   pub fn list<T: AsRef<str>>(v: Vec<(char, T)>) -> Vec<Self> {
     v.into_iter().map(|(key, desc)| {
+      // TODO: We might be making unnecessary copies of strings here.
       Self {key: key, desc: String::from(desc.as_ref())}
     }).collect()
   }
