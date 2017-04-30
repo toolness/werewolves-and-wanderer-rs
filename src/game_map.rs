@@ -84,7 +84,8 @@ impl<'a> GameMap<'a> {
     for _ in 0..num_rooms {
       loop {
         let room_id = RoomId::random();
-        if room_id != Entrance && room_id != Exit {
+        if room_id != Entrance && room_id != Exit &&
+           room_id != Lift {
           let room = self.room(room_id);
           if room.contents.is_none() {
             let contents = allotter();
