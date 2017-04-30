@@ -6,6 +6,8 @@ const CHEATING_FOOD_DIVISOR: i32 = 4;
 const INITIAL_STRENGTH: i32 = 100;
 const INITIAL_WEALTH: i32 = 75;
 const STRENGTH_PER_FOOD: i32 = 5;
+const TALLY_PER_MOVE: i32 = 1;
+const STRENGTH_LOSS_PER_MOVE: i32 = 5;
 
 #[derive(Debug, PartialEq, Copy, Clone)]
 pub enum GameMode {
@@ -165,6 +167,11 @@ impl<'a> GameState<'a> {
         }
       }
     });
+  }
+
+  pub fn process_move(&mut self) {
+    self.tally += TALLY_PER_MOVE;
+    self.strength -= STRENGTH_LOSS_PER_MOVE;
   }
 
   pub fn tick(&mut self) {

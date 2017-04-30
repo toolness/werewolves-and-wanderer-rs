@@ -1,4 +1,4 @@
-use game_map::RoomId;
+use game_map::{random_enum, RoomId};
 use direction::Direction;
 use game_state::{GameState, GameMode};
 use command::{CommandProcessor, HelpInfo};
@@ -8,8 +8,6 @@ use util;
 
 use self::PrimaryCommand::*;
 
-const TALLY_PER_MOVE: i32 = 1;
-const STRENGTH_LOSS_PER_MOVE: i32 = 5;
 const MIN_STRENGTH_WARNING: i32 = 10;
 
 #[derive(Debug)]
@@ -18,6 +16,7 @@ pub enum PrimaryCommand {
   Inventory,
   Look,
   EatFood,
+  MagicAmulet,
   Quit,
 }
 
@@ -31,6 +30,7 @@ impl CommandProcessor<PrimaryCommand> for PrimaryCommand {
       ('u', "go up"),
       ('d', "go down"),
       ('c', "consume food"),
+      ('m', "use magic amulet (if equipped)"),
       ('i', "inventory/buy provisions"),
       ('l', "look around"),
       ('q', "quit"),
@@ -46,6 +46,7 @@ impl CommandProcessor<PrimaryCommand> for PrimaryCommand {
       'u' => Some(Go(Direction::Up)),
       'd' => Some(Go(Direction::Down)),
       'c' => Some(EatFood),
+      'm' => Some(MagicAmulet),
       'i' => Some(Inventory),
       'l' => Some(Look),
       'q' => Some(Quit),
@@ -79,6 +80,27 @@ impl<'a> GameState<'a> {
     if self.sword { items.push(Item::Sword.as_str()) }
     if self.amulet { items.push(Item::Amulet.as_str()) }
     items
+  }
+
+  fn use_amulet(&mut self) {
+    if self.amulet {
+      platform::writeln_with_wrapping(
+        "You invoke the magic amulet and are whisked \
+         away to somewhere else..."
+      );
+      self.pause();
+      loop {
+        let room_id = random_enum::<RoomId>();
+        if room_id != self.curr_room {
+          self.curr_room = room_id;
+          self.show_desc = true;
+          self.process_move();
+          break;
+        }
+      }
+    } else {
+      println!("You don't have the amulet, {}.", self.player_name);
+    }
   }
 
   pub fn tick_primary_mode(&mut self) {
@@ -128,8 +150,7 @@ impl<'a> GameState<'a> {
           if let Some(room) = self.map.room(self.curr_room).get_exit(dir) {
             self.curr_room = room;
             self.show_desc = true;
-            self.tally += TALLY_PER_MOVE;
-            self.strength -= STRENGTH_LOSS_PER_MOVE;
+            self.process_move();
           } else {
             println!("You can't go that way.");
           }
@@ -143,6 +164,7 @@ impl<'a> GameState<'a> {
             self.set_mode(GameMode::EatFood);
           }
         },
+        MagicAmulet => { self.use_amulet() },
         Quit => { self.finish_game() }
       }
     };

@@ -22,7 +22,7 @@ const MAX_TREASURE_AMOUNT: u8 = 110;
 //
 // Ideally we could populate it automatically through a macro, but
 // for now we'll just implement it manually for all our enums.
-trait SizedEnum {
+pub trait SizedEnum {
   fn size() -> usize;
 }
 
@@ -287,7 +287,7 @@ impl<'a> GameMap<'a> {
   }
 }
 
-fn random_enum<T: FromPrimitive + SizedEnum>() -> T {
+pub fn random_enum<T: FromPrimitive + SizedEnum>() -> T {
   loop {
     let r = random_i32(0, T::size() as i32);
     match T::from_i32(r) {
