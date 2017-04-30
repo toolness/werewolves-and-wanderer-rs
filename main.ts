@@ -34,10 +34,16 @@ interface Window {
 }
 
 (() => {
-  const outputEl = document.getElementById('output') as HTMLDivElement;
-  const promptEl = document.getElementById('prompt') as HTMLLabelElement;
-  const inputEl = document.getElementById('input') as HTMLInputElement;
-  const formEl = document.getElementById('form') as HTMLFormElement;
+  const outputEl = el_with_id('output');
+  const promptEl = el_with_id('prompt');
+  const inputEl = el_with_id('input');
+  const formEl = el_with_id('form');
+
+  if (!(inputEl instanceof HTMLInputElement))
+    throw new Error("Expected inputEl to be an <input>");
+
+  if (!(formEl instanceof HTMLFormElement))
+    throw new Error("Expected formEl to be a <form>");
 
   let _currentInput: string | null = null;
   let _currentPrompt = promptEl.textContent;
@@ -50,6 +56,13 @@ interface Window {
   // unlike its synchronous command-line counterpart.
   let _currentPromise = Promise.resolve();
   let _isSleeping = false;
+
+  function el_with_id(id: string): HTMLElement {
+    const el = document.getElementById(id);
+    if (el === null)
+      throw new Error(`Element with id "${id}" not found!`);
+    return el;
+  }
 
   function set_input(val: string | null) {
     _currentPromise.then(() => {
