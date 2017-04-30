@@ -93,7 +93,7 @@ impl<'a> GameState<'a> {
         "You invoke the magic amulet and are whisked \
          away to somewhere else..."
       );
-      self.pause();
+      Self::pause();
       loop {
         let room_id = RoomId::random();
         if room_id != self.curr_room {
@@ -113,22 +113,22 @@ impl<'a> GameState<'a> {
       match self.curr_room {
         RoomId::Lift => {
           println!("You have entered the lift...");
-          self.pause();
+          Self::pause();
           println!("It slowly descends...");
-          self.pause();
+          Self::pause();
           self.curr_room = RoomId::RearVestibule;
           return;
         },
         RoomId::Exit => {
           println!("\nYou've done it!!");
-          self.pause();
+          Self::pause();
           println!("That was the exit from the castle.");
-          self.pause();
+          Self::pause();
           println!("\nYou have succeeded, {}!", self.player_name);
           println!("\nYou managed to get out of the castle.");
-          self.pause();
+          Self::pause();
           println!("\nWell done!");
-          self.pause();
+          Self::pause();
           self.finish_game();
           return;
         },
@@ -147,7 +147,7 @@ impl<'a> GameState<'a> {
               },
               RoomContents::Terror(monster_id) => {
                 println!("\nDanger... There is a monster here....");
-                self.pause();
+                Self::pause();
                 // TODO: Finish this.
               },
             });

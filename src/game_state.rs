@@ -103,17 +103,17 @@ impl<'a> GameState<'a> {
     self.food = self.food / CHEATING_FOOD_DIVISOR;
     self.amulet = false;
     self.suit = false;
-    self.pause();
+    Self::pause();
   }
 
-  pub fn pause(&self) {
+  pub fn pause() {
     platform::hide_prompt();
     platform::sleep(PAUSE_MS);
   }
 
   fn die(&mut self) {
     println!("You have died.........");
-    self.pause();
+    Self::pause();
     self.finish_game();
   }
 
@@ -147,7 +147,7 @@ impl<'a> GameState<'a> {
             println!("GIVE ME A POSITIVE INTEGER.");
           } else if amount == 0 {
             println!("Fine, be that way.");
-            self.pause();
+            Self::pause();
             self.set_mode(GameMode::Primary);
           } else if amount > self.food {
             self.accuse_player_of_cheating();
@@ -158,7 +158,7 @@ impl<'a> GameState<'a> {
             self.food -= amount;
             self.strength += amount * STRENGTH_PER_FOOD;
             self.set_mode(GameMode::Primary);
-            self.pause();
+            Self::pause();
           }
         },
         Err(_) => {
