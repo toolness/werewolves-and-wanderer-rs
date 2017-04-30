@@ -1,6 +1,6 @@
 use game_map::RoomId;
 use direction::Direction;
-use game_state::{GameState, GameMode, PAUSE_MS};
+use game_state::{GameState, GameMode};
 use command::{CommandProcessor, HelpInfo};
 use items::Item;
 use platform;
@@ -78,22 +78,22 @@ impl<'a> GameState<'a> {
       match self.curr_room {
         RoomId::Lift => {
           println!("You have entered the lift...");
-          platform::sleep(PAUSE_MS);
+          self.pause();
           println!("It slowly descends...");
-          platform::sleep(PAUSE_MS);
+          self.pause();
           self.curr_room = RoomId::RearVestibule;
           return;
         },
         RoomId::Exit => {
           println!("\nYou've done it!!");
-          platform::sleep(PAUSE_MS);
+          self.pause();
           println!("That was the exit from the castle.");
-          platform::sleep(PAUSE_MS);
+          self.pause();
           println!("\nYou have succeeded, {}!", self.player_name);
           println!("\nYou managed to get out of the castle.");
-          platform::sleep(PAUSE_MS);
+          self.pause();
           println!("\nWell done!");
-          platform::sleep(PAUSE_MS);
+          self.pause();
           self.finish_game();
           return;
         },

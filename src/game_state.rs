@@ -1,7 +1,7 @@
 use game_map::{RoomId, GameMap};
 use platform;
 
-pub const PAUSE_MS: u64 = 2500;
+const PAUSE_MS: u64 = 2500;
 
 #[derive(Debug, PartialEq, Copy, Clone)]
 pub enum GameMode {
@@ -97,6 +97,11 @@ impl<'a> GameState<'a> {
     self.food = self.food / 4;
     self.amulet = false;
     self.suit = false;
+    self.pause();
+  }
+
+  pub fn pause(&self) {
+    platform::hide_prompt();
     platform::sleep(PAUSE_MS);
   }
 
@@ -130,7 +135,7 @@ impl<'a> GameState<'a> {
             println!("GIVE ME A POSITIVE INTEGER.");
           } else if amount == 0 {
             println!("Fine, be that way.");
-            platform::sleep(PAUSE_MS);
+            self.pause();
             self.set_mode(GameMode::Primary);
           } else if amount > self.food {
             self.accuse_player_of_cheating();
@@ -141,7 +146,7 @@ impl<'a> GameState<'a> {
             self.food -= amount;
             self.strength += amount * 5;
             self.set_mode(GameMode::Primary);
-            platform::sleep(PAUSE_MS);
+            self.pause();
           }
         },
         Err(_) => {
