@@ -18,7 +18,9 @@ impl CommandProcessor<InventoryCommand> for InventoryCommand {
       ('1', buy(Torch)),
       ('2', buy(Axe)),
       ('3', buy(Sword)),
+      ('4', buy(Food)),
       ('5', buy(Amulet)),
+      ('6', buy(Armor)),
       ('0', String::from("continue adventure")),
     ])
   }
@@ -28,7 +30,9 @@ impl CommandProcessor<InventoryCommand> for InventoryCommand {
       '1' => Some(InventoryCommand::Buy(Torch)),
       '2' => Some(InventoryCommand::Buy(Axe)),
       '3' => Some(InventoryCommand::Buy(Sword)),
+      '4' => Some(InventoryCommand::Buy(Food)),
       '5' => Some(InventoryCommand::Buy(Amulet)),
+      '6' => Some(InventoryCommand::Buy(Armor)),
       _ => Some(InventoryCommand::Quit),
     }
   }
@@ -59,7 +63,9 @@ impl<'a> GameState<'a> {
               Torch => self.light = true,
               Axe => self.axe = true,
               Sword => self.sword = true,
+              Food => self.food += 1,
               Amulet => self.amulet = true,
+              Armor => self.suit = true,
             }
           }
           println!("");

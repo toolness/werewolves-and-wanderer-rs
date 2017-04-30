@@ -6,7 +6,9 @@ pub enum Item {
   Torch,
   Axe,
   Sword,
+  Food,
   Amulet,
+  Armor,
 }
 
 impl Item {
@@ -15,7 +17,9 @@ impl Item {
       Torch => 15,
       Axe => 10,
       Sword => 20,
+      Food => 2,
       Amulet => 30,
+      Armor => 50,
     }
   }
 
@@ -24,7 +28,9 @@ impl Item {
       Torch => "a flaming torch",
       Axe => "an axe",
       Sword => "a sword",
+      Food => "one unit of food",
       Amulet => "the magic amulet",
+      Armor => "a suit of armor",
     }
   }
 }
