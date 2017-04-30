@@ -1,4 +1,4 @@
-use game_map::{random_enum, RoomId};
+use game_map::{SizedEnum, RoomId};
 use direction::Direction;
 use game_state::{GameState, GameMode};
 use command::{CommandProcessor, HelpInfo};
@@ -90,7 +90,7 @@ impl<'a> GameState<'a> {
       );
       self.pause();
       loop {
-        let room_id = random_enum::<RoomId>();
+        let room_id = RoomId::random();
         if room_id != self.curr_room {
           self.curr_room = room_id;
           self.show_desc = true;

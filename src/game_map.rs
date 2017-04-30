@@ -22,8 +22,18 @@ const MAX_TREASURE_AMOUNT: u8 = 110;
 //
 // Ideally we could populate it automatically through a macro, but
 // for now we'll just implement it manually for all our enums.
-pub trait SizedEnum {
+pub trait SizedEnum : FromPrimitive {
   fn size() -> usize;
+
+  fn random() -> Self {
+    loop {
+      let r = random_i32(0, Self::size() as i32);
+      match Self::from_i32(r) {
+        Some(t) => { return t; },
+        None => {}
+      }
+    }
+  }
 }
 
 enum_from_primitive! {
@@ -94,7 +104,7 @@ impl<'a> GameMap<'a> {
   {
     for _ in 0..num_rooms {
       loop {
-        let room_id = random_enum::<RoomId>();
+        let room_id = RoomId::random();
         if room_id != Entrance && room_id != Exit {
           let room = self.room(room_id);
           if room.contents.is_none() {
@@ -111,7 +121,7 @@ impl<'a> GameMap<'a> {
   }
 
   fn allot_terror(&mut self) {
-    self.allot(NUM_ROOMS_WITH_TERROR, || Terror(random_enum::<MonsterId>()))
+    self.allot(NUM_ROOMS_WITH_TERROR, || Terror(MonsterId::random()))
   }
 
   fn allot_treasure(&mut self) {
@@ -284,16 +294,6 @@ impl<'a> GameMap<'a> {
     self.connect(Treasury, East, SmallRoom);
     self.connect(ChambermaidsBedroom, North, DressingChamber);
     self.connect(SmallRoom, North, Lift);
-  }
-}
-
-pub fn random_enum<T: FromPrimitive + SizedEnum>() -> T {
-  loop {
-    let r = random_i32(0, T::size() as i32);
-    match T::from_i32(r) {
-      Some(t) => { return t; },
-      None => {}
-    }
   }
 }
 
