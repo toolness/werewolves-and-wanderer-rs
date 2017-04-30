@@ -21,16 +21,20 @@ impl Item {
       Amulet => 30,
     }
   }
-}
 
-impl fmt::Display for Item {
-  fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-    write!(f, "{}", match *self {
+  pub fn as_str(&self) -> &'static str {
+    match *self {
       Torch => "a flaming torch",
       Axe => "an axe",
       Sword => "a sword",
       Amulet => "the magic amulet",
-    })
+    }
+  }
+}
+
+impl fmt::Display for Item {
+  fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+    write!(f, "{}", self.as_str())
   }
 }
 

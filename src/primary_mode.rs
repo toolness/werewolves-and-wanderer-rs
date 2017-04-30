@@ -2,6 +2,7 @@ use game_map::RoomId;
 use direction::Direction;
 use game_state::{GameState, GameMode};
 use command::{CommandProcessor, HelpInfo};
+use inventory::Item;
 use platform;
 use util;
 
@@ -66,9 +67,9 @@ impl<'a> GameState<'a> {
 
   fn get_item_names(&self) -> Vec<&str> {
     let mut items = Vec::new();
-    if self.axe { items.push("an axe") }
-    if self.sword { items.push("a sword") }
-    if self.amulet { items.push("the magic amulet") }
+    if self.axe { items.push(Item::Axe.as_str()) }
+    if self.sword { items.push(Item::Sword.as_str()) }
+    if self.amulet { items.push(Item::Amulet.as_str()) }
     items
   }
 
