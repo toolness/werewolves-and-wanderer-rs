@@ -136,7 +136,7 @@ impl<'a> GameState<'a> {
           platform::clear_screen();
           self.print_status_report();
           println!("");
-          if self.curr_room != RoomId::Entrance && !self.light {
+          if !self.can_player_see() {
             println!("It is too dark to see anything.");
           } else {
             let room = self.map.room(self.curr_room);
@@ -171,7 +171,17 @@ impl<'a> GameState<'a> {
         },
         Inventory => { self.set_mode(GameMode::Inventory) },
         PickUpTreasure => {
-          // TODO: Finish this.
+          if !self.can_player_see() {
+            println!("It's too dark to see any treasure here.");
+          } else if let Some(RoomContents::Treasure(amt)) =
+              self.map.room(self.curr_room).contents {
+            println!("You are now ${} richer.", amt);
+            self.wealth += amt as i32;
+            self.map.mut_room(self.curr_room).contents = None;
+            self.process_move();
+          } else {
+            println!("There is no treasure to pick up here.");
+          }
         },
         Look => { self.show_desc = true },
         EatFood => {

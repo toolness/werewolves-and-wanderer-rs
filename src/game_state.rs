@@ -57,6 +57,10 @@ impl<'a> GameState<'a> {
     }
   }
 
+  pub fn can_player_see(&self) -> bool {
+    self.curr_room == RoomId::Entrance || self.light
+  }
+
   pub fn set_mode(&mut self, mode: GameMode) {
     self.show_desc = true;
     self.curr_mode = mode;
