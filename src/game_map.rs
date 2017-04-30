@@ -2,13 +2,13 @@ use map;
 use room::Room;
 use platform::random_i32;
 use direction::Direction::*;
+use monsters::MonsterId;
 use sized_enum::SizedEnum;
 
 use self::RoomId::*;
 use self::RoomContents::*;
 
 const NUM_ROOMS: usize = 19;
-const NUM_MONSTERS: usize = 4;
 const NUM_ROOMS_WITH_TREASURE: usize = 4;
 const NUM_ROOMS_WITH_TERROR: usize = 4;
 const MIN_TREASURE_AMOUNT: u8 = 10;
@@ -41,20 +41,6 @@ pub enum RoomId {
 
 impl SizedEnum for RoomId {
   fn size() -> usize { NUM_ROOMS }
-}
-
-enum_from_primitive! {
-#[derive(Debug, Copy, Clone)]
-pub enum MonsterId {
-  Werewolf = 0,
-  Fleshgorger = 1,
-  Maldemer = 2,
-  Dragon = 3,
-}
-}
-
-impl SizedEnum for MonsterId {
-  fn size() -> usize { NUM_MONSTERS }
 }
 
 #[derive(Debug, Copy, Clone)]

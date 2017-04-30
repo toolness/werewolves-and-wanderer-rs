@@ -155,6 +155,10 @@ impl<'a> GameState<'a> {
               RoomContents::Terror(monster_id) => {
                 println!("\nDanger... There is a monster here....");
                 Self::pause();
+                println!("\nIt is a {}!", monster_id);
+                println!("\nThe danger level is {}!!",
+                         monster_id.ferocity_factor());
+                Self::pause();
                 // TODO: Finish this.
               },
             });
