@@ -115,6 +115,14 @@ impl<'a> GameState<'a> {
     }
   }
 
+  fn describe_room(&self) {
+    let room = self.map.room(self.curr_room);
+    platform::writeln_with_wrapping(room.description);
+    if let Some(RoomContents::Treasure(amount)) = room.contents {
+      println!("\nThere is treasure here worth ${}.", amount);
+    }
+  }
+
   pub fn tick_primary_mode(&mut self) {
     if self.show_desc {
       match self.curr_room {
@@ -146,22 +154,10 @@ impl<'a> GameState<'a> {
           if !self.can_player_see() {
             println!("It is too dark to see anything.");
           } else {
-            let room = self.map.room(self.curr_room);
-            platform::writeln_with_wrapping(room.description);
-            room.contents.map(|c| match c {
-              RoomContents::Treasure(amount) => {
-                println!("\nThere is treasure here worth ${}.", amount);
-              },
-              RoomContents::Terror(monster_id) => {
-                println!("\nDanger... There is a monster here....");
-                Self::pause();
-                println!("\nIt is a {}!", monster_id);
-                println!("\nThe danger level is {}!!",
-                         monster_id.ferocity_factor());
-                Self::pause();
-                // TODO: Finish this.
-              },
-            });
+            self.describe_room();
+            if self.maybe_start_combat() {
+              return;
+            }
           }
           println!("");
         }

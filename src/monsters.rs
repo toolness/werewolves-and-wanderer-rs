@@ -6,7 +6,7 @@ use self::MonsterId::*;
 const NUM_MONSTERS: usize = 4;
 
 enum_from_primitive! {
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, PartialEq, Copy, Clone)]
 pub enum MonsterId {
   Werewolf = 0,
   Fleshgorger = 1,

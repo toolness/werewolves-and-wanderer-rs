@@ -1,4 +1,5 @@
 use game_map::{RoomId, GameMap};
+use combat::CombatState;
 use platform;
 
 const PAUSE_MS: u64 = 2500;
@@ -15,6 +16,7 @@ pub enum GameMode {
   Primary,
   Inventory,
   EatFood,
+  Combat(CombatState),
   Finished,
 
   #[cfg(debug_assertions)]
@@ -189,6 +191,7 @@ impl<'a> GameState<'a> {
       GameMode::Primary => { self.tick_primary_mode() },
       GameMode::Inventory => { self.tick_inventory_mode() },
       GameMode::EatFood => { self.tick_eat_food_mode() },
+      GameMode::Combat(state) => { self.tick_combat_mode(&state) },
       GameMode::Finished => {},
 
       #[cfg(debug_assertions)]
