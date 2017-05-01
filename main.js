@@ -30,24 +30,15 @@
             _currentInput = typeof (val) === 'string' ? val.trim() : val;
         });
     }
-    function init_ugh_mobile_support() {
-        // If we ever detect that the inner height of the window is
-        // this ridiculously tiny, we're probably in a mobile browser
-        // with a virtual keyboard that takes up most of the screen.
-        var UGH_MOBILE_HEIGHT = 300;
-        var ughMobileInterval = setInterval(function () {
-            if (window.innerHeight <= UGH_MOBILE_HEIGHT) {
-                clearInterval(ughMobileInterval);
-                document.documentElement.classList.add('ugh-mobile');
-            }
-        }, 1000);
-    }
     function scroll_output() {
         // We want the very bottom of our input field (i.e., the
         // "virtual console cursor") to be at the bottom of the user's
         // viewport. This is particularly hard to do on iOS Safari, where
         // window.innerHeight doesn't account for the user's keyboard,
         // but at least this algorithm makes things slightly less horrible.
+        //
+        // TODO: After adding .ugh-ios support, not sure if we need
+        // such a complex algorithm anymore.
         var PADDING = 8;
         var rect = inputEl.getBoundingClientRect();
         var scrollY = typeof (window.scrollY) === 'number'
@@ -136,6 +127,11 @@
         }
         script.setAttribute('src', scriptName + suffix);
         document.body.appendChild(script);
-        init_ugh_mobile_support();
+        // See our CSS for .ugh-ios for details on why we're doing this.
+        var IS_IOS = /iPad|iPhone|iPod/.test(navigator.userAgent) &&
+            !('MSStream' in window);
+        if (IS_IOS) {
+            document.documentElement.classList.add('ugh-ios');
+        }
     });
 })();
