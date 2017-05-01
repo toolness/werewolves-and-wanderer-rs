@@ -72,25 +72,9 @@ interface Window {
   }
 
   function scroll_output() {
-    // We want the very bottom of our input field (i.e., the
-    // "virtual console cursor") to be at the bottom of the user's
-    // viewport. This is particularly hard to do on iOS Safari, where
-    // window.innerHeight doesn't account for the user's keyboard,
-    // but at least this algorithm makes things slightly less horrible.
-    //
-    // TODO: After adding .ugh-ios support, not sure if we need
-    // such a complex algorithm anymore.
-    const PADDING = 8;
-    const rect = inputEl.getBoundingClientRect();
-    const scrollY = typeof(window.scrollY) === 'number'
-                    ? window.scrollY
-                    : window.pageYOffset;
-    const bottom = scrollY + rect.bottom + PADDING;
-    const scrollTop = Math.max(bottom - window.innerHeight, 0);
-
     // Different browsers use different elements for scrolling. :(
     [document.documentElement, document.body].forEach(el => {
-      el.scrollTop = scrollTop;
+      el.scrollTop = el.scrollHeight;
     });
   }
 
