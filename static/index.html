@@ -6,24 +6,31 @@
   box-sizing: border-box;
 }
 
-/* If we manage to detect that we're on a mobile browser with a
-   massive virtual keyboard, we've got problems. We'll add the
-   .ugh-mobile class to the page to make things a bit less
-   horrible for the user, primarily by sticking everything to
-   the bottom of the page instead of the top. The downside is
-   that we lose the scrollback buffer but this is better than
-   the alternative. */
-html.ugh-mobile, html.ugh-mobile body {
+/* Safari on iOS has an incredibly annoying feature where
+   it obscures part of the window with its virtual keyboard,
+   but the underlying JS has no way of telling whether its
+   content is being obscured. This confounds our auto-scroll
+   functionality.
+
+   (I've verified that this isn't an issue on other mobile browsers,
+   such as Firefox and Chrome for Android.)
+
+   To get around this, we'll add the .ugh-ios class to the page
+   to make things a bit less horrible for the user, primarily by
+   sticking everything to the bottom of the page instead of the top.
+   The downside is that we lose the scrollback buffer but this is
+   better than the alternative. */
+html.ugh-ios, html.ugh-ios body {
   height: 100%;
 }
 
-html.ugh-mobile body {
+html.ugh-ios body {
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
 }
 
-html.ugh-mobile a.github {
+html.ugh-ios a.github {
   top: 8px;
   bottom: auto;
 }
