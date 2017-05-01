@@ -1,18 +1,12 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, height=device-height, initial-scale=1">
 <style>
 * {
   box-sizing: border-box;
 }
 
-html, body {
-  height: 100%;
-}
-
 body {
-  display: flex;
-  flex-direction: column;
   margin: 0;
   padding: 8px 0;
   font-family: Consolas, Monaco, monospace;
@@ -45,6 +39,18 @@ body, label, input {
   align-items: center;
 }
 
+/* Blerg, we're only using @supports here to exclude IE11, which
+   seems to have issues with this @media rule that cause it to
+   hide the text field entirely. */
+@supports (display: flex) {
+  @media (max-width: 640px) {
+    #form {
+      flex-direction: column;
+      align-items: stretch;
+    }
+  }
+}
+
 #prompt {
   white-space: pre;
 }
@@ -52,6 +58,8 @@ body, label, input {
 label, input {
   font-family: inherit;
   font-size: inherit;
+  padding: 0;
+  margin: 0;
 }
 
 #input {
