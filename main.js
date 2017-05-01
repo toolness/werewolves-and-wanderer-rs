@@ -30,6 +30,18 @@
             _currentInput = typeof (val) === 'string' ? val.trim() : val;
         });
     }
+    function init_ugh_mobile_support() {
+        // If we ever detect that the inner height of the window is
+        // this ridiculously tiny, we're probably in a mobile browser
+        // with a virtual keyboard that takes up most of the screen.
+        var UGH_MOBILE_HEIGHT = 300;
+        var ughMobileInterval = setInterval(function () {
+            if (window.innerHeight <= UGH_MOBILE_HEIGHT) {
+                clearInterval(ughMobileInterval);
+                document.documentElement.classList.add('ugh-mobile');
+            }
+        }, 1000);
+    }
     function scroll_output() {
         // We want the very bottom of our input field (i.e., the
         // "virtual console cursor") to be at the bottom of the user's
@@ -124,5 +136,6 @@
         }
         script.setAttribute('src', scriptName + suffix);
         document.body.appendChild(script);
+        init_ugh_mobile_support();
     });
 })();
