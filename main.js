@@ -1,5 +1,6 @@
 "use strict";
 (function () {
+    var a11yOutputEl = el_with_id('a11y-output');
     var outputEl = el_with_id('output');
     var promptEl = el_with_id('prompt');
     var inputEl = el_with_id('input');
@@ -56,6 +57,7 @@
         _currentPromise.then(function () {
             if (prompt !== _currentPrompt) {
                 promptEl.textContent = _currentPrompt = prompt;
+                a11yOutputEl.appendChild(document.createTextNode(prompt));
             }
         });
     };
@@ -83,6 +85,7 @@
             _currentPromise.then(function () {
                 var textNode = document.createTextNode(msg + '\n');
                 outputEl.appendChild(textNode);
+                a11yOutputEl.appendChild(textNode.cloneNode());
                 scroll_output();
             });
         }
@@ -96,7 +99,6 @@
         el.textContent = "" + _currentPrompt + inputEl.value;
         outputEl.appendChild(el);
         scroll_output();
-        window.set_prompt("");
         set_input(inputEl.value);
         inputEl.value = "";
     });

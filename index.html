@@ -79,12 +79,26 @@ a.github:focus {
 a.github img {
   width: 2em;
 }
+
+/* http://webaim.org/techniques/css/invisiblecontent/ */
+.sr-only {
+  position: absolute;
+  left: -10000px;
+  top: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
 </style>
 <title>Werewolves and Wanderer</title>
 <body>
-<div id="output-wrapper"><div id="output" role="log" aria-live="polite">Loading&hellip;<noscript>Alas, you need JavaScript enabled to play this game.</noscript></div></div>
-<div id="form-wrapper"><form id="form"><label id="prompt" for="input" aria-live="assertive"></label><input id="input" autofocus autocomplete="off"></form></div>
+<div id="output-wrapper"><div id="output" aria-hidden="true">Loading&hellip;<noscript>Alas, you need JavaScript enabled to play this game.</noscript></div></div>
+<div id="form-wrapper"><form id="form"><label id="prompt" for="input"></label><input id="input" autofocus autocomplete="off"></form></div>
 <a href="https://github.com/toolness/werewolves-and-wanderer-rs#readme" class="github" target="_blank"><img src="GitHub-Mark-Light-120px-plus.png" alt="Learn more about this project on GitHub"></a>
+<div id="a11y-output" role="log" aria-live="polite" class="sr-only">
+  Loading&hellip;
+  <noscript>Alas, you need JavaScript enabled to play this game.</noscript>
+</div>
 <script>
 if (!('Promise' in window)) {
   document.write('<script src="promise.js"></' + 'script>');
