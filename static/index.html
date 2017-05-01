@@ -6,6 +6,28 @@
   box-sizing: border-box;
 }
 
+/* If we manage to detect that we're on a mobile browser with a
+   massive virtual keyboard, we've got problems. We'll add the
+   .ugh-mobile class to the page to make things a bit less
+   horrible for the user, primarily by sticking everything to
+   the bottom of the page instead of the top. The downside is
+   that we lose the scrollback buffer but this is better than
+   the alternative. */
+html.ugh-mobile, html.ugh-mobile body {
+  height: 100%;
+}
+
+html.ugh-mobile body {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+html.ugh-mobile a.github {
+  top: 8px;
+  bottom: auto;
+}
+
 body {
   margin: 0;
   padding: 8px 0;
