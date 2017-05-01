@@ -2,7 +2,8 @@ This is an implementation of _Werewolves and Wanderer_, the first
 project in Tim Hartnell's [Creating Adventure Games on Your Computer][cagyc],
 in Rust.
 
-You can [try it in your browser][play].
+You can [try it in your browser][play]. It should work on browsers
+at least as old as IE11, as well as a variety of screen readers.
 
 Alternatively, it can also be run as a command-line program.
 

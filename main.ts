@@ -34,6 +34,7 @@ interface Window {
 }
 
 (() => {
+  const a11yOutputEl = el_with_id('a11y-output');
   const outputEl = el_with_id('output');
   const promptEl = el_with_id('prompt');
   const inputEl = el_with_id('input');
@@ -100,6 +101,7 @@ interface Window {
     _currentPromise.then(() => {
       if (prompt !== _currentPrompt) {
         promptEl.textContent = _currentPrompt = prompt;
+        a11yOutputEl.appendChild(document.createTextNode(prompt));
       }
     });
   };
@@ -131,6 +133,7 @@ interface Window {
       _currentPromise.then(() => {
         const textNode = document.createTextNode(msg + '\n');
         outputEl.appendChild(textNode);
+        a11yOutputEl.appendChild(textNode.cloneNode());
         scroll_output();
       });
     }
@@ -148,7 +151,6 @@ interface Window {
     outputEl.appendChild(el);
     scroll_output();
 
-    window.set_prompt("");
     set_input(inputEl.value);
     inputEl.value = "";
   });
