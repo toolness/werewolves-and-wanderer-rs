@@ -1969,7 +1969,7 @@ var ASM_CONSTS = [];
 
 STATIC_BASE = 1024;
 
-STATICTOP = STATIC_BASE + 26528;
+STATICTOP = STATIC_BASE + 26592;
   /* global initializers */  __ATINIT__.push();
   
 
@@ -1978,7 +1978,7 @@ memoryInitializer = Module["wasmJSMethod"].indexOf("asmjs") >= 0 || Module["wasm
 
 
 
-var STATIC_BUMP = 26528;
+var STATIC_BUMP = 26592;
 Module["STATIC_BASE"] = STATIC_BASE;
 Module["STATIC_BUMP"] = STATIC_BUMP;
 
