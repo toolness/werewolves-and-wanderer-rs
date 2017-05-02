@@ -60,6 +60,21 @@ enter it.
   That said, I did go a bit overboard with some abstractions,
   so there's a bit of variety.
 
+* Some of the "bugs" in the program are intentional features
+  from the original BASIC implementation. For example, the
+  chapter on [Interpreting Your Commands][chapter 9] states:
+
+  > You can enter the full word (such as NORTH) or just the
+  > first letter. As you can see, the last part of line 460
+  > cuts the input down to a single letter anyway, so you may
+  > as well just enter the first letter of your command.
+
+  This actually results in lots of unexpected behavior, as
+  e.g. "eat" causes the player to go east rather than consume
+  a unit of food.
+
+  I found this funny so I left it in.
+
 * Because of the fact that the web version can't block the UI
   thread to wait for user input--well, at least not in a
   user-friendly way--the program's source code is actually capable
@@ -85,3 +100,4 @@ enter it.
 [Emscripten]: http://emscripten.org/
 [NodeJS]: http://nodejs.org/
 [`futures-rs`]: https://github.com/alexcrichton/futures-rs
+[chapter 9]: http://www.atariarchives.org/adventure/chapter9.php
