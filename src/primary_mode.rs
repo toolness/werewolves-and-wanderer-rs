@@ -159,6 +159,10 @@ impl<'a> GameState<'a> {
               return;
             }
           }
+          if !self.shown_hint {
+            println!("\n(You can press 'h' for help at any time.)");
+            self.shown_hint = true;
+          }
           println!("");
         }
       }

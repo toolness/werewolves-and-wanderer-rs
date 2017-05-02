@@ -26,6 +26,7 @@ pub enum GameMode {
 pub struct GameState<'a> {
   pub map: &'a mut GameMap<'a>,
   pub curr_mode: GameMode,
+  pub shown_hint: bool,
   pub player_name: String,
   pub strength: i32,
   pub wealth: i32,
@@ -48,6 +49,7 @@ impl<'a> GameState<'a> {
       player_name: String::from(""),
       curr_mode: GameMode::AskName,
       curr_room: RoomId::Entrance,
+      shown_hint: false,
       strength: INITIAL_STRENGTH,
       wealth: INITIAL_WEALTH,
       food: 0,
