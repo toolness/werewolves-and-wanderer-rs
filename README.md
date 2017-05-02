@@ -51,6 +51,15 @@ enter it.
 
 ## Implementation notes
 
+* The architecture of the program (very) loosely follows that
+  of the original BASIC program from CAGYC. In particular, this
+  means that the game world isn't particularly object-oriented.
+  It feels a bit baroque in some ways. I don't think I used
+  dynamic dispatch at all.
+
+  That said, I did go a bit overboard with some abstractions,
+  so there's a bit of variety.
+
 * Because of the fact that the web version can't block the UI
   thread to wait for user input--well, at least not in a
   user-friendly way--the program's source code is actually capable
