@@ -19,7 +19,7 @@ pub struct CombatState {
   ff: i32,
 }
 
-impl<'a> GameState<'a> {
+impl GameState {
   pub fn maybe_start_combat(&mut self) -> bool {
     if let Some(RoomContents::Terror(monster_id)) =
         self.map.room(self.curr_room).contents {

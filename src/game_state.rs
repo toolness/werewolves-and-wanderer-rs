@@ -23,8 +23,8 @@ pub enum GameMode {
   Debug,
 }
 
-pub struct GameState<'a> {
-  pub map: &'a mut GameMap,
+pub struct GameState {
+  pub map: GameMap,
   pub curr_mode: GameMode,
   pub shown_hint: bool,
   pub player_name: String,
@@ -42,10 +42,10 @@ pub struct GameState<'a> {
   pub show_desc: bool,
 }
 
-impl<'a> GameState<'a> {
-  pub fn new(map: &'a mut GameMap) -> Self {
+impl GameState {
+  pub fn new() -> Self {
     Self {
-      map: map,
+      map: GameMap::new(),
       player_name: String::from(""),
       curr_mode: GameMode::AskName,
       curr_room: RoomId::Entrance,

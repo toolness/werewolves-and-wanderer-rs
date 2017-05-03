@@ -4,7 +4,7 @@ use enum_primitive::FromPrimitive;
 use game_map::{RoomId};
 use game_state::{GameState, GameMode};
 
-impl<'a> GameState<'a> {
+impl GameState {
   fn print_help(&self) {
     println!(
       "Debug mode commands:\n\n\

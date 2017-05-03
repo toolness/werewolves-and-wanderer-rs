@@ -41,7 +41,7 @@ impl CommandProcessor<InventoryCommand> for InventoryCommand {
   }
 }
 
-impl<'a> GameState<'a> {
+impl GameState {
   pub fn tick_inventory_mode(&mut self) {
     if self.show_desc {
       println!("Provisions & inventory\n");

@@ -67,7 +67,7 @@ impl CommandProcessor<PrimaryCommand> for PrimaryCommand {
   }
 }
 
-impl<'a> GameState<'a> {
+impl GameState {
   fn print_status_report(&self) {
     if self.strength <= MIN_STRENGTH_WARNING {
       println!("Warning, {}! Your strength is running low.\n",

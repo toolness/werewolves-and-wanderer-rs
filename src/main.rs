@@ -1,18 +1,15 @@
 extern crate ww;
 
 use ww::platform;
-use ww::game_map::GameMap;
 use ww::game_state::GameState;
 
 fn main() {
   #[cfg(target_os = "windows")]
   platform::windows::enable_ansi();
 
-  let mut map = GameMap::new();
+  let mut state = GameState::new();
 
-  map.populate();
-
-  let mut state = GameState::new(&mut map);
+  state.map.populate();
 
   platform::clear_screen();
 
