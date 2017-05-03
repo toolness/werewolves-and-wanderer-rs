@@ -1,18 +1,19 @@
 use room::Room;
 use direction::Direction;
+use sized_enum::SizedEnum;
 
 pub trait MapRoomId {
   fn room_id(self) -> usize;
 }
 
 #[derive(Debug)]
-pub struct Map<'a, T: 'a + Copy + MapRoomId, C: 'a + Copy> {
-  rooms: &'a mut [Room<T, C>]
+pub struct Map<T: Copy + MapRoomId + SizedEnum, C: Copy> {
+  rooms: Vec<Room<T, C>>
 }
 
-impl<'a, T: Copy + MapRoomId, C: Copy> Map<'a, T, C> {
-  pub fn new(rooms: &'a mut [Room<T, C>]) -> Self {
-    Self { rooms: rooms }
+impl<T: Copy + MapRoomId + SizedEnum, C: Copy> Map<T, C> {
+  pub fn new() -> Self {
+    Self { rooms: vec![Room::new(); T::size()] }
   }
 
   pub fn room(&self, r: T) -> &Room<T, C> {

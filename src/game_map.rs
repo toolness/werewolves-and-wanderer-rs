@@ -1,5 +1,4 @@
 use map;
-use room::Room;
 use platform::random_i32;
 use direction::Direction::*;
 use monsters::MonsterId;
@@ -49,13 +48,9 @@ pub enum RoomContents {
   Terror(MonsterId),
 }
 
-pub type GameMap<'a> = map::Map<'a, RoomId, RoomContents>;
+pub type GameMap = map::Map<RoomId, RoomContents>;
 
-impl<'a> GameMap<'a> {
-  pub fn create_rooms() -> [Room<RoomId, RoomContents>; NUM_ROOMS] {
-    [Room::new(); NUM_ROOMS]
-  }
-
+impl GameMap {
   pub fn populate(&mut self) {
     self.describe_and_connect();
     self.allot_treasure();

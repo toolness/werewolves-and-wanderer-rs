@@ -24,7 +24,7 @@ pub enum GameMode {
 }
 
 pub struct GameState<'a> {
-  pub map: &'a mut GameMap<'a>,
+  pub map: &'a mut GameMap,
   pub curr_mode: GameMode,
   pub shown_hint: bool,
   pub player_name: String,
@@ -43,7 +43,7 @@ pub struct GameState<'a> {
 }
 
 impl<'a> GameState<'a> {
-  pub fn new(map: &'a mut GameMap<'a>) -> Self {
+  pub fn new(map: &'a mut GameMap) -> Self {
     Self {
       map: map,
       player_name: String::from(""),

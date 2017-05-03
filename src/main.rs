@@ -8,8 +8,7 @@ fn main() {
   #[cfg(target_os = "windows")]
   platform::windows::enable_ansi();
 
-  let mut rooms = GameMap::create_rooms();
-  let mut map = GameMap::new(&mut rooms);
+  let mut map = GameMap::new();
 
   map.populate();
 
