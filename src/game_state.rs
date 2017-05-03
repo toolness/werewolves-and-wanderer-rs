@@ -1,3 +1,4 @@
+use std::rc::Rc;
 use game_map::{RoomId, GameMap};
 use combat::CombatState;
 use platform;
@@ -23,6 +24,12 @@ pub enum GameMode {
   Debug,
 }
 
+// We have our input callbacks have a GameState explicitly passed
+// into them instead of expecting 'self' to be captured into their
+// closure, because the latter leads to all kinds of lifetime
+// headaches.
+type InputCallback = Fn(&mut GameState, String);
+
 pub struct GameState {
   pub map: GameMap,
   pub curr_mode: GameMode,
@@ -40,6 +47,7 @@ pub struct GameState {
   pub light: bool,
   pub curr_room: RoomId,
   pub show_desc: bool,
+  input_callback: Option<Rc<InputCallback>>,
 }
 
 impl GameState {
@@ -61,7 +69,15 @@ impl GameState {
       suit: false,
       light: false,
       show_desc: true,
+      input_callback: None,
     }
+  }
+
+  pub fn read_input<F>(&mut self, cb: F)
+      where F: 'static + Fn(&mut GameState, String) {
+    assert!(self.input_callback.is_none(),
+            "Program must not already be waiting for input");
+    self.input_callback = Some(Rc::new(cb));
   }
 
   pub fn can_player_see(&self) -> bool {
@@ -131,13 +147,13 @@ impl GameState {
   fn tick_ask_name_mode(&mut self) {
     platform::show_prompt("What is your name, explorer? ");
 
-    platform::read_input().map(|input| {
+    self.read_input(|state, input| {
       if input.len() == 0 {
         println!("Pardon me?");
       } else {
         platform::hide_prompt();
-        self.player_name = input;
-        self.set_mode(GameMode::Primary);
+        state.player_name = input;
+        state.set_mode(GameMode::Primary);
       }
     });
   }
@@ -186,6 +202,26 @@ impl GameState {
   }
 
   pub fn tick(&mut self) {
+    let mut input_cb: Option<Rc<InputCallback>> = None;
+
+    if let Some(ref cb) = self.input_callback {
+      input_cb = Some(cb.clone());
+    }
+
+    if let Some(ref cb) = input_cb {
+      match platform::read_input() {
+        Some(input) => {
+          self.input_callback = None;
+          cb(self, input);
+        },
+        None => {
+          // We're probably running in the browser and there's currently
+          // no input to process, so just return.
+          return;
+        }
+      }
+    }
+
     if self.strength < 1 { self.die() }
 
     match self.curr_mode {
