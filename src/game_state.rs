@@ -167,7 +167,7 @@ impl GameState {
 
     platform::show_prompt("How many do you want to eat? ");
 
-    platform::read_input().map(|input| {
+    self.read_input(|state, input| {
       match input.parse::<i32>() {
         Ok(amount) => {
           if amount < 0 {
@@ -175,22 +175,22 @@ impl GameState {
           } else if amount == 0 {
             println!("Fine, be that way.");
             Self::pause();
-            self.set_mode(GameMode::Primary);
-          } else if amount > self.food {
-            self.accuse_player_of_cheating();
-            self.set_mode(GameMode::Primary);
+            state.set_mode(GameMode::Primary);
+          } else if amount > state.food {
+            state.accuse_player_of_cheating();
+            state.set_mode(GameMode::Primary);
           } else {
             platform::hide_prompt();
             println!("After some munching, you feel stronger.");
-            self.food -= amount;
-            self.strength += amount * STRENGTH_PER_FOOD;
-            self.set_mode(GameMode::Primary);
+            state.food -= amount;
+            state.strength += amount * STRENGTH_PER_FOOD;
+            state.set_mode(GameMode::Primary);
             Self::pause();
           }
         },
         Err(_) => {
           println!("That does not even look like a number, {}.",
-                   self.player_name);
+                   state.player_name);
         }
       }
     });
