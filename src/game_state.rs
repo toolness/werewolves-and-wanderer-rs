@@ -211,13 +211,15 @@ impl GameState {
           platform::hide_prompt();
           self.input_callback = None;
           cb(self, input);
+          // Note that at this point, self.input_callback may be
+          // set again, if the callback asked for input again.
         },
         None => {
           // We're probably running in the browser and there's currently
-          // no input to process, so just return.
-          return;
+          // no input to process.
         }
       }
+      return;
     }
 
     if self.strength < 1 { self.die() }
