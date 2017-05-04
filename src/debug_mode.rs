@@ -41,15 +41,15 @@ impl GameState {
   pub fn tick_debug_mode(&mut self) {
     platform::show_prompt("debug> ");
 
-    platform::read_input().map(|input| {
+    self.read_input(|state, input| {
       if input == "q" || input == "quit" {
-        self.set_mode(GameMode::Primary);
+        state.set_mode(GameMode::Primary);
       } else if input == "h" || input == "?" || input == "help" {
-        self.print_help();
+        state.print_help();
       } else if input == "rooms" {
-        self.list_rooms();
+        state.list_rooms();
       } else if input.starts_with("goto ") {
-        self.goto_room(input.split_whitespace().skip(1).collect());
+        state.goto_room(input.split_whitespace().skip(1).collect());
       } else if input.len() > 0 {
         println!("Unrecognized command. Type ? for help.");
       }
