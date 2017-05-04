@@ -1,4 +1,3 @@
-use std::rc::Rc;
 use game_map::{RoomId, GameMap};
 use combat::CombatState;
 use platform;
@@ -51,7 +50,7 @@ pub struct GameState {
   pub light: bool,
   pub curr_room: RoomId,
   pub show_desc: bool,
-  input_callback: Option<Rc<InputCallback>>,
+  input_callback: Option<Box<InputCallback>>,
 }
 
 impl GameState {
@@ -81,7 +80,7 @@ impl GameState {
       where F: 'static + Fn(&mut GameState, String) {
     assert!(self.input_callback.is_none(),
             "Program must not already be waiting for input");
-    self.input_callback = Some(Rc::new(cb));
+    self.input_callback = Some(Box::new(cb));
   }
 
   pub fn can_player_see(&self) -> bool {
@@ -203,17 +202,14 @@ impl GameState {
   }
 
   pub fn tick(&mut self) {
-    let mut input_cb: Option<Rc<InputCallback>> = None;
+    let mut input_cb: Option<Box<InputCallback>> = None;
 
-    if let Some(ref cb) = self.input_callback {
-      input_cb = Some(cb.clone());
-    }
+    ::std::mem::swap(&mut input_cb, &mut self.input_callback);
 
     if let Some(ref cb) = input_cb {
       match platform::read_input() {
         Some(input) => {
           platform::hide_prompt();
-          self.input_callback = None;
           cb(self, input);
           // Note that at this point, self.input_callback may be
           // set again, if the callback asked for input again.
