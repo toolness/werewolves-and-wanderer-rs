@@ -28,9 +28,8 @@ pub enum GameMode {
 // closure, because the latter leads to all kinds of lifetime
 // headaches.
 //
-// Note also that this should probably be a FnOnce rather than
-// an Fn, since it only gets called once, but that doing that
-// is hard right now: https://github.com/rust-lang/rust/issues/28796
+// Note also that this doesn't need to be a FnOnce, since it can
+// request that it be called again, e.g. if the user input was invalid.
 type InputCallback = Fn(&mut GameState, String);
 
 pub struct GameState {
@@ -51,6 +50,8 @@ pub struct GameState {
   pub curr_room: RoomId,
   pub show_desc: bool,
   input_callback: Option<Box<InputCallback>>,
+  last_input_prompt: String,
+  read_input_again: bool,
 }
 
 impl GameState {
@@ -73,12 +74,40 @@ impl GameState {
       light: false,
       show_desc: true,
       input_callback: None,
+      last_input_prompt: String::from(""),
+      read_input_again: false,
     }
+  }
+
+  pub fn show_prompt(&mut self, prompt: &str) {
+    self.last_input_prompt = String::from(prompt);
+    platform::show_prompt(prompt);
+  }
+
+  pub fn ask_again(&mut self) {
+    self.read_input_again = true;
+  }
+
+  pub fn ask_i32<F>(&mut self, question: &str, cb: F)
+      where F: 'static + Fn(&mut GameState, i32) {
+    self.show_prompt(question);
+    self.read_input(move |state, input| {
+      match input.parse::<i32>() {
+        Ok(amount) => {
+          cb(state, amount);
+        },
+        Err(_) => {
+          println!("That does not even look like a number, {}.",
+                   state.player_name);
+          state.ask_again();
+        }
+      }
+    });
   }
 
   pub fn ask<F>(&mut self, question: &str, cb: F)
       where F: 'static + Fn(&mut GameState, String) {
-    platform::show_prompt(question);
+    self.show_prompt(question);
     self.read_input(cb);
   }
 
@@ -86,6 +115,7 @@ impl GameState {
       where F: 'static + Fn(&mut GameState, String) {
     assert!(self.input_callback.is_none(),
             "Program must not already be waiting for input");
+    self.read_input_again = false;
     self.input_callback = Some(Box::new(cb));
   }
 
@@ -170,30 +200,23 @@ impl GameState {
       self.show_desc = false;
     }
 
-    self.ask("How many do you want to eat? ", |state, input| {
-      match input.parse::<i32>() {
-        Ok(amount) => {
-          if amount < 0 {
-            println!("GIVE ME A POSITIVE INTEGER.");
-          } else if amount == 0 {
-            println!("Fine, be that way.");
-            Self::pause();
-            state.set_mode(GameMode::Primary);
-          } else if amount > state.food {
-            state.accuse_player_of_cheating();
-            state.set_mode(GameMode::Primary);
-          } else {
-            println!("After some munching, you feel stronger.");
-            state.food -= amount;
-            state.strength += amount * STRENGTH_PER_FOOD;
-            state.set_mode(GameMode::Primary);
-            Self::pause();
-          }
-        },
-        Err(_) => {
-          println!("That does not even look like a number, {}.",
-                   state.player_name);
-        }
+    self.ask_i32("How many do you want to eat? ", |state, amount| {
+      if amount < 0 {
+        println!("GIVE ME A POSITIVE INTEGER.");
+        state.ask_again();
+      } else if amount == 0 {
+        println!("Fine, be that way.");
+        Self::pause();
+        state.set_mode(GameMode::Primary);
+      } else if amount > state.food {
+        state.accuse_player_of_cheating();
+        state.set_mode(GameMode::Primary);
+      } else {
+        println!("After some munching, you feel stronger.");
+        state.food -= amount;
+        state.strength += amount * STRENGTH_PER_FOOD;
+        state.set_mode(GameMode::Primary);
+        Self::pause();
       }
     });
   }
@@ -204,6 +227,7 @@ impl GameState {
   }
 
   pub fn tick(&mut self) {
+    let mut input_processed = false;
     let mut input_cb: Option<Box<InputCallback>> = None;
 
     ::std::mem::swap(&mut input_cb, &mut self.input_callback);
@@ -221,6 +245,19 @@ impl GameState {
           // no input to process.
         }
       }
+      input_processed = true;
+    }
+
+    if input_processed {
+      if self.read_input_again {
+        assert!(self.input_callback.is_none(),
+                "Program cannot ask to re-run last input callback \
+                 *and* run a new input callback simultaneously");
+        self.read_input_again = false;
+        self.input_callback = input_cb;
+        platform::show_prompt(self.last_input_prompt.as_str());
+      }
+
       return;
     }
 
