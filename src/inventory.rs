@@ -2,7 +2,6 @@ use game_state::{GameState, GameMode};
 use command::{CommandProcessor, HelpInfo};
 use items::Item;
 use items::Item::*;
-use platform;
 
 use self::InventoryCommand::*;
 
@@ -85,9 +84,7 @@ impl GameState {
       self.show_desc = false;
     }
 
-    platform::show_prompt("What do you want to buy? ");
-
-    self.read_input(|state, input| {
+    self.ask("What do you want to buy? ", |state, input| {
       if let Some(cmd) = InventoryCommand::get_from_input(input) {
         state.process_inventory_cmd(cmd);
       }

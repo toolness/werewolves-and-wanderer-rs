@@ -1,4 +1,3 @@
-use platform;
 use sized_enum::SizedEnum;
 use enum_primitive::FromPrimitive;
 use game_map::{RoomId};
@@ -39,9 +38,7 @@ impl GameState {
   }
 
   pub fn tick_debug_mode(&mut self) {
-    platform::show_prompt("debug> ");
-
-    self.read_input(|state, input| {
+    self.ask("debug> ", |state, input| {
       if input == "q" || input == "quit" {
         state.set_mode(GameMode::Primary);
       } else if input == "h" || input == "?" || input == "help" {

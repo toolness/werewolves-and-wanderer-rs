@@ -72,9 +72,8 @@ impl GameState {
   }
 
   fn tick_preparation_phase(&mut self, state: &CombatState) {
-    platform::show_prompt("Press enter to fight! ");
     let state = *state;
-    self.read_input(move |game_state, _| {
+    self.ask("Press enter to fight! ", move |game_state, _| {
       game_state.prepare();
       println!("\n");
       game_state.curr_mode = GameMode::Combat(CombatState {

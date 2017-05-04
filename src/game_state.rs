@@ -76,6 +76,12 @@ impl GameState {
     }
   }
 
+  pub fn ask<F>(&mut self, question: &str, cb: F)
+      where F: 'static + Fn(&mut GameState, String) {
+    platform::show_prompt(question);
+    self.read_input(cb);
+  }
+
   pub fn read_input<F>(&mut self, cb: F)
       where F: 'static + Fn(&mut GameState, String) {
     assert!(self.input_callback.is_none(),
@@ -147,9 +153,7 @@ impl GameState {
   }
 
   fn tick_ask_name_mode(&mut self) {
-    platform::show_prompt("What is your name, explorer? ");
-
-    self.read_input(|state, input| {
+    self.ask("What is your name, explorer? ", |state, input| {
       if input.len() == 0 {
         println!("Pardon me?");
       } else {
@@ -166,9 +170,7 @@ impl GameState {
       self.show_desc = false;
     }
 
-    platform::show_prompt("How many do you want to eat? ");
-
-    self.read_input(|state, input| {
+    self.ask("How many do you want to eat? ", |state, input| {
       match input.parse::<i32>() {
         Ok(amount) => {
           if amount < 0 {
