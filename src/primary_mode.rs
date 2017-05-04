@@ -210,7 +210,7 @@ impl GameState {
       self.show_desc = false;
     }
 
-    platform::show_prompt(PrimaryCommand::prompt());
+    platform::show_prompt("What do you want to do? ");
 
     self.read_input(|state, input| {
       if let Some(cmd) = PrimaryCommand::get_from_input(input) {

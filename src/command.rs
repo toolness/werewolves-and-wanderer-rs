@@ -21,8 +21,6 @@ pub trait CommandProcessor<T> {
 
   fn get_help() -> Vec<HelpInfo>;
 
-  fn prompt() -> &'static str { "What do you want to do? " }
-
   fn show_help() {
     for info in Self::get_help().iter() {
       println!("  {} - {}", info.key, info.desc);

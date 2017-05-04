@@ -12,8 +12,6 @@ pub enum InventoryCommand {
 }
 
 impl CommandProcessor<InventoryCommand> for InventoryCommand {
-  fn prompt() -> &'static str { "What do you want to buy? " }
-
   fn get_help() -> Vec<HelpInfo> {
     let buy = |item: Item| format!("buy {} (${})", item, item.price());
 
@@ -87,7 +85,7 @@ impl GameState {
       self.show_desc = false;
     }
 
-    platform::show_prompt(InventoryCommand::prompt());
+    platform::show_prompt("What do you want to buy? ");
 
     self.read_input(|state, input| {
       if let Some(cmd) = InventoryCommand::get_from_input(input) {
