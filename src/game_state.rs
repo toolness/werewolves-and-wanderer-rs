@@ -134,7 +134,6 @@ impl GameState {
   }
 
   pub fn pause() {
-    platform::hide_prompt();
     platform::sleep(PAUSE_MS);
   }
 
@@ -151,7 +150,6 @@ impl GameState {
       if input.len() == 0 {
         println!("Pardon me?");
       } else {
-        platform::hide_prompt();
         state.player_name = input;
         state.set_mode(GameMode::Primary);
       }
@@ -180,7 +178,6 @@ impl GameState {
             state.accuse_player_of_cheating();
             state.set_mode(GameMode::Primary);
           } else {
-            platform::hide_prompt();
             println!("After some munching, you feel stronger.");
             state.food -= amount;
             state.strength += amount * STRENGTH_PER_FOOD;
@@ -211,6 +208,7 @@ impl GameState {
     if let Some(ref cb) = input_cb {
       match platform::read_input() {
         Some(input) => {
+          platform::hide_prompt();
           self.input_callback = None;
           cb(self, input);
         },

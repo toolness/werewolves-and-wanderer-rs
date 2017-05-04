@@ -1,7 +1,5 @@
 use std::ascii::AsciiExt;
 
-use platform;
-
 pub struct HelpInfo {
   key: char,
   desc: String,
@@ -28,7 +26,6 @@ pub trait CommandProcessor<T> {
   }
 
   fn get_from_input(input: String) -> Option<T> {
-    platform::hide_prompt();
     match input.chars().next() {
       Some(k) => {
         let k = k.to_ascii_lowercase();
