@@ -123,6 +123,47 @@ impl GameState {
     }
   }
 
+  fn process_cmd(&mut self, cmd: PrimaryCommand) {
+    match cmd {
+      Go(dir) => {
+        if let Some(room) = self.map.room(self.curr_room).get_exit(dir) {
+          self.curr_room = room;
+          self.show_desc = true;
+          self.process_move();
+        } else {
+          println!("You can't go that way.");
+        }
+      },
+      Inventory => { self.set_mode(GameMode::Inventory) },
+      PickUpTreasure => {
+        if !self.can_player_see() {
+          println!("It's too dark to see any treasure here.");
+        } else if let Some(RoomContents::Treasure(amt)) =
+            self.map.room(self.curr_room).contents {
+          println!("You are now ${} richer.", amt);
+          self.wealth += amt as i32;
+          self.map.mut_room(self.curr_room).contents = None;
+          self.process_move();
+        } else {
+          println!("There is no treasure to pick up here.");
+        }
+      },
+      Look => { self.show_desc = true },
+      EatFood => {
+        if self.food == 0 {
+          println!("You have no food!");
+        } else {
+          self.set_mode(GameMode::EatFood);
+        }
+      },
+      MagicAmulet => { self.use_amulet() },
+      Quit => { self.finish_game() },
+
+      #[cfg(debug_assertions)]
+      Debug => { self.set_mode(GameMode::Debug) },
+    }
+  }
+
   pub fn tick_primary_mode(&mut self) {
     if self.show_desc {
       match self.curr_room {
@@ -169,45 +210,10 @@ impl GameState {
       self.show_desc = false;
     }
 
-    if let Some(cmd) = PrimaryCommand::get() {
-      match cmd {
-        Go(dir) => {
-          if let Some(room) = self.map.room(self.curr_room).get_exit(dir) {
-            self.curr_room = room;
-            self.show_desc = true;
-            self.process_move();
-          } else {
-            println!("You can't go that way.");
-          }
-        },
-        Inventory => { self.set_mode(GameMode::Inventory) },
-        PickUpTreasure => {
-          if !self.can_player_see() {
-            println!("It's too dark to see any treasure here.");
-          } else if let Some(RoomContents::Treasure(amt)) =
-              self.map.room(self.curr_room).contents {
-            println!("You are now ${} richer.", amt);
-            self.wealth += amt as i32;
-            self.map.mut_room(self.curr_room).contents = None;
-            self.process_move();
-          } else {
-            println!("There is no treasure to pick up here.");
-          }
-        },
-        Look => { self.show_desc = true },
-        EatFood => {
-          if self.food == 0 {
-            println!("You have no food!");
-          } else {
-            self.set_mode(GameMode::EatFood);
-          }
-        },
-        MagicAmulet => { self.use_amulet() },
-        Quit => { self.finish_game() },
-
-        #[cfg(debug_assertions)]
-        Debug => { self.set_mode(GameMode::Debug) },
-      }
-    };
+    self.read_input(|state, input| {
+      if let Some(cmd) = PrimaryCommand::get_from_input(input) {
+        state.process_cmd(cmd);
+      };
+    });
   }
 }
