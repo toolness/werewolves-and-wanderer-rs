@@ -48,13 +48,4 @@ pub trait CommandProcessor<T> {
     println!("I have no idea what you're talking about.");
     return None;
   }
-
-  fn get() -> Option<T> {
-    platform::show_prompt(Self::prompt());
-
-    match platform::read_input() {
-      Some(input) => Self::get_from_input(input),
-      None => None
-    }
-  }
 }
