@@ -28,6 +28,10 @@ pub enum GameMode {
 // into them instead of expecting 'self' to be captured into their
 // closure, because the latter leads to all kinds of lifetime
 // headaches.
+//
+// Note also that this should probably be a FnOnce rather than
+// an Fn, since it only gets called once, but that doing that
+// is hard right now: https://github.com/rust-lang/rust/issues/28796
 type InputCallback = Fn(&mut GameState, String);
 
 pub struct GameState {
