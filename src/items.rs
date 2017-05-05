@@ -2,6 +2,7 @@ use std::fmt;
 
 use self::Item::*;
 
+#[derive(PartialEq, Copy, Clone)]
 pub enum Item {
   Torch,
   Axe,
@@ -17,10 +18,14 @@ impl Item {
       Torch => 15,
       Axe => 10,
       Sword => 20,
-      Food => 2,
+      Food => 4,
       Amulet => 30,
       Armor => 50,
     }
+  }
+
+  pub fn can_own_many(&self) -> bool {
+    *self == Food
   }
 
   pub fn as_str(&self) -> &'static str {
@@ -28,7 +33,7 @@ impl Item {
       Torch => "a flaming torch",
       Axe => "an axe",
       Sword => "a sword",
-      Food => "one unit of food",
+      Food => "food",
       Amulet => "the magic amulet",
       Armor => "a suit of armor",
     }
