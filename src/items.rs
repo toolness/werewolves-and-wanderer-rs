@@ -17,7 +17,7 @@ impl Item {
       Torch => 15,
       Axe => 10,
       Sword => 20,
-      Food => 2,
+      Food => 4,
       Amulet => 30,
       Armor => 50,
     }
