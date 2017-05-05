@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/toolness/werewolves-and-wanderer-rs.svg?branch=master)](https://travis-ci.org/toolness/werewolves-and-wanderer-rs)
+
 This is an implementation of _Werewolves and Wanderer_, the first
 project in Tim Hartnell's [Creating Adventure Games on Your Computer][cagyc],
 in Rust.
