@@ -90,6 +90,10 @@ enter it.
   In the future I might try using something like [`futures-rs`][]
   instead.
 
+  **Update:** While `futures-rs` was a bit overwhelming for me,
+  I did manage to refactor things to make them (hopefully)
+  less confusing and cumbersome in [#1][].
+
 * When I originally started this project, I wanted it to work
   on bare metal setups that lacked a heap. I'm not sure *why* I
   wanted to do that, but I did, and eventually it became too
@@ -103,3 +107,4 @@ enter it.
 [NodeJS]: http://nodejs.org/
 [`futures-rs`]: https://github.com/alexcrichton/futures-rs
 [chapter 9]: http://www.atariarchives.org/adventure/chapter9.php
+[#1]: https://github.com/toolness/werewolves-and-wanderer-rs/pull/1
