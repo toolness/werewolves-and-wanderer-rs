@@ -50,6 +50,7 @@ pub struct GameState {
   pub curr_room: RoomId,
   pub show_desc: bool,
   input_callback: Option<Box<InputCallback>>,
+  is_processing_input: bool,
   last_input_prompt: String,
   read_input_again: bool,
 }
@@ -74,6 +75,7 @@ impl GameState {
       light: false,
       show_desc: true,
       input_callback: None,
+      is_processing_input: false,
       last_input_prompt: String::from(""),
       read_input_again: false,
     }
@@ -85,6 +87,8 @@ impl GameState {
   }
 
   pub fn ask_again(&mut self) {
+    assert_eq!(self.is_processing_input, true,
+               "This method must be called from an input callback");
     self.read_input_again = true;
   }
 
@@ -233,6 +237,7 @@ impl GameState {
     ::std::mem::swap(&mut input_cb, &mut self.input_callback);
 
     if let Some(ref cb) = input_cb {
+      self.is_processing_input = true;
       match platform::read_input() {
         Some(input) => {
           platform::hide_prompt();
@@ -245,6 +250,7 @@ impl GameState {
           // no input to process.
         }
       }
+      self.is_processing_input = false;
       input_processed = true;
     }
 
