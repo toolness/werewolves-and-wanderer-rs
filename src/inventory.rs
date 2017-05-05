@@ -12,7 +12,11 @@ pub enum InventoryCommand {
 
 impl CommandProcessor<InventoryCommand> for InventoryCommand {
   fn get_help() -> Vec<HelpInfo> {
-    let buy = |item: Item| format!("buy {} (${})", item, item.price());
+    let buy = |item: Item| {
+      format!("buy {} (${}{})",
+              item, item.price(),
+              if item.can_own_many() { " per unit" } else { "" })
+    };
 
     HelpInfo::list(vec![
       ('1', buy(Torch)),
@@ -40,35 +44,59 @@ impl CommandProcessor<InventoryCommand> for InventoryCommand {
 }
 
 impl GameState {
+  fn buy_quantity(&mut self, item: Item, quantity: i32) {
+    let price = item.price() * quantity;
+    if self.wealth < price {
+      self.accuse_player_of_cheating();
+    } else {
+      self.wealth -= price;
+      if item.can_own_many() {
+        println!("You bought {} unit{} of {}.",
+                 quantity, if quantity > 1 { "s" } else { "" }, item);
+      } else {
+        println!("You bought {}.", item);
+      }
+      self.print_wealth();
+      match item {
+        Torch => self.light = true,
+        Axe => self.axe = true,
+        Sword => self.sword = true,
+        Food => self.food += quantity,
+        Amulet => self.amulet = true,
+        Armor => self.suit = true,
+      }
+    }
+  }
+
+  fn buy(&mut self, item: Item) {
+    if item.can_own_many() {
+      self.ask_i32("How many units? ", move |state, amount| {
+        if amount <= 0 {
+          println!("Fine, don't buy any then.");
+        } else {
+          state.buy_quantity(item, amount);
+        }
+      });
+    } else {
+      self.buy_quantity(item, 1);
+    }
+  }
+
   fn process_inventory_cmd(&mut self, cmd: InventoryCommand) {
     match cmd {
       Buy(item) => {
-        let price = item.price();
-        if match item {
+        if !item.can_own_many() && match item {
           Torch => self.light,
           Axe => self.axe,
           Sword => self.sword,
-          Food => false,
           Amulet => self.amulet,
           Armor => self.suit,
+          _ => false,
         } {
-          println!("You already own {}.", item);
-        } else if self.wealth < price {
-          self.accuse_player_of_cheating();
+          println!("You already own {}.\n", item);
         } else {
-          self.wealth -= price;
-          println!("You bought {}.", item);
-          self.print_wealth();
-          match item {
-            Torch => self.light = true,
-            Axe => self.axe = true,
-            Sword => self.sword = true,
-            Food => self.food += 1,
-            Amulet => self.amulet = true,
-            Armor => self.suit = true,
-          }
+          self.buy(item);
         }
-        println!("");
       },
       Leave => { self.set_mode(GameMode::Primary) },
     }
