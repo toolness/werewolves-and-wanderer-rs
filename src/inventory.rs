@@ -11,8 +11,6 @@ pub enum InventoryCommand {
 }
 
 impl CommandProcessor<InventoryCommand> for InventoryCommand {
-  fn prompt() -> &'static str { "What do you want to buy? " }
-
   fn get_help() -> Vec<HelpInfo> {
     let buy = |item: Item| format!("buy {} (${})", item, item.price());
 
@@ -42,6 +40,40 @@ impl CommandProcessor<InventoryCommand> for InventoryCommand {
 }
 
 impl GameState {
+  fn process_inventory_cmd(&mut self, cmd: InventoryCommand) {
+    match cmd {
+      Buy(item) => {
+        let price = item.price();
+        if match item {
+          Torch => self.light,
+          Axe => self.axe,
+          Sword => self.sword,
+          Food => false,
+          Amulet => self.amulet,
+          Armor => self.suit,
+        } {
+          println!("You already own {}.", item);
+        } else if self.wealth < price {
+          self.accuse_player_of_cheating();
+        } else {
+          self.wealth -= price;
+          println!("You bought {}.", item);
+          self.print_wealth();
+          match item {
+            Torch => self.light = true,
+            Axe => self.axe = true,
+            Sword => self.sword = true,
+            Food => self.food += 1,
+            Amulet => self.amulet = true,
+            Armor => self.suit = true,
+          }
+        }
+        println!("");
+      },
+      Leave => { self.set_mode(GameMode::Primary) },
+    }
+  }
+
   pub fn tick_inventory_mode(&mut self) {
     if self.show_desc {
       println!("Provisions & inventory\n");
@@ -52,38 +84,10 @@ impl GameState {
       self.show_desc = false;
     }
 
-    if let Some(cmd) = InventoryCommand::get() {
-      match cmd {
-        Buy(item) => {
-          let price = item.price();
-          if match item {
-            Torch => self.light,
-            Axe => self.axe,
-            Sword => self.sword,
-            Food => false,
-            Amulet => self.amulet,
-            Armor => self.suit,
-          } {
-            println!("You already own {}.", item);
-          } else if self.wealth < price {
-            self.accuse_player_of_cheating();
-          } else {
-            self.wealth -= price;
-            println!("You bought {}.", item);
-            self.print_wealth();
-            match item {
-              Torch => self.light = true,
-              Axe => self.axe = true,
-              Sword => self.sword = true,
-              Food => self.food += 1,
-              Amulet => self.amulet = true,
-              Armor => self.suit = true,
-            }
-          }
-          println!("");
-        },
-        Leave => { self.set_mode(GameMode::Primary) },
+    self.ask("What do you want to buy? ", |state, input| {
+      if let Some(cmd) = InventoryCommand::get_from_input(input) {
+        state.process_inventory_cmd(cmd);
       }
-    }
+    });
   }
 }

@@ -23,6 +23,15 @@ pub enum GameMode {
   Debug,
 }
 
+// We have our input callbacks have a GameState explicitly passed
+// into them instead of expecting 'self' to be captured into their
+// closure, because the latter leads to all kinds of lifetime
+// headaches.
+//
+// Note also that this doesn't need to be a FnOnce, since it can
+// request that it be called again, e.g. if the user input was invalid.
+type InputCallback = Fn(&mut GameState, String);
+
 pub struct GameState {
   pub map: GameMap,
   pub curr_mode: GameMode,
@@ -40,6 +49,10 @@ pub struct GameState {
   pub light: bool,
   pub curr_room: RoomId,
   pub show_desc: bool,
+  input_callback: Option<Box<InputCallback>>,
+  is_processing_input: bool,
+  last_input_prompt: String,
+  read_input_again: bool,
 }
 
 impl GameState {
@@ -61,7 +74,53 @@ impl GameState {
       suit: false,
       light: false,
       show_desc: true,
+      input_callback: None,
+      is_processing_input: false,
+      last_input_prompt: String::from(""),
+      read_input_again: false,
     }
+  }
+
+  pub fn show_prompt(&mut self, prompt: &str) {
+    self.last_input_prompt = String::from(prompt);
+    platform::show_prompt(prompt);
+  }
+
+  pub fn ask_again(&mut self) {
+    assert_eq!(self.is_processing_input, true,
+               "This method must be called from an input callback");
+    self.read_input_again = true;
+  }
+
+  pub fn ask_i32<F>(&mut self, question: &str, cb: F)
+      where F: 'static + Fn(&mut GameState, i32) {
+    self.show_prompt(question);
+    self.read_input(move |state, input| {
+      match input.parse::<i32>() {
+        Ok(amount) => {
+          cb(state, amount);
+        },
+        Err(_) => {
+          println!("That does not even look like a number, {}.",
+                   state.player_name);
+          state.ask_again();
+        }
+      }
+    });
+  }
+
+  pub fn ask<F>(&mut self, question: &str, cb: F)
+      where F: 'static + Fn(&mut GameState, String) {
+    self.show_prompt(question);
+    self.read_input(cb);
+  }
+
+  pub fn read_input<F>(&mut self, cb: F)
+      where F: 'static + Fn(&mut GameState, String) {
+    assert!(self.input_callback.is_none(),
+            "Program must not already be waiting for input");
+    self.read_input_again = false;
+    self.input_callback = Some(Box::new(cb));
   }
 
   pub fn can_player_see(&self) -> bool {
@@ -118,7 +177,6 @@ impl GameState {
   }
 
   pub fn pause() {
-    platform::hide_prompt();
     platform::sleep(PAUSE_MS);
   }
 
@@ -129,15 +187,12 @@ impl GameState {
   }
 
   fn tick_ask_name_mode(&mut self) {
-    platform::show_prompt("What is your name, explorer? ");
-
-    platform::read_input().map(|input| {
+    self.ask("What is your name, explorer? ", |state, input| {
       if input.len() == 0 {
         println!("Pardon me?");
       } else {
-        platform::hide_prompt();
-        self.player_name = input;
-        self.set_mode(GameMode::Primary);
+        state.player_name = input;
+        state.set_mode(GameMode::Primary);
       }
     });
   }
@@ -149,33 +204,23 @@ impl GameState {
       self.show_desc = false;
     }
 
-    platform::show_prompt("How many do you want to eat? ");
-
-    platform::read_input().map(|input| {
-      match input.parse::<i32>() {
-        Ok(amount) => {
-          if amount < 0 {
-            println!("GIVE ME A POSITIVE INTEGER.");
-          } else if amount == 0 {
-            println!("Fine, be that way.");
-            Self::pause();
-            self.set_mode(GameMode::Primary);
-          } else if amount > self.food {
-            self.accuse_player_of_cheating();
-            self.set_mode(GameMode::Primary);
-          } else {
-            platform::hide_prompt();
-            println!("After some munching, you feel stronger.");
-            self.food -= amount;
-            self.strength += amount * STRENGTH_PER_FOOD;
-            self.set_mode(GameMode::Primary);
-            Self::pause();
-          }
-        },
-        Err(_) => {
-          println!("That does not even look like a number, {}.",
-                   self.player_name);
-        }
+    self.ask_i32("How many do you want to eat? ", |state, amount| {
+      if amount < 0 {
+        println!("GIVE ME A POSITIVE INTEGER.");
+        state.ask_again();
+      } else if amount == 0 {
+        println!("Fine, be that way.");
+        Self::pause();
+        state.set_mode(GameMode::Primary);
+      } else if amount > state.food {
+        state.accuse_player_of_cheating();
+        state.set_mode(GameMode::Primary);
+      } else {
+        println!("After some munching, you feel stronger.");
+        state.food -= amount;
+        state.strength += amount * STRENGTH_PER_FOOD;
+        state.set_mode(GameMode::Primary);
+        Self::pause();
       }
     });
   }
@@ -186,6 +231,42 @@ impl GameState {
   }
 
   pub fn tick(&mut self) {
+    let mut input_processed = false;
+    let mut input_cb: Option<Box<InputCallback>> = None;
+
+    ::std::mem::swap(&mut input_cb, &mut self.input_callback);
+
+    if let Some(ref cb) = input_cb {
+      self.is_processing_input = true;
+      match platform::read_input() {
+        Some(input) => {
+          platform::hide_prompt();
+          cb(self, input);
+          // Note that at this point, self.input_callback may be
+          // set again, if the callback asked for input again.
+        },
+        None => {
+          // We're probably running in the browser and there's currently
+          // no input to process.
+        }
+      }
+      self.is_processing_input = false;
+      input_processed = true;
+    }
+
+    if input_processed {
+      if self.read_input_again {
+        assert!(self.input_callback.is_none(),
+                "Program cannot ask to re-run last input callback \
+                 *and* run a new input callback simultaneously");
+        self.read_input_again = false;
+        self.input_callback = input_cb;
+        platform::show_prompt(self.last_input_prompt.as_str());
+      }
+
+      return;
+    }
+
     if self.strength < 1 { self.die() }
 
     match self.curr_mode {
