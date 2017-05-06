@@ -26,6 +26,9 @@ impl<T: Copy> CommandInfo<T> {
 
 pub trait CommandProcessor<T: Copy> {
   fn from_char(c: char) -> Option<T> {
+    // A HashMap here would obviously be more efficient, but
+    // since we're not going to be called very often, it's probably
+    // not that big a deal.
     for info in Self::get_command_info().iter() {
       if c == info.key { return Some(info.cmd); }
     }
