@@ -1,4 +1,4 @@
-use map::{RoomId, GameMap};
+use map::{RoomId, Map};
 use combat::CombatState;
 use inventory::Inventory;
 use items::Item::*;
@@ -35,7 +35,7 @@ pub enum GameMode {
 type InputCallback = Fn(&mut GameState, String);
 
 pub struct GameState {
-  pub map: GameMap,
+  pub map: Map,
   pub curr_mode: GameMode,
   pub shown_hint: bool,
   pub player_name: String,
@@ -55,7 +55,7 @@ pub struct GameState {
 impl GameState {
   pub fn new() -> Self {
     Self {
-      map: GameMap::new(),
+      map: Map::new(),
       player_name: String::from(""),
       curr_mode: GameMode::AskName,
       curr_room: RoomId::Entrance,

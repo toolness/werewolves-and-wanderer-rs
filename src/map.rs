@@ -48,11 +48,11 @@ pub enum RoomContents {
   Terror(MonsterId),
 }
 
-pub struct GameMap {
+pub struct Map {
   rooms: Vec<Room>,
 }
 
-impl GameMap {
+impl Map {
   pub fn new() -> Self {
     Self { rooms: vec![Room::new(); RoomId::size()] }
   }
