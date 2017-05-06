@@ -1,5 +1,5 @@
 use monsters::MonsterId;
-use game_map::RoomContents;
+use map::RoomContents;
 use game_state::{GameState, GameMode};
 use items::Item::*;
 use platform;

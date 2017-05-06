@@ -1,6 +1,6 @@
 use sized_enum::SizedEnum;
 use enum_primitive::FromPrimitive;
-use game_map::{RoomId};
+use map::RoomId;
 use game_state::{GameState, GameMode};
 
 impl GameState {

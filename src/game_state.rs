@@ -1,4 +1,4 @@
-use game_map::{RoomId, GameMap};
+use map::{RoomId, GameMap};
 use combat::CombatState;
 use inventory::Inventory;
 use items::Item::*;

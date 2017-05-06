@@ -3,7 +3,7 @@
 pub mod direction;
 pub mod command;
 pub mod platform;
-pub mod game_map;
+pub mod map;
 pub mod game_state;
 pub mod primary_mode;
 pub mod combat;
