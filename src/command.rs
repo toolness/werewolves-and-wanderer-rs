@@ -1,5 +1,15 @@
 use std::ascii::AsciiExt;
 
+macro_rules! command_processor {
+  ( $command_enum:path, $block:block ) => {
+    use command::CommandProcessor;
+
+    impl CommandProcessor<$command_enum> for $command_enum {
+      fn get_command_info() -> Vec<CommandInfo<$command_enum>> $block
+    }
+  }
+}
+
 pub struct CommandInfo<T: Copy> {
   key: char,
   desc: String,

@@ -2,7 +2,7 @@ use map::{RoomId, RoomContents};
 use sized_enum::SizedEnum;
 use direction::Direction;
 use game_state::{GameState, GameMode};
-use command::{CommandProcessor, CommandInfo};
+use command::CommandInfo;
 use items::Item::*;
 use platform;
 use util;
@@ -25,27 +25,25 @@ pub enum PrimaryCommand {
   Debug,
 }
 
-impl CommandProcessor<PrimaryCommand> for PrimaryCommand {
-  fn get_command_info() -> Vec<CommandInfo<PrimaryCommand>> {
-    vec![
-      CommandInfo::new('n', "go north", Go(Direction::North)),
-      CommandInfo::new('s', "go south", Go(Direction::South)),
-      CommandInfo::new('e', "go east", Go(Direction::East)),
-      CommandInfo::new('w', "go west", Go(Direction::West)),
-      CommandInfo::new('u', "go up", Go(Direction::Up)),
-      CommandInfo::new('d', "go down", Go(Direction::Down)),
-      CommandInfo::new('c', "consume food", EatFood),
-      CommandInfo::new('m', "use magic amulet (if equipped)", MagicAmulet),
-      CommandInfo::new('i', "inventory/buy provisions", Inventory),
-      CommandInfo::new('p', "pick up treasure", PickUpTreasure),
-      CommandInfo::new('l', "look around", Look),
-      CommandInfo::new('q', "quit", Quit),
+command_processor!(PrimaryCommand, {
+  vec![
+    CommandInfo::new('n', "go north", Go(Direction::North)),
+    CommandInfo::new('s', "go south", Go(Direction::South)),
+    CommandInfo::new('e', "go east", Go(Direction::East)),
+    CommandInfo::new('w', "go west", Go(Direction::West)),
+    CommandInfo::new('u', "go up", Go(Direction::Up)),
+    CommandInfo::new('d', "go down", Go(Direction::Down)),
+    CommandInfo::new('c', "consume food", EatFood),
+    CommandInfo::new('m', "use magic amulet (if equipped)", MagicAmulet),
+    CommandInfo::new('i', "inventory/buy provisions", Inventory),
+    CommandInfo::new('p', "pick up treasure", PickUpTreasure),
+    CommandInfo::new('l', "look around", Look),
+    CommandInfo::new('q', "quit", Quit),
 
-      #[cfg(debug_assertions)]
-      CommandInfo::new('`', "debug mode", Debug).hidden(),
-    ]
-  }
-}
+    #[cfg(debug_assertions)]
+    CommandInfo::new('`', "debug mode", Debug).hidden(),
+  ]
+});
 
 impl GameState {
   fn print_status_report(&self) {
