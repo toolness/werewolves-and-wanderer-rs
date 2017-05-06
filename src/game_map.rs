@@ -1,5 +1,5 @@
-use map;
 use platform::random_i32;
+use direction::{Direction, NUM_DIRECTIONS};
 use direction::Direction::*;
 use monsters::MonsterId;
 use sized_enum::SizedEnum;
@@ -48,9 +48,30 @@ pub enum RoomContents {
   Terror(MonsterId),
 }
 
-pub type GameMap = map::Map<RoomId, RoomContents>;
+pub struct GameMap {
+  rooms: Vec<Room>,
+}
 
 impl GameMap {
+  pub fn new() -> Self {
+    Self { rooms: vec![Room::new(); RoomId::size()] }
+  }
+
+  pub fn room(&self, r: RoomId) -> &Room {
+    &self.rooms[r as usize]
+  }
+
+  pub fn mut_room(&mut self, r: RoomId) -> &mut Room {
+    &mut self.rooms[r as usize]
+  }
+
+  pub fn connect(&mut self, from: RoomId, d: Direction,
+                 to: RoomId) -> &mut Self {
+    self.mut_room(from).set_exit(d, to);
+    self.mut_room(to).set_exit(d.opposite(), from);
+    self
+  }
+
   pub fn populate(&mut self) {
     self.describe_and_connect();
     self.allot_treasure();
@@ -255,9 +276,39 @@ fn random_treasure_amount() -> u8 {
   random_i32(MIN_TREASURE_AMOUNT as i32, MAX_TREASURE_AMOUNT as i32) as u8
 }
 
-// Ideally we'd actually just get rid of MapRoomId and add a constraint
-// to Map<T> requiring that T be type-castable as usize, but I don't
-// know how to do that, so...
-impl map::MapRoomId for RoomId {
-  fn room_id(self) -> usize { self as usize }
+#[derive(Debug, Copy, Clone)]
+pub struct Room {
+  exits: [Option<RoomId>; NUM_DIRECTIONS],
+  pub name: &'static str,
+  pub description: &'static str,
+  pub contents: Option<RoomContents>,
+}
+
+impl Room {
+  pub fn new() -> Self {
+    Self {
+      exits: [None; NUM_DIRECTIONS],
+      name: "",
+      description: "",
+      contents: None,
+    }
+  }
+
+  pub fn get_exit(self, d: Direction) -> Option<RoomId> {
+    self.exits[d as usize]
+  }
+
+  pub fn set_exit(&mut self, d: Direction, r: RoomId) -> &mut Self {
+    assert!(self.exits[d as usize].is_none());
+    self.exits[d as usize] = Some(r);
+    self
+  }
+
+  pub fn describe(&mut self, name: &'static str,
+                  desc: &'static str) -> &mut Self {
+    assert_eq!(self.name, "");
+    self.name = name;
+    self.description = desc;
+    self
+  }
 }
