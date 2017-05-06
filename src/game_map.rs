@@ -1,5 +1,5 @@
 use platform::random_i32;
-use direction::{Direction, NUM_DIRECTIONS};
+use direction::Direction;
 use direction::Direction::*;
 use monsters::MonsterId;
 use sized_enum::SizedEnum;
@@ -276,9 +276,9 @@ fn random_treasure_amount() -> u8 {
   random_i32(MIN_TREASURE_AMOUNT as i32, MAX_TREASURE_AMOUNT as i32) as u8
 }
 
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Clone)]
 pub struct Room {
-  exits: [Option<RoomId>; NUM_DIRECTIONS],
+  exits: Vec<Option<RoomId>>,
   pub name: &'static str,
   pub description: &'static str,
   pub contents: Option<RoomContents>,
@@ -287,14 +287,14 @@ pub struct Room {
 impl Room {
   pub fn new() -> Self {
     Self {
-      exits: [None; NUM_DIRECTIONS],
+      exits: vec![None; Direction::size()],
       name: "",
       description: "",
       contents: None,
     }
   }
 
-  pub fn get_exit(self, d: Direction) -> Option<RoomId> {
+  pub fn get_exit(&self, d: Direction) -> Option<RoomId> {
     self.exits[d as usize]
   }
 

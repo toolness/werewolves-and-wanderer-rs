@@ -1,7 +1,10 @@
-pub const NUM_DIRECTIONS: usize = 6;
+const NUM_DIRECTIONS: usize = 6;
+
+use sized_enum::SizedEnum;
 
 use self::Direction::*;
 
+enum_from_primitive! {
 #[derive(Debug, Copy, Clone)]
 pub enum Direction {
   North,
@@ -10,6 +13,7 @@ pub enum Direction {
   West,
   Up,
   Down,
+}
 }
 
 impl Direction {
@@ -23,4 +27,8 @@ impl Direction {
       Down => Up,
     }
   }
+}
+
+impl SizedEnum for Direction {
+  fn size() -> usize { NUM_DIRECTIONS }
 }
