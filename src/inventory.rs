@@ -2,8 +2,47 @@ use game_state::{GameState, GameMode};
 use command::{CommandProcessor, HelpInfo};
 use items::Item;
 use items::Item::*;
+use sized_enum::SizedEnum;
 
 use self::InventoryCommand::*;
+
+pub struct Inventory {
+  quantities: Vec<i32>,
+}
+
+impl Inventory {
+  pub fn new() -> Self {
+    Self { quantities: vec![0; Item::size()] }
+  }
+
+  pub fn owns(&self, item: Item) -> bool {
+    self.quantities[item as usize] > 0
+  }
+
+  pub fn get_quantity(&self, item: Item) -> i32 {
+    self.quantities[item as usize]
+  }
+
+  pub fn set_quantity(&mut self, item: Item, amount: i32) {
+    self.quantities[item as usize] = amount;
+  }
+
+  pub fn increase(&mut self, item: Item, amount: i32) {
+    self.quantities[item as usize] += amount;
+  }
+
+  pub fn decrease(&mut self, item: Item, amount: i32) {
+    self.quantities[item as usize] -= amount;
+  }
+
+  pub fn obtain(&mut self, item: Item) {
+    self.quantities[item as usize] = 1;
+  }
+
+  pub fn lose(&mut self, item: Item) {
+    self.quantities[item as usize] = 0;
+  }
+}
 
 pub enum InventoryCommand {
   Buy(Item),
@@ -51,20 +90,14 @@ impl GameState {
     } else {
       self.wealth -= price;
       if item.can_own_many() {
+        self.items.increase(item, quantity);
         println!("You bought {} unit{} of {}.",
                  quantity, if quantity > 1 { "s" } else { "" }, item);
       } else {
+        self.items.obtain(item);
         println!("You bought {}.", item);
       }
       self.print_wealth();
-      match item {
-        Torch => self.light = true,
-        Axe => self.axe = true,
-        Sword => self.sword = true,
-        Food => self.food += quantity,
-        Amulet => self.amulet = true,
-        Armor => self.suit = true,
-      }
     }
   }
 
@@ -85,14 +118,7 @@ impl GameState {
   fn process_inventory_cmd(&mut self, cmd: InventoryCommand) {
     match cmd {
       Buy(item) => {
-        if !item.can_own_many() && match item {
-          Torch => self.light,
-          Axe => self.axe,
-          Sword => self.sword,
-          Amulet => self.amulet,
-          Armor => self.suit,
-          _ => false,
-        } {
+        if !item.can_own_many() && self.items.owns(item) {
           println!("You already own {}.\n", item);
         } else {
           self.buy(item);

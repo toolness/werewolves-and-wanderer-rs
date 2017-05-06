@@ -1,5 +1,7 @@
 use game_map::{RoomId, GameMap};
 use combat::CombatState;
+use inventory::Inventory;
+use items::Item::*;
 use platform;
 
 const PAUSE_MS: u64 = 2500;
@@ -39,16 +41,11 @@ pub struct GameState {
   pub player_name: String,
   pub strength: i32,
   pub wealth: i32,
-  pub food: i32,
   pub tally: i32,
   pub monsters_killed: i32,
-  pub sword: bool,
-  pub amulet: bool,
-  pub axe: bool,
-  pub suit: bool,
-  pub light: bool,
   pub curr_room: RoomId,
   pub show_desc: bool,
+  pub items: Inventory,
   input_callback: Option<Box<InputCallback>>,
   is_processing_input: bool,
   last_input_prompt: String,
@@ -65,15 +62,10 @@ impl GameState {
       shown_hint: false,
       strength: INITIAL_STRENGTH,
       wealth: INITIAL_WEALTH,
-      food: 0,
       tally: 0,
       monsters_killed: 0,
-      sword: false,
-      amulet: false,
-      axe: false,
-      suit: false,
-      light: false,
       show_desc: true,
+      items: Inventory::new(),
       input_callback: None,
       is_processing_input: false,
       last_input_prompt: String::from(""),
@@ -124,7 +116,7 @@ impl GameState {
   }
 
   pub fn can_player_see(&self) -> bool {
-    self.curr_room == RoomId::Entrance || self.light
+    self.curr_room == RoomId::Entrance || self.items.owns(Torch)
   }
 
   pub fn set_mode(&mut self, mode: GameMode) {
@@ -142,15 +134,16 @@ impl GameState {
   }
 
   pub fn print_food(&self) {
+    let food = self.items.get_quantity(Food);
     println!("Your provisions sack holds {} unit{} of food.",
-             self.food, if self.food == 1 { "" } else { "s" });
+             food, if food == 1 { "" } else { "s" });
   }
 
   fn get_score(&self) -> i32 {
     3  * self.tally +
     5  * self.strength +
     2  * self.wealth +
-    1  * self.food +
+    1  * self.items.get_quantity(Food) +
     30 * self.monsters_killed
   }
 
@@ -167,12 +160,15 @@ impl GameState {
   pub fn accuse_player_of_cheating(&mut self) {
     println!("YOU HAVE TRIED TO CHEAT ME!");
     self.wealth = 0;
-    self.light = false;
-    self.axe = false;
-    self.sword = false;
-    self.food = self.food / CHEATING_FOOD_DIVISOR;
-    self.amulet = false;
-    self.suit = false;
+    self.items.lose(Torch);
+    self.items.lose(Axe);
+    self.items.lose(Sword);
+
+    let food = self.items.get_quantity(Food);
+    self.items.set_quantity(Food, food / CHEATING_FOOD_DIVISOR);
+
+    self.items.lose(Amulet);
+    self.items.lose(Armor);
     Self::pause();
   }
 
@@ -212,12 +208,12 @@ impl GameState {
         println!("Fine, be that way.");
         Self::pause();
         state.set_mode(GameMode::Primary);
-      } else if amount > state.food {
+      } else if amount > state.items.get_quantity(Food) {
         state.accuse_player_of_cheating();
         state.set_mode(GameMode::Primary);
       } else {
         println!("After some munching, you feel stronger.");
-        state.food -= amount;
+        state.items.decrease(Food, amount);
         state.strength += amount * STRENGTH_PER_FOOD;
         state.set_mode(GameMode::Primary);
         Self::pause();

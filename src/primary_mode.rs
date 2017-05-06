@@ -4,7 +4,7 @@ use direction::Direction;
 use game_state::{GameState, GameMode};
 use game_map::RoomContents;
 use command::{CommandProcessor, HelpInfo};
-use items::Item;
+use items::Item::*;
 use platform;
 use util;
 
@@ -75,8 +75,8 @@ impl GameState {
     }
     println!("{}, your strength is {}.", self.player_name, self.strength);
     self.print_wealth();
-    if self.food > 0 { self.print_food(); }
-    if self.suit {
+    if self.items.get_quantity(Food) > 0 { self.print_food(); }
+    if self.items.owns(Armor) {
       println!("You are wearing armor.");
     }
     let item_names = self.get_item_names();
@@ -88,14 +88,14 @@ impl GameState {
 
   fn get_item_names(&self) -> Vec<&str> {
     let mut items = Vec::new();
-    if self.axe { items.push(Item::Axe.as_str()) }
-    if self.sword { items.push(Item::Sword.as_str()) }
-    if self.amulet { items.push(Item::Amulet.as_str()) }
+    for &item in [Axe, Sword, Amulet].iter() {
+      if self.items.owns(item) { items.push(item.as_str()) }
+    }
     items
   }
 
   fn use_amulet(&mut self) {
-    if self.amulet {
+    if self.items.owns(Amulet) {
       platform::writeln_with_wrapping(
         "You invoke the magic amulet and are whisked \
          away to somewhere else..."
@@ -150,7 +150,7 @@ impl GameState {
       },
       Look => { self.show_desc = true },
       EatFood => {
-        if self.food == 0 {
+        if !self.items.owns(Food) {
           println!("You have no food!");
         } else {
           self.set_mode(GameMode::EatFood);

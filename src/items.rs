@@ -1,7 +1,12 @@
 use std::fmt;
 
+use sized_enum::SizedEnum;
+
 use self::Item::*;
 
+const NUM_ITEMS: usize = 6;
+
+enum_from_primitive! {
 #[derive(PartialEq, Copy, Clone)]
 pub enum Item {
   Torch,
@@ -10,6 +15,11 @@ pub enum Item {
   Food,
   Amulet,
   Armor,
+}
+}
+
+impl SizedEnum for Item {
+  fn size() -> usize { NUM_ITEMS }
 }
 
 impl Item {

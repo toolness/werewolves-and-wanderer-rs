@@ -1,6 +1,7 @@
 use monsters::MonsterId;
 use game_map::RoomContents;
 use game_state::{GameState, GameMode};
+use items::Item::*;
 use platform;
 
 use self::CombatPhase::*;
@@ -41,13 +42,15 @@ impl GameState {
 
   fn get_modified_ff(&self, base_ff: i32) -> i32 {
     let mut ff = base_ff;
+    let axe = self.items.owns(Axe);
+    let sword = self.items.owns(Sword);
 
-    if self.suit { ff = 3 * (ff / 4); }
-    if !self.axe && !self.sword {
+    if self.items.owns(Armor) { ff = 3 * (ff / 4); }
+    if !axe && !sword {
       ff + (ff / 5)
-    } else if self.axe && !self.sword {
+    } else if axe && !sword {
       4 * (ff / 5)
-    } else if self.sword && !self.axe {
+    } else if sword && !axe {
       3 * (ff / 4)
     } else {
       3 * (ff / 5)
@@ -55,15 +58,19 @@ impl GameState {
   }
 
   fn prepare(&self) {
-    if self.suit {
+    if self.items.owns(Armor) {
       println!("Your armor increases your chance of success.");
     }
-    if !self.axe && !self.sword {
+
+    let axe = self.items.owns(Axe);
+    let sword = self.items.owns(Sword);
+
+    if !axe && !sword {
       println!("You have no weapons.");
       println!("You must fight with bare hands.");
-    } else if self.axe && !self.sword {
+    } else if axe && !sword {
       println!("You have only an axe to fight with.");
-    } else if self.sword && !self.axe {
+    } else if sword && !axe {
       println!("You must fight with your sword.");
     } else {
       println!("You are dual-wielding a sword and axe like a boss.");
