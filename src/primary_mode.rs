@@ -2,7 +2,7 @@ use map::{RoomId, RoomContents};
 use sized_enum::SizedEnum;
 use direction::Direction;
 use game_state::{GameState, GameMode};
-use command::{CommandProcessor, HelpInfo};
+use command::{CommandProcessor, CommandInfo};
 use items::Item::*;
 use platform;
 use util;
@@ -11,7 +11,7 @@ use self::PrimaryCommand::*;
 
 const MIN_STRENGTH_WARNING: i32 = 10;
 
-#[derive(Debug)]
+#[derive(Debug, Copy, Clone)]
 pub enum PrimaryCommand {
   Go(Direction),
   Inventory,
@@ -26,43 +26,24 @@ pub enum PrimaryCommand {
 }
 
 impl CommandProcessor<PrimaryCommand> for PrimaryCommand {
-  fn get_help() -> Vec<HelpInfo> {
-    HelpInfo::list(vec![
-      ('n', "go north"),
-      ('s', "go south"),
-      ('e', "go east"),
-      ('w', "go west"),
-      ('u', "go up"),
-      ('d', "go down"),
-      ('c', "consume food"),
-      ('m', "use magic amulet (if equipped)"),
-      ('i', "inventory/buy provisions"),
-      ('p', "pick up treasure"),
-      ('l', "look around"),
-      ('q', "quit"),
-    ])
-  }
-
-  fn from_char(c: char) -> Option<PrimaryCommand> {
-    match c {
-      'n' => Some(Go(Direction::North)),
-      's' => Some(Go(Direction::South)),
-      'e' => Some(Go(Direction::East)),
-      'w' => Some(Go(Direction::West)),
-      'u' => Some(Go(Direction::Up)),
-      'd' => Some(Go(Direction::Down)),
-      'c' => Some(EatFood),
-      'm' => Some(MagicAmulet),
-      'i' => Some(Inventory),
-      'p' => Some(PickUpTreasure),
-      'l' => Some(Look),
-      'q' => Some(Quit),
+  fn get_command_info() -> Vec<CommandInfo<PrimaryCommand>> {
+    vec![
+      CommandInfo::new('n', "go north", Go(Direction::North)),
+      CommandInfo::new('s', "go south", Go(Direction::South)),
+      CommandInfo::new('e', "go east", Go(Direction::East)),
+      CommandInfo::new('w', "go west", Go(Direction::West)),
+      CommandInfo::new('u', "go up", Go(Direction::Up)),
+      CommandInfo::new('d', "go down", Go(Direction::Down)),
+      CommandInfo::new('c', "consume food", EatFood),
+      CommandInfo::new('m', "use magic amulet (if equipped)", MagicAmulet),
+      CommandInfo::new('i', "inventory/buy provisions", Inventory),
+      CommandInfo::new('p', "pick up treasure", PickUpTreasure),
+      CommandInfo::new('l', "look around", Look),
+      CommandInfo::new('q', "quit", Quit),
 
       #[cfg(debug_assertions)]
-      '`' => Some(Debug),
-
-      _ => None,
-    }
+      CommandInfo::new('`', "debug mode", Debug).hidden(),
+    ]
   }
 }
 

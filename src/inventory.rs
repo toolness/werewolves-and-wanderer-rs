@@ -1,5 +1,5 @@
 use game_state::{GameState, GameMode};
-use command::{CommandProcessor, HelpInfo};
+use command::{CommandProcessor, CommandInfo};
 use items::Item;
 use items::Item::*;
 use sized_enum::SizedEnum;
@@ -44,41 +44,29 @@ impl Inventory {
   }
 }
 
+#[derive(Copy, Clone)]
 pub enum InventoryCommand {
   Buy(Item),
   Leave,
 }
 
 impl CommandProcessor<InventoryCommand> for InventoryCommand {
-  fn get_help() -> Vec<HelpInfo> {
+  fn get_command_info() -> Vec<CommandInfo<InventoryCommand>> {
     let buy = |item: Item| {
       format!("buy {} (${}{})",
               item, item.price(),
               if item.can_own_many() { " per unit" } else { "" })
     };
 
-    HelpInfo::list(vec![
-      ('1', buy(Torch)),
-      ('2', buy(Axe)),
-      ('3', buy(Sword)),
-      ('4', buy(Food)),
-      ('5', buy(Amulet)),
-      ('6', buy(Armor)),
-      ('0', String::from("continue adventure")),
-    ])
-  }
-
-  fn from_char(c: char) -> Option<InventoryCommand> {
-    match c {
-      '1' => Some(Buy(Torch)),
-      '2' => Some(Buy(Axe)),
-      '3' => Some(Buy(Sword)),
-      '4' => Some(Buy(Food)),
-      '5' => Some(Buy(Amulet)),
-      '6' => Some(Buy(Armor)),
-      '0' | 'q' => Some(Leave),
-      _ => None,
-    }
+    vec![
+      CommandInfo::new('1', buy(Torch), Buy(Torch)),
+      CommandInfo::new('2', buy(Axe), Buy(Axe)),
+      CommandInfo::new('3', buy(Sword), Buy(Sword)),
+      CommandInfo::new('4', buy(Food), Buy(Food)),
+      CommandInfo::new('5', buy(Amulet), Buy(Amulet)),
+      CommandInfo::new('6', buy(Armor), Buy(Armor)),
+      CommandInfo::new('0', String::from("continue adventure"), Leave),
+    ]
   }
 }
 

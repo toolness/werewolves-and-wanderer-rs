@@ -1,26 +1,41 @@
 use std::ascii::AsciiExt;
 
-pub struct HelpInfo {
+pub struct CommandInfo<T: Copy> {
   key: char,
   desc: String,
+  cmd: T,
+  hidden: bool,
 }
 
-impl HelpInfo {
-  pub fn list<T: AsRef<str>>(v: Vec<(char, T)>) -> Vec<Self> {
-    v.into_iter().map(|(key, desc)| {
+impl<T: Copy> CommandInfo<T> {
+  pub fn new<S: AsRef<str>>(key: char, desc: S, cmd: T) -> Self {
+    Self {
+      key,
       // TODO: We might be making unnecessary copies of strings here.
-      Self {key: key, desc: String::from(desc.as_ref())}
-    }).collect()
+      desc: String::from(desc.as_ref()),
+      cmd,
+      hidden: false
+    }
+  }
+
+  pub fn hidden(mut self) -> Self {
+    self.hidden = true;
+    self
   }
 }
 
-pub trait CommandProcessor<T> {
-  fn from_char(c: char) -> Option<T>;
+pub trait CommandProcessor<T: Copy> {
+  fn from_char(c: char) -> Option<T> {
+    for info in Self::get_command_info().iter() {
+      if c == info.key { return Some(info.cmd); }
+    }
+    None
+  }
 
-  fn get_help() -> Vec<HelpInfo>;
+  fn get_command_info() -> Vec<CommandInfo<T>>;
 
   fn show_help() {
-    for info in Self::get_help().iter() {
+    for info in Self::get_command_info().iter().filter(|i| !i.hidden) {
       println!("  {} - {}", info.key, info.desc);
     }
   }
