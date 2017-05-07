@@ -26,24 +26,22 @@ pub enum PrimaryCommand {
 }
 
 command_processor!(PrimaryCommand, {
-  type Infos = Vec<CommandInfo<PrimaryCommand>>;
-  let mut info: Infos = Direction::iter().map(|dir| {
-    CommandInfo::new(dir.character(), format!("go {}", dir), Go(dir))
-  }).collect();
+  [
+    Direction::iter().map(|dir| {
+      CommandInfo::new(dir.character(), format!("go {}", dir), Go(dir))
+    }).collect(),
+    vec![
+      CommandInfo::new('c', "consume food", EatFood),
+      CommandInfo::new('m', "use magic amulet (if equipped)", MagicAmulet),
+      CommandInfo::new('i', "inventory/buy provisions", Inventory),
+      CommandInfo::new('p', "pick up treasure", PickUpTreasure),
+      CommandInfo::new('l', "look around", Look),
+      CommandInfo::new('q', "quit", Quit),
 
-  info.append(&mut vec![
-    CommandInfo::new('c', "consume food", EatFood),
-    CommandInfo::new('m', "use magic amulet (if equipped)", MagicAmulet),
-    CommandInfo::new('i', "inventory/buy provisions", Inventory),
-    CommandInfo::new('p', "pick up treasure", PickUpTreasure),
-    CommandInfo::new('l', "look around", Look),
-    CommandInfo::new('q', "quit", Quit),
-
-    #[cfg(debug_assertions)]
-    CommandInfo::new('`', "debug mode", Debug).hidden(),
-  ]);
-
-  info
+      #[cfg(debug_assertions)]
+      CommandInfo::new('`', "debug mode", Debug).hidden(),
+    ],
+  ].concat()
 });
 
 impl GameState {

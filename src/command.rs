@@ -10,6 +10,7 @@ macro_rules! command_processor {
   }
 }
 
+#[derive(Clone)]
 pub struct CommandInfo<T: Copy> {
   key: char,
   desc: String,
