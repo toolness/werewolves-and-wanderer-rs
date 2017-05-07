@@ -5,7 +5,7 @@ use game_state::{GameState, GameMode};
 
 impl GameState {
   fn print_help(&self) {
-    println!(
+    wrapln!(
       "Debug mode commands:\n\n\
 
        quit            - exit debug mode\n\
