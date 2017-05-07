@@ -238,6 +238,10 @@ impl GameState {
     }
   }
 
+  pub fn is_waiting_for_input(&self) -> bool {
+    self.input_callback.is_some()
+  }
+
   pub fn tick(&mut self) {
     let mut input_processed = false;
     let mut input_cb: Option<Box<InputCallback>> = None;

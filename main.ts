@@ -30,6 +30,16 @@ interface Window {
     // This is ultimately called by any Rust code that writes to
     // stdout.
     print: (msg: string) => void;
+
+    // This is an API provided by Emscripten to call into C functions.
+    // In this case, we'll be calling into a function defined in Rust,
+    // which tells the game to process input we've just made available
+    // to it. This increases responsiveness of the UI so the user
+    // doesn't have to wait around for the next "frame" to call the
+    // main loop callback. It also allows us to set our "FPS" to a
+    // very low value without affecting the responsiveness of the UI,
+    // which should hopefully help save battery life.
+    cwrap: (fn_name: 'game_state_tick', retval: null) => (() => void);
   };
 }
 
@@ -68,6 +78,8 @@ interface Window {
   function set_input(val: string | null) {
     _currentPromise.then(() => {
       _currentInput = typeof(val) === 'string' ? val.trim() : val;
+      let game_state_tick = window.Module.cwrap('game_state_tick', null);
+      game_state_tick();
     });
   }
 
@@ -137,7 +149,15 @@ interface Window {
         a11yOutputEl.appendChild(textNode.cloneNode());
         scroll_output();
       });
-    }
+    },
+
+    // This is a placeholder implementation that will be filled out
+    // once Emscripten loads. We're partly leaving it here to
+    // appease TypeScript, but also to provide a stub implementation
+    // in case Emscripten is really slow to load, I guess.
+    cwrap(fn_name: string, retval: null) {
+      return () => {};
+    },
   };
 
   formEl.addEventListener('submit', e => {

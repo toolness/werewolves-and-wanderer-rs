@@ -6,7 +6,7 @@ use std::cell::RefCell;
 use std::ptr::null_mut;
 use std::os::raw::{c_int, c_void, c_float, c_char};
 
-pub const FPS: c_int = 15;
+pub const FPS: c_int = 1;
 
 #[allow(non_camel_case_types)]
 type em_callback_func = unsafe extern fn();
