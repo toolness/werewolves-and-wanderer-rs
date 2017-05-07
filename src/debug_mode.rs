@@ -10,7 +10,8 @@ impl GameState {
 
        quit            - exit debug mode\n\
        goto <room id>  - teleport to a room\n\
-       rooms           - list rooms + their contents\n"
+       rooms           - list rooms + their contents\n\
+       version         - show version number\n"
     );
   }
 
@@ -47,6 +48,8 @@ impl GameState {
         state.list_rooms();
       } else if input.starts_with("goto ") {
         state.goto_room(input.split_whitespace().skip(1).collect());
+      } else if input == "version" {
+        println!("{} {}", env!("CARGO_PKG_NAME"), env!("CARGO_PKG_VERSION"));
       } else if input.len() > 0 {
         println!("Unrecognized command. Type ? for help.");
       }
