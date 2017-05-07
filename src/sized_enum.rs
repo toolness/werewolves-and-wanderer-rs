@@ -1,3 +1,4 @@
+use std::marker::PhantomData;
 use enum_primitive::FromPrimitive;
 
 use platform::random_i32;
@@ -11,6 +12,10 @@ use platform::random_i32;
 pub trait SizedEnum : FromPrimitive {
   fn size() -> usize;
 
+  fn iter() -> SizedEnumIterator<Self> {
+    SizedEnumIterator::new()
+  }
+
   fn random() -> Self {
     loop {
       let r = random_i32(0, Self::size() as i32);
@@ -19,5 +24,24 @@ pub trait SizedEnum : FromPrimitive {
         None => {}
       }
     }
+  }
+}
+
+pub struct SizedEnumIterator<T: FromPrimitive> {
+  current: i32,
+  phantom: PhantomData<T>,
+}
+
+impl<T: FromPrimitive> SizedEnumIterator<T> {
+  fn new() -> Self {
+    Self { current: 0, phantom: PhantomData }
+  }
+}
+
+impl<T: FromPrimitive> Iterator for SizedEnumIterator<T> {
+  type Item = T;
+
+  fn next(&mut self) -> Option<T> {
+    T::from_i32(self.current)
   }
 }
