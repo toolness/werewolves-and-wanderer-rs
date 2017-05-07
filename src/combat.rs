@@ -4,6 +4,7 @@ use game_state::{GameState, GameMode};
 use command::CommandInfo;
 use items::Item::*;
 use direction::Direction;
+use sized_enum::SizedEnum;
 use platform;
 
 use self::FleeCommand::*;
@@ -31,14 +32,9 @@ pub enum FleeCommand {
 }
 
 command_processor!(FleeCommand, {
-  vec![
-    CommandInfo::new('n', "flee north", Flee(Direction::North)),
-    CommandInfo::new('s', "flee south", Flee(Direction::South)),
-    CommandInfo::new('e', "flee east", Flee(Direction::East)),
-    CommandInfo::new('w', "flee west", Flee(Direction::West)),
-    CommandInfo::new('u', "flee up", Flee(Direction::Up)),
-    CommandInfo::new('d', "flee down", Flee(Direction::Down)),
-  ]
+  Direction::iter().map(|dir| {
+    CommandInfo::new(dir.character(), format!("flee {}", dir), Flee(dir))
+  }).collect()
 });
 
 impl GameState {

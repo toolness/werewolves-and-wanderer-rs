@@ -27,21 +27,26 @@ pub trait SizedEnum : FromPrimitive {
   }
 }
 
-pub struct SizedEnumIterator<T: FromPrimitive> {
-  current: i32,
+pub struct SizedEnumIterator<T: SizedEnum> {
+  current: usize,
   phantom: PhantomData<T>,
 }
 
-impl<T: FromPrimitive> SizedEnumIterator<T> {
+impl<T: SizedEnum> SizedEnumIterator<T> {
   fn new() -> Self {
     Self { current: 0, phantom: PhantomData }
   }
 }
 
-impl<T: FromPrimitive> Iterator for SizedEnumIterator<T> {
+impl<T: SizedEnum> Iterator for SizedEnumIterator<T> {
   type Item = T;
 
   fn next(&mut self) -> Option<T> {
-    T::from_i32(self.current)
+    while self.current < T::size() {
+      let result = T::from_usize(self.current);
+      self.current += 1;
+      if result.is_some() { return result; }
+    }
+    None
   }
 }
