@@ -256,7 +256,9 @@ impl GameState {
         },
         None => {
           // We're probably running in the browser and there's currently
-          // no input to process.
+          // no input to process. Re-schedule the input callback to be
+          // called next tick.
+          self.ask_again();
         }
       }
       self.is_processing_input = false;
