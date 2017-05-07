@@ -1601,9 +1601,9 @@ function integrateWasmJS(Module) {
   var method = Module['wasmJSMethod'] || 'native-wasm';
   Module['wasmJSMethod'] = method;
 
-  var wasmTextFile = Module['wasmTextFile'] || 'werewolves_and_wanderer-dd46a2fb5e2bdb09.wast';
-  var wasmBinaryFile = Module['wasmBinaryFile'] || 'werewolves_and_wanderer-dd46a2fb5e2bdb09.wasm';
-  var asmjsCodeFile = Module['asmjsCodeFile'] || 'werewolves_and_wanderer-dd46a2fb5e2bdb09.asm.js';
+  var wasmTextFile = Module['wasmTextFile'] || 'werewolves_and_wanderer-f50639aba30d109d.wast';
+  var wasmBinaryFile = Module['wasmBinaryFile'] || 'werewolves_and_wanderer-f50639aba30d109d.wasm';
+  var asmjsCodeFile = Module['asmjsCodeFile'] || 'werewolves_and_wanderer-f50639aba30d109d.asm.js';
 
   // utilities
 
@@ -1969,16 +1969,16 @@ var ASM_CONSTS = [];
 
 STATIC_BASE = 1024;
 
-STATICTOP = STATIC_BASE + 26592;
+STATICTOP = STATIC_BASE + 51744;
   /* global initializers */  __ATINIT__.push();
   
 
-memoryInitializer = Module["wasmJSMethod"].indexOf("asmjs") >= 0 || Module["wasmJSMethod"].indexOf("interpret-asm2wasm") >= 0 ? "werewolves_and_wanderer-dd46a2fb5e2bdb09.js.mem" : null;
+memoryInitializer = Module["wasmJSMethod"].indexOf("asmjs") >= 0 || Module["wasmJSMethod"].indexOf("interpret-asm2wasm") >= 0 ? "werewolves_and_wanderer-f50639aba30d109d.js.mem" : null;
 
 
 
 
-var STATIC_BUMP = 26592;
+var STATIC_BUMP = 51744;
 Module["STATIC_BASE"] = STATIC_BASE;
 Module["STATIC_BUMP"] = STATIC_BUMP;
 
@@ -2021,8 +2021,6 @@ function copyTempDouble(ptr) {
 
 // {{PRE_LIBRARY}}
 
-
-  function _pthread_mutex_destroy() {}
 
   
   function __ZSt18uncaught_exceptionv() { // std::uncaught_exception()
@@ -2165,8 +2163,6 @@ function copyTempDouble(ptr) {
       }
     }
 
-  function _pthread_condattr_setclock() { return 0; }
-
   function ___lock() {}
 
   function ___unlock() {}
@@ -2201,6 +2197,8 @@ function copyTempDouble(ptr) {
       }
       return ERRNO_CODES.EINVAL;
     }
+
+  function _pthread_cond_init() { return 0; }
 
   function _pthread_setspecific(key, value) {
       if (!(key in PTHREAD_SPECIFIC)) {
@@ -3143,6 +3141,8 @@ function copyTempDouble(ptr) {
       }
     }
 
+  function _pthread_condattr_setclock() { return 0; }
+
   
   
   
@@ -3219,7 +3219,6 @@ function copyTempDouble(ptr) {
    
   Module["_pthread_mutex_unlock"] = _pthread_mutex_unlock;
 
-  function _pthread_cond_init() { return 0; }
 
   
   
@@ -6322,6 +6321,7 @@ function copyTempDouble(ptr) {
   function ___gxx_personality_v0() {
     }
 
+  function _pthread_mutex_destroy() {}
 
   function ___syscall54(which, varargs) {SYSCALLS.varargs = varargs;
   try {
@@ -6470,6 +6470,8 @@ function nullFunc_iiii(x) { Module["printErr"]("Invalid function pointer called 
 
 function nullFunc_viiiii(x) { Module["printErr"]("Invalid function pointer called with signature 'viiiii'. Perhaps this is an invalid value (e.g. caused by calling a virtual method on a NULL pointer)? Or calling a function with an incorrect type, which will fail? (it is worth building your source files with -Werror (warnings are errors), as warnings can indicate undefined behavior which can cause this)");  Module["printErr"]("Build with ASSERTIONS=2 for more info.");abort(x) }
 
+function nullFunc_f(x) { Module["printErr"]("Invalid function pointer called with signature 'f'. Perhaps this is an invalid value (e.g. caused by calling a virtual method on a NULL pointer)? Or calling a function with an incorrect type, which will fail? (it is worth building your source files with -Werror (warnings are errors), as warnings can indicate undefined behavior which can cause this)");  Module["printErr"]("Build with ASSERTIONS=2 for more info.");abort(x) }
+
 function nullFunc_i(x) { Module["printErr"]("Invalid function pointer called with signature 'i'. Perhaps this is an invalid value (e.g. caused by calling a virtual method on a NULL pointer)? Or calling a function with an incorrect type, which will fail? (it is worth building your source files with -Werror (warnings are errors), as warnings can indicate undefined behavior which can cause this)");  Module["printErr"]("Build with ASSERTIONS=2 for more info.");abort(x) }
 
 function nullFunc_vi(x) { Module["printErr"]("Invalid function pointer called with signature 'vi'. Perhaps this is an invalid value (e.g. caused by calling a virtual method on a NULL pointer)? Or calling a function with an incorrect type, which will fail? (it is worth building your source files with -Werror (warnings are errors), as warnings can indicate undefined behavior which can cause this)");  Module["printErr"]("Build with ASSERTIONS=2 for more info.");abort(x) }
@@ -6490,9 +6492,9 @@ function nullFunc_iii(x) { Module["printErr"]("Invalid function pointer called w
 
 function nullFunc_viii(x) { Module["printErr"]("Invalid function pointer called with signature 'viii'. Perhaps this is an invalid value (e.g. caused by calling a virtual method on a NULL pointer)? Or calling a function with an incorrect type, which will fail? (it is worth building your source files with -Werror (warnings are errors), as warnings can indicate undefined behavior which can cause this)");  Module["printErr"]("Build with ASSERTIONS=2 for more info.");abort(x) }
 
-Module['wasmTableSize'] = 5184;
+Module['wasmTableSize'] = 10880;
 
-Module['wasmMaxTableSize'] = 5184;
+Module['wasmMaxTableSize'] = 10880;
 
 function invoke_iiii(index,a1,a2,a3) {
   try {
@@ -6506,6 +6508,15 @@ function invoke_iiii(index,a1,a2,a3) {
 function invoke_viiiii(index,a1,a2,a3,a4,a5) {
   try {
     Module["dynCall_viiiii"](index,a1,a2,a3,a4,a5);
+  } catch(e) {
+    if (typeof e !== 'number' && e !== 'longjmp') throw e;
+    Module["setThrew"](1, 0);
+  }
+}
+
+function invoke_f(index) {
+  try {
+    return Module["dynCall_f"](index);
   } catch(e) {
     if (typeof e !== 'number' && e !== 'longjmp') throw e;
     Module["setThrew"](1, 0);
@@ -6604,7 +6615,7 @@ function invoke_viii(index,a1,a2,a3) {
 
 Module.asmGlobalArg = { "Math": Math, "Int8Array": Int8Array, "Int16Array": Int16Array, "Int32Array": Int32Array, "Uint8Array": Uint8Array, "Uint16Array": Uint16Array, "Uint32Array": Uint32Array, "Float32Array": Float32Array, "Float64Array": Float64Array, "NaN": NaN, "Infinity": Infinity };
 
-Module.asmLibraryArg = { "abort": abort, "assert": assert, "enlargeMemory": enlargeMemory, "getTotalMemory": getTotalMemory, "abortOnCannotGrowMemory": abortOnCannotGrowMemory, "abortStackOverflow": abortStackOverflow, "nullFunc_iiii": nullFunc_iiii, "nullFunc_viiiii": nullFunc_viiiii, "nullFunc_i": nullFunc_i, "nullFunc_vi": nullFunc_vi, "nullFunc_vii": nullFunc_vii, "nullFunc_ii": nullFunc_ii, "nullFunc_ji": nullFunc_ji, "nullFunc_v": nullFunc_v, "nullFunc_iiiii": nullFunc_iiiii, "nullFunc_viiii": nullFunc_viiii, "nullFunc_iii": nullFunc_iii, "nullFunc_viii": nullFunc_viii, "invoke_iiii": invoke_iiii, "invoke_viiiii": invoke_viiiii, "invoke_i": invoke_i, "invoke_vi": invoke_vi, "invoke_vii": invoke_vii, "invoke_ii": invoke_ii, "invoke_ji": invoke_ji, "invoke_v": invoke_v, "invoke_iiiii": invoke_iiiii, "invoke_viiii": invoke_viiii, "invoke_iii": invoke_iii, "invoke_viii": invoke_viii, "_pthread_cond_wait": _pthread_cond_wait, "_emscripten_run_script_string": _emscripten_run_script_string, "_emscripten_run_script": _emscripten_run_script, "_pthread_key_create": _pthread_key_create, "__Unwind_FindEnclosingFunction": __Unwind_FindEnclosingFunction, "_emscripten_get_callstack_js": _emscripten_get_callstack_js, "___gxx_personality_v0": ___gxx_personality_v0, "_pthread_rwlock_unlock": _pthread_rwlock_unlock, "___cxa_find_matching_catch_2": ___cxa_find_matching_catch_2, "__ZSt18uncaught_exceptionv": __ZSt18uncaught_exceptionv, "___buildEnvironment": ___buildEnvironment, "_pthread_cond_init": _pthread_cond_init, "__Unwind_GetIPInfo": __Unwind_GetIPInfo, "_pthread_mutexattr_destroy": _pthread_mutexattr_destroy, "__emscripten_traverse_stack": __emscripten_traverse_stack, "_emscripten_set_main_loop_timing": _emscripten_set_main_loop_timing, "___cxa_free_exception": ___cxa_free_exception, "_pthread_key_delete": _pthread_key_delete, "_emscripten_cancel_main_loop": _emscripten_cancel_main_loop, "___cxa_allocate_exception": ___cxa_allocate_exception, "_emscripten_memcpy_big": _emscripten_memcpy_big, "___resumeException": ___resumeException, "___cxa_find_matching_catch": ___cxa_find_matching_catch, "_pthread_condattr_setclock": _pthread_condattr_setclock, "___setErrNo": ___setErrNo, "_pthread_getspecific": _pthread_getspecific, "___cxa_find_matching_catch_3": ___cxa_find_matching_catch_3, "_pthread_rwlock_rdlock": _pthread_rwlock_rdlock, "_pthread_cond_signal": _pthread_cond_signal, "_pthread_mutex_destroy": _pthread_mutex_destroy, "_abort": _abort, "_pthread_condattr_init": _pthread_condattr_init, "_pthread_mutexattr_settype": _pthread_mutexattr_settype, "_getenv": _getenv, "_emscripten_run_script_int": _emscripten_run_script_int, "___syscall54": ___syscall54, "___unlock": ___unlock, "___syscall140": ___syscall140, "_emscripten_set_main_loop": _emscripten_set_main_loop, "_emscripten_get_now": _emscripten_get_now, "_pthread_mutexattr_init": _pthread_mutexattr_init, "_pthread_setspecific": _pthread_setspecific, "_dladdr": _dladdr, "___cxa_throw": ___cxa_throw, "___lock": ___lock, "___syscall6": ___syscall6, "___syscall4": ___syscall4, "_pthread_cond_destroy": _pthread_cond_destroy, "_pthread_condattr_destroy": _pthread_condattr_destroy, "_emscripten_random": _emscripten_random, "_llvm_trap": _llvm_trap, "_pthread_mutex_init": _pthread_mutex_init, "__Unwind_Backtrace": __Unwind_Backtrace, "___syscall146": ___syscall146, "DYNAMICTOP_PTR": DYNAMICTOP_PTR, "tempDoublePtr": tempDoublePtr, "ABORT": ABORT, "STACKTOP": STACKTOP, "STACK_MAX": STACK_MAX };
+Module.asmLibraryArg = { "abort": abort, "assert": assert, "enlargeMemory": enlargeMemory, "getTotalMemory": getTotalMemory, "abortOnCannotGrowMemory": abortOnCannotGrowMemory, "abortStackOverflow": abortStackOverflow, "nullFunc_iiii": nullFunc_iiii, "nullFunc_viiiii": nullFunc_viiiii, "nullFunc_f": nullFunc_f, "nullFunc_i": nullFunc_i, "nullFunc_vi": nullFunc_vi, "nullFunc_vii": nullFunc_vii, "nullFunc_ii": nullFunc_ii, "nullFunc_ji": nullFunc_ji, "nullFunc_v": nullFunc_v, "nullFunc_iiiii": nullFunc_iiiii, "nullFunc_viiii": nullFunc_viiii, "nullFunc_iii": nullFunc_iii, "nullFunc_viii": nullFunc_viii, "invoke_iiii": invoke_iiii, "invoke_viiiii": invoke_viiiii, "invoke_f": invoke_f, "invoke_i": invoke_i, "invoke_vi": invoke_vi, "invoke_vii": invoke_vii, "invoke_ii": invoke_ii, "invoke_ji": invoke_ji, "invoke_v": invoke_v, "invoke_iiiii": invoke_iiiii, "invoke_viiii": invoke_viiii, "invoke_iii": invoke_iii, "invoke_viii": invoke_viii, "_pthread_cond_wait": _pthread_cond_wait, "_emscripten_run_script_string": _emscripten_run_script_string, "_emscripten_run_script": _emscripten_run_script, "_pthread_key_create": _pthread_key_create, "__Unwind_FindEnclosingFunction": __Unwind_FindEnclosingFunction, "_emscripten_get_callstack_js": _emscripten_get_callstack_js, "___gxx_personality_v0": ___gxx_personality_v0, "_pthread_rwlock_unlock": _pthread_rwlock_unlock, "___cxa_find_matching_catch_2": ___cxa_find_matching_catch_2, "__ZSt18uncaught_exceptionv": __ZSt18uncaught_exceptionv, "___buildEnvironment": ___buildEnvironment, "_pthread_cond_init": _pthread_cond_init, "__Unwind_GetIPInfo": __Unwind_GetIPInfo, "_pthread_mutexattr_destroy": _pthread_mutexattr_destroy, "__emscripten_traverse_stack": __emscripten_traverse_stack, "_emscripten_set_main_loop_timing": _emscripten_set_main_loop_timing, "___cxa_free_exception": ___cxa_free_exception, "_pthread_key_delete": _pthread_key_delete, "_emscripten_cancel_main_loop": _emscripten_cancel_main_loop, "___cxa_allocate_exception": ___cxa_allocate_exception, "_emscripten_memcpy_big": _emscripten_memcpy_big, "___resumeException": ___resumeException, "___cxa_find_matching_catch": ___cxa_find_matching_catch, "_pthread_condattr_setclock": _pthread_condattr_setclock, "___setErrNo": ___setErrNo, "_pthread_getspecific": _pthread_getspecific, "___cxa_find_matching_catch_3": ___cxa_find_matching_catch_3, "_pthread_rwlock_rdlock": _pthread_rwlock_rdlock, "_pthread_cond_signal": _pthread_cond_signal, "_pthread_mutex_destroy": _pthread_mutex_destroy, "_abort": _abort, "_pthread_condattr_init": _pthread_condattr_init, "_pthread_mutexattr_settype": _pthread_mutexattr_settype, "_getenv": _getenv, "_emscripten_run_script_int": _emscripten_run_script_int, "___syscall54": ___syscall54, "___unlock": ___unlock, "___syscall140": ___syscall140, "_emscripten_set_main_loop": _emscripten_set_main_loop, "_emscripten_get_now": _emscripten_get_now, "_pthread_mutexattr_init": _pthread_mutexattr_init, "_pthread_setspecific": _pthread_setspecific, "_dladdr": _dladdr, "___cxa_throw": ___cxa_throw, "___lock": ___lock, "___syscall6": ___syscall6, "___syscall4": ___syscall4, "_pthread_cond_destroy": _pthread_cond_destroy, "_pthread_condattr_destroy": _pthread_condattr_destroy, "_emscripten_random": _emscripten_random, "_llvm_trap": _llvm_trap, "_pthread_mutex_init": _pthread_mutex_init, "__Unwind_Backtrace": __Unwind_Backtrace, "___syscall146": ___syscall146, "DYNAMICTOP_PTR": DYNAMICTOP_PTR, "tempDoublePtr": tempDoublePtr, "ABORT": ABORT, "STACKTOP": STACKTOP, "STACK_MAX": STACK_MAX };
 // EMSCRIPTEN_START_ASM
 var asm =Module["asm"]// EMSCRIPTEN_END_ASM
 (Module.asmGlobalArg, Module.asmLibraryArg, buffer);
@@ -6619,6 +6630,12 @@ var real__main = asm["_main"]; asm["_main"] = function() {
 assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
 assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
 return real__main.apply(null, arguments);
+};
+
+var real__rust_eh_personality = asm["_rust_eh_personality"]; asm["_rust_eh_personality"] = function() {
+assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
+assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
+return real__rust_eh_personality.apply(null, arguments);
 };
 
 var real_setThrew = asm["setThrew"]; asm["setThrew"] = function() {
@@ -6637,6 +6654,12 @@ var real_setTempRet0 = asm["setTempRet0"]; asm["setTempRet0"] = function() {
 assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
 assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
 return real_setTempRet0.apply(null, arguments);
+};
+
+var real__game_state_tick = asm["_game_state_tick"]; asm["_game_state_tick"] = function() {
+assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
+assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
+return real__game_state_tick.apply(null, arguments);
 };
 
 var real__sbrk = asm["_sbrk"]; asm["_sbrk"] = function() {
@@ -6687,10 +6710,10 @@ assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it a
 return real__llvm_bswap_i16.apply(null, arguments);
 };
 
-var real_stackRestore = asm["stackRestore"]; asm["stackRestore"] = function() {
+var real__emscripten_get_global_libc = asm["_emscripten_get_global_libc"]; asm["_emscripten_get_global_libc"] = function() {
 assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
 assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
-return real_stackRestore.apply(null, arguments);
+return real__emscripten_get_global_libc.apply(null, arguments);
 };
 
 var real__htons = asm["_htons"]; asm["_htons"] = function() {
@@ -6723,10 +6746,10 @@ assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it a
 return real__memmove.apply(null, arguments);
 };
 
-var real__emscripten_get_global_libc = asm["_emscripten_get_global_libc"]; asm["_emscripten_get_global_libc"] = function() {
+var real_stackRestore = asm["stackRestore"]; asm["stackRestore"] = function() {
 assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
 assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
-return real__emscripten_get_global_libc.apply(null, arguments);
+return real_stackRestore.apply(null, arguments);
 };
 
 var real__malloc = asm["_malloc"]; asm["_malloc"] = function() {
@@ -6743,9 +6766,11 @@ return real__pthread_mutex_lock.apply(null, arguments);
 Module["asm"] = asm;
 var _llvm_bswap_i32 = Module["_llvm_bswap_i32"] = function() { return Module["asm"]["_llvm_bswap_i32"].apply(null, arguments) };
 var _main = Module["_main"] = function() { return Module["asm"]["_main"].apply(null, arguments) };
+var _rust_eh_personality = Module["_rust_eh_personality"] = function() { return Module["asm"]["_rust_eh_personality"].apply(null, arguments) };
 var setThrew = Module["setThrew"] = function() { return Module["asm"]["setThrew"].apply(null, arguments) };
 var _fflush = Module["_fflush"] = function() { return Module["asm"]["_fflush"].apply(null, arguments) };
 var setTempRet0 = Module["setTempRet0"] = function() { return Module["asm"]["setTempRet0"].apply(null, arguments) };
+var _game_state_tick = Module["_game_state_tick"] = function() { return Module["asm"]["_game_state_tick"].apply(null, arguments) };
 var _memset = Module["_memset"] = function() { return Module["asm"]["_memset"].apply(null, arguments) };
 var _sbrk = Module["_sbrk"] = function() { return Module["asm"]["_sbrk"].apply(null, arguments) };
 var _memcpy = Module["_memcpy"] = function() { return Module["asm"]["_memcpy"].apply(null, arguments) };
@@ -6756,18 +6781,19 @@ var _ntohs = Module["_ntohs"] = function() { return Module["asm"]["_ntohs"].appl
 var _htonl = Module["_htonl"] = function() { return Module["asm"]["_htonl"].apply(null, arguments) };
 var _pthread_mutex_unlock = Module["_pthread_mutex_unlock"] = function() { return Module["asm"]["_pthread_mutex_unlock"].apply(null, arguments) };
 var _llvm_bswap_i16 = Module["_llvm_bswap_i16"] = function() { return Module["asm"]["_llvm_bswap_i16"].apply(null, arguments) };
-var stackRestore = Module["stackRestore"] = function() { return Module["asm"]["stackRestore"].apply(null, arguments) };
+var _emscripten_get_global_libc = Module["_emscripten_get_global_libc"] = function() { return Module["asm"]["_emscripten_get_global_libc"].apply(null, arguments) };
 var _htons = Module["_htons"] = function() { return Module["asm"]["_htons"].apply(null, arguments) };
 var stackSave = Module["stackSave"] = function() { return Module["asm"]["stackSave"].apply(null, arguments) };
 var _free = Module["_free"] = function() { return Module["asm"]["_free"].apply(null, arguments) };
 var runPostSets = Module["runPostSets"] = function() { return Module["asm"]["runPostSets"].apply(null, arguments) };
 var establishStackSpace = Module["establishStackSpace"] = function() { return Module["asm"]["establishStackSpace"].apply(null, arguments) };
 var _memmove = Module["_memmove"] = function() { return Module["asm"]["_memmove"].apply(null, arguments) };
-var _emscripten_get_global_libc = Module["_emscripten_get_global_libc"] = function() { return Module["asm"]["_emscripten_get_global_libc"].apply(null, arguments) };
+var stackRestore = Module["stackRestore"] = function() { return Module["asm"]["stackRestore"].apply(null, arguments) };
 var _malloc = Module["_malloc"] = function() { return Module["asm"]["_malloc"].apply(null, arguments) };
 var _pthread_mutex_lock = Module["_pthread_mutex_lock"] = function() { return Module["asm"]["_pthread_mutex_lock"].apply(null, arguments) };
 var dynCall_iiii = Module["dynCall_iiii"] = function() { return Module["asm"]["dynCall_iiii"].apply(null, arguments) };
 var dynCall_viiiii = Module["dynCall_viiiii"] = function() { return Module["asm"]["dynCall_viiiii"].apply(null, arguments) };
+var dynCall_f = Module["dynCall_f"] = function() { return Module["asm"]["dynCall_f"].apply(null, arguments) };
 var dynCall_i = Module["dynCall_i"] = function() { return Module["asm"]["dynCall_i"].apply(null, arguments) };
 var dynCall_vi = Module["dynCall_vi"] = function() { return Module["asm"]["dynCall_vi"].apply(null, arguments) };
 var dynCall_vii = Module["dynCall_vii"] = function() { return Module["asm"]["dynCall_vii"].apply(null, arguments) };
@@ -7059,3 +7085,4 @@ run();
 
 
 
+//# sourceMappingURL=werewolves_and_wanderer-f50639aba30d109d.js.map

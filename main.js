@@ -28,6 +28,8 @@
     function set_input(val) {
         _currentPromise.then(function () {
             _currentInput = typeof (val) === 'string' ? val.trim() : val;
+            var game_state_tick = window.Module.cwrap('game_state_tick', null);
+            game_state_tick();
         });
     }
     function scroll_output() {
@@ -89,7 +91,14 @@
                 a11yOutputEl.appendChild(textNode.cloneNode());
                 scroll_output();
             });
-        }
+        },
+        // This is a placeholder implementation that will be filled out
+        // once Emscripten loads. We're partly leaving it here to
+        // appease TypeScript, but also to provide a stub implementation
+        // in case Emscripten is really slow to load, I guess.
+        cwrap: function (fn_name, retval) {
+            return function () { };
+        },
     };
     formEl.addEventListener('submit', function (e) {
         e.preventDefault();
