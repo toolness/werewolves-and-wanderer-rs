@@ -28,7 +28,14 @@ pub fn writeln_with_wrapping(s: &str) {
       }
       last_space = i;
     }
-    if column + (i - last_space) > CHARS_PER_LINE {
+    if column + (i - last_space) >= CHARS_PER_LINE {
+      if column == 0 {
+        // Ack, we've got a really long word that exceeds the
+        // length of a single line. Just write it out, breaking
+        // it at the end of the line.
+        handle.write(&bytes[last_space..i]).unwrap();
+        last_space = i;
+      }
       handle.write(b"\n").unwrap();
       column = 0;
     }
