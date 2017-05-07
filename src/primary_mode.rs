@@ -103,15 +103,7 @@ impl GameState {
 
   fn process_cmd(&mut self, cmd: PrimaryCommand) {
     match cmd {
-      Go(dir) => {
-        if let Some(room) = self.map.room(self.curr_room).get_exit(dir) {
-          self.curr_room = room;
-          self.show_desc = true;
-          self.process_move();
-        } else {
-          println!("You can't go that way.");
-        }
-      },
+      Go(dir) => { self.try_to_move(dir); },
       Inventory => { self.set_mode(GameMode::Inventory) },
       PickUpTreasure => {
         if !self.can_player_see() {

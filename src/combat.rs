@@ -1,10 +1,15 @@
 use monsters::MonsterId;
 use map::RoomContents;
 use game_state::{GameState, GameMode};
+use command::CommandInfo;
 use items::Item::*;
+use direction::Direction;
 use platform;
 
+use self::FleeCommand::*;
 use self::CombatPhase::*;
+
+const CHANCE_TO_RUN: f32 = 0.3;
 
 #[derive(Debug, PartialEq, Copy, Clone)]
 pub enum CombatPhase {
@@ -19,6 +24,22 @@ pub struct CombatState {
   enemy: MonsterId,
   ff: i32,
 }
+
+#[derive(Debug, Copy, Clone)]
+pub enum FleeCommand {
+  Flee(Direction),
+}
+
+command_processor!(FleeCommand, {
+  vec![
+    CommandInfo::new('n', "flee north", Flee(Direction::North)),
+    CommandInfo::new('s', "flee south", Flee(Direction::South)),
+    CommandInfo::new('e', "flee east", Flee(Direction::East)),
+    CommandInfo::new('w', "flee west", Flee(Direction::West)),
+    CommandInfo::new('u', "flee up", Flee(Direction::Up)),
+    CommandInfo::new('d', "flee down", Flee(Direction::Down)),
+  ]
+});
 
 impl GameState {
   pub fn maybe_start_combat(&mut self) -> bool {
@@ -78,8 +99,7 @@ impl GameState {
     Self::pause();
   }
 
-  fn tick_preparation_phase(&mut self, state: &CombatState) {
-    let state = *state;
+  fn press_enter_to_fight(&mut self, state: CombatState) {
     self.ask("Press enter to fight! ", move |game_state, _| {
       game_state.prepare();
       println!("\n");
@@ -87,6 +107,32 @@ impl GameState {
         phase: Battle,
         .. state
       });
+    });
+  }
+
+  fn ask_direction_to_run(&mut self) {
+    self.ask("What direction will you run? ", move |game_state, input| {
+      if let Some(Flee(dir)) = FleeCommand::get_from_input(input) {
+        if game_state.try_to_move(dir) {
+          return;
+        }
+      }
+      game_state.ask_again();
+    });
+  }
+
+  fn tick_preparation_phase(&mut self, state: &CombatState) {
+    let state = *state;
+    self.ask("Will you run away like a coward? ", move |game_state, input| {
+      if input.to_lowercase().starts_with('y') {
+        if platform::random() <= CHANCE_TO_RUN {
+          game_state.set_mode(GameMode::Primary);
+          game_state.ask_direction_to_run();
+          return;
+        }
+        println!("Your craven attempt to escape has failed.");
+      }
+      game_state.press_enter_to_fight(state);
     });
   }
 

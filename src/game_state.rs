@@ -1,6 +1,7 @@
 use map::{RoomId, Map};
 use combat::CombatState;
 use inventory::Inventory;
+use direction::Direction;
 use items::Item::*;
 use platform;
 
@@ -224,6 +225,18 @@ impl GameState {
   pub fn process_move(&mut self) {
     self.tally += TALLY_PER_MOVE;
     self.strength -= STRENGTH_LOSS_PER_MOVE;
+  }
+
+  pub fn try_to_move(&mut self, dir: Direction) -> bool {
+    if let Some(room) = self.map.room(self.curr_room).get_exit(dir) {
+      self.curr_room = room;
+      self.show_desc = true;
+      self.process_move();
+      true
+    } else {
+      println!("You can't go that way.");
+      false
+    }
   }
 
   pub fn tick(&mut self) {
