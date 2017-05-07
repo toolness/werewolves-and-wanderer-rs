@@ -50,7 +50,7 @@ pub trait CommandProcessor<T: Copy> {
 
   fn show_help() {
     for info in Self::get_command_info().iter().filter(|i| !i.hidden) {
-      println!("  {} - {}", info.key, info.desc);
+      wrapln!("  {} - {}", info.key, info.desc);
     }
   }
 
@@ -59,9 +59,9 @@ pub trait CommandProcessor<T: Copy> {
       Some(k) => {
         let k = k.to_ascii_lowercase();
         if k == 'h' || k == '?' {
-          println!("Here's what I understand right now:\n");
+          wrapln!("Here's what I understand right now:\n");
           Self::show_help();
-          println!("");
+          wrapln!();
           return None;
         } else if let Some(cmd) = Self::from_char(k) {
           return Some(cmd);
@@ -69,7 +69,7 @@ pub trait CommandProcessor<T: Copy> {
       },
       None => {}
     }
-    println!("I have no idea what you're talking about.");
+    wrapln!("I have no idea what you're talking about.");
     return None;
   }
 }

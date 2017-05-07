@@ -77,11 +77,11 @@ impl GameState {
       self.wealth -= price;
       if item.can_own_many() {
         self.items.increase(item, quantity);
-        println!("You bought {} unit{} of {}.",
-                 quantity, if quantity > 1 { "s" } else { "" }, item);
+        wrapln!("You bought {} unit{} of {}.",
+                quantity, if quantity > 1 { "s" } else { "" }, item);
       } else {
         self.items.obtain(item);
-        println!("You bought {}.", item);
+        wrapln!("You bought {}.", item);
       }
       self.print_wealth();
     }
@@ -91,7 +91,7 @@ impl GameState {
     if item.can_own_many() {
       self.ask_i32("How many units? ", move |state, amount| {
         if amount <= 0 {
-          println!("Fine, don't buy any then.");
+          wrapln!("Fine, don't buy any then.");
         } else {
           state.buy_quantity(item, amount);
         }
@@ -105,7 +105,7 @@ impl GameState {
     match cmd {
       Buy(item) => {
         if !item.can_own_many() && self.items.owns(item) {
-          println!("You already own {}.\n", item);
+          wrapln!("You already own {}.\n", item);
         } else {
           self.buy(item);
         }
@@ -116,11 +116,11 @@ impl GameState {
 
   pub fn tick_inventory_mode(&mut self) {
     if self.show_desc {
-      println!("Provisions & inventory\n");
+      wrapln!("Provisions & inventory\n");
       self.print_wealth();
-      println!("");
+      wrapln!();
       InventoryCommand::show_help();
-      println!("");
+      wrapln!();
       self.show_desc = false;
     }
 

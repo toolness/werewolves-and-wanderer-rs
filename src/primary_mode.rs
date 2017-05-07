@@ -47,19 +47,19 @@ command_processor!(PrimaryCommand, {
 impl GameState {
   fn print_status_report(&self) {
     if self.strength <= MIN_STRENGTH_WARNING {
-      println!("Warning, {}! Your strength is running low.\n",
-               self.player_name);
+      wrapln!("Warning, {}! Your strength is running low.\n",
+              self.player_name);
     }
-    println!("{}, your strength is {}.", self.player_name, self.strength);
+    wrapln!("{}, your strength is {}.", self.player_name, self.strength);
     self.print_wealth();
     if self.items.get_quantity(Food) > 0 { self.print_food(); }
     if self.items.owns(Armor) {
-      println!("You are wearing armor.");
+      wrapln!("You are wearing armor.");
     }
     let item_names = self.get_item_names();
     if item_names.len() > 0 {
-      println!("You are carrying {}.",
-               util::friendly_join(self.get_item_names()));
+      wrapln!("You are carrying {}.",
+              util::friendly_join(self.get_item_names()));
     }
   }
 
@@ -73,10 +73,8 @@ impl GameState {
 
   fn use_amulet(&mut self) {
     if self.items.owns(Amulet) {
-      platform::writeln_with_wrapping(
-        "You invoke the magic amulet and are whisked \
-         away to somewhere else..."
-      );
+      wrapln!("You invoke the magic amulet and are whisked \
+               away to somewhere else...");
       Self::pause();
       loop {
         let room_id = RoomId::random();
@@ -88,15 +86,15 @@ impl GameState {
         }
       }
     } else {
-      println!("You don't have the amulet, {}.", self.player_name);
+      wrapln!("You don't have the amulet, {}.", self.player_name);
     }
   }
 
   fn describe_room(&self) {
     let room = self.map.room(self.curr_room);
-    platform::writeln_with_wrapping(room.description);
+    wrapln!("{}", room.description);
     if let Some(RoomContents::Treasure(amount)) = room.contents {
-      println!("\nThere is treasure here worth ${}.", amount);
+      wrapln!("\nThere is treasure here worth ${}.", amount);
     }
   }
 
@@ -106,21 +104,21 @@ impl GameState {
       Inventory => { self.set_mode(GameMode::Inventory) },
       PickUpTreasure => {
         if !self.can_player_see() {
-          println!("It's too dark to see any treasure here.");
+          wrapln!("It's too dark to see any treasure here.");
         } else if let Some(RoomContents::Treasure(amt)) =
             self.map.room(self.curr_room).contents {
-          println!("You are now ${} richer.", amt);
+          wrapln!("You are now ${} richer.", amt);
           self.wealth += amt as i32;
           self.map.mut_room(self.curr_room).contents = None;
           self.process_move();
         } else {
-          println!("There is no treasure to pick up here.");
+          wrapln!("There is no treasure to pick up here.");
         }
       },
       Look => { self.show_desc = true },
       EatFood => {
         if !self.items.owns(Food) {
-          println!("You have no food!");
+          wrapln!("You have no food!");
         } else {
           self.set_mode(GameMode::EatFood);
         }
@@ -137,22 +135,22 @@ impl GameState {
     if self.show_desc {
       match self.curr_room {
         RoomId::Lift => {
-          println!("You have entered the lift...");
+          wrapln!("You have entered the lift...");
           Self::pause();
-          println!("It slowly descends...");
+          wrapln!("It slowly descends...");
           Self::pause();
           self.curr_room = RoomId::RearVestibule;
           return;
         },
         RoomId::Exit => {
-          println!("\nYou've done it!!");
+          wrapln!("\nYou've done it!!");
           Self::pause();
-          println!("That was the exit from the castle.");
+          wrapln!("That was the exit from the castle.");
           Self::pause();
-          println!("\nYou have succeeded, {}!", self.player_name);
-          println!("\nYou managed to get out of the castle.");
+          wrapln!("\nYou have succeeded, {}!", self.player_name);
+          wrapln!("\nYou managed to get out of the castle.");
           Self::pause();
-          println!("\nWell done!");
+          wrapln!("\nWell done!");
           Self::pause();
           self.finish_game();
           return;
@@ -160,9 +158,9 @@ impl GameState {
         _ => {
           platform::clear_screen();
           self.print_status_report();
-          println!("");
+          wrapln!();
           if !self.can_player_see() {
-            println!("It is too dark to see anything.");
+            wrapln!("It is too dark to see anything.");
           } else {
             self.describe_room();
             if self.maybe_start_combat() {
@@ -170,10 +168,10 @@ impl GameState {
             }
           }
           if !self.shown_hint {
-            println!("\n(You can press 'h' for help at any time.)");
+            wrapln!("\n(You can press 'h' for help at any time.)");
             self.shown_hint = true;
           }
-          println!("");
+          wrapln!();
         }
       }
       self.show_desc = false;

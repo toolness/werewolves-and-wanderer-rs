@@ -94,8 +94,8 @@ impl GameState {
           cb(state, amount);
         },
         Err(_) => {
-          println!("That does not even look like a number, {}.",
-                   state.player_name);
+          wrapln!("That does not even look like a number, {}.",
+                  state.player_name);
           state.ask_again();
         }
       }
@@ -126,18 +126,17 @@ impl GameState {
   }
 
   pub fn print_wealth(&self) {
-    print!("You have ");
     if self.wealth > 0 {
-      println!("${}.", self.wealth);
+      wrapln!("You have ${}.", self.wealth);
     } else {
-      println!("no money.");
+      wrapln!("You have no money.");
     }
   }
 
   pub fn print_food(&self) {
     let food = self.items.get_quantity(Food);
-    println!("Your provisions sack holds {} unit{} of food.",
-             food, if food == 1 { "" } else { "s" });
+    wrapln!("Your provisions sack holds {} unit{} of food.",
+            food, if food == 1 { "" } else { "s" });
   }
 
   fn get_score(&self) -> i32 {
@@ -150,8 +149,8 @@ impl GameState {
 
   pub fn finish_game(&mut self) {
     self.curr_mode = GameMode::Finished;
-    println!("Your score is {}.\n", self.get_score());
-    println!("Farewell.");
+    wrapln!("Your score is {}.\n", self.get_score());
+    wrapln!("Farewell.");
   }
 
   pub fn is_finished(&self) -> bool {
@@ -159,7 +158,7 @@ impl GameState {
   }
 
   pub fn accuse_player_of_cheating(&mut self) {
-    println!("YOU HAVE TRIED TO CHEAT ME!");
+    wrapln!("YOU HAVE TRIED TO CHEAT ME!");
     self.wealth = 0;
     self.items.lose(Torch);
     self.items.lose(Axe);
@@ -178,7 +177,7 @@ impl GameState {
   }
 
   fn die(&mut self) {
-    println!("You have died.........");
+    wrapln!("You have died.........");
     Self::pause();
     self.finish_game();
   }
@@ -186,7 +185,7 @@ impl GameState {
   fn tick_ask_name_mode(&mut self) {
     self.ask("What is your name, explorer? ", |state, input| {
       if input.len() == 0 {
-        println!("Pardon me?");
+        wrapln!("Pardon me?");
       } else {
         state.player_name = input;
         state.set_mode(GameMode::Primary);
@@ -197,23 +196,23 @@ impl GameState {
   fn tick_eat_food_mode(&mut self) {
     if self.show_desc {
       self.print_food();
-      println!("");
+      wrapln!();
       self.show_desc = false;
     }
 
     self.ask_i32("How many do you want to eat? ", |state, amount| {
       if amount < 0 {
-        println!("GIVE ME A POSITIVE INTEGER.");
+        wrapln!("GIVE ME A POSITIVE INTEGER.");
         state.ask_again();
       } else if amount == 0 {
-        println!("Fine, be that way.");
+        wrapln!("Fine, be that way.");
         Self::pause();
         state.set_mode(GameMode::Primary);
       } else if amount > state.items.get_quantity(Food) {
         state.accuse_player_of_cheating();
         state.set_mode(GameMode::Primary);
       } else {
-        println!("After some munching, you feel stronger.");
+        wrapln!("After some munching, you feel stronger.");
         state.items.decrease(Food, amount);
         state.strength += amount * STRENGTH_PER_FOOD;
         state.set_mode(GameMode::Primary);
@@ -234,7 +233,7 @@ impl GameState {
       self.process_move();
       true
     } else {
-      println!("You can't go that way.");
+      wrapln!("You can't go that way.");
       false
     }
   }

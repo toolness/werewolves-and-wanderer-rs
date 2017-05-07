@@ -1,8 +1,8 @@
 #[macro_use] extern crate enum_primitive;
 
+#[macro_use] pub mod platform;
 pub mod direction;
 #[macro_use] pub mod command;
-pub mod platform;
 pub mod map;
 pub mod game_state;
 pub mod primary_mode;

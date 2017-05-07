@@ -41,11 +41,11 @@ impl GameState {
   pub fn maybe_start_combat(&mut self) -> bool {
     if let Some(RoomContents::Terror(monster_id)) =
         self.map.room(self.curr_room).contents {
-      println!("\nDanger... There is a monster here....");
+      wrapln!("\nDanger... There is a monster here....");
       Self::pause();
-      println!("\nIt is a {}!", monster_id);
+      wrapln!("\nIt is a {}!", monster_id);
       let ff = self.get_modified_ff(monster_id.ferocity_factor());
-      println!("\nThe danger level is {}!!\n", ff);
+      wrapln!("\nThe danger level is {}!!\n", ff);
       Self::pause();
       self.set_mode(GameMode::Combat(CombatState {
         phase: Preparation,
@@ -76,21 +76,21 @@ impl GameState {
 
   fn prepare(&self) {
     if self.items.owns(Armor) {
-      println!("Your armor increases your chance of success.");
+      wrapln!("Your armor increases your chance of success.");
     }
 
     let axe = self.items.owns(Axe);
     let sword = self.items.owns(Sword);
 
     if !axe && !sword {
-      println!("You have no weapons.");
-      println!("You must fight with bare hands.");
+      wrapln!("You have no weapons.");
+      wrapln!("You must fight with bare hands.");
     } else if axe && !sword {
-      println!("You have only an axe to fight with.");
+      wrapln!("You have only an axe to fight with.");
     } else if sword && !axe {
-      println!("You must fight with your sword.");
+      wrapln!("You must fight with your sword.");
     } else {
-      println!("You are dual-wielding a sword and axe like a boss.");
+      wrapln!("You are dual-wielding a sword and axe like a boss.");
     }
     Self::pause();
   }
@@ -98,7 +98,7 @@ impl GameState {
   fn press_enter_to_fight(&mut self, state: CombatState) {
     self.ask("Press enter to fight! ", move |game_state, _| {
       game_state.prepare();
-      println!("\n");
+      wrapln!("\n");
       game_state.curr_mode = GameMode::Combat(CombatState {
         phase: Battle,
         .. state
@@ -126,7 +126,7 @@ impl GameState {
           game_state.ask_direction_to_run();
           return;
         }
-        println!("Your craven attempt to escape has failed.");
+        wrapln!("Your craven attempt to escape has failed.");
       }
       game_state.press_enter_to_fight(state);
     });
@@ -137,22 +137,22 @@ impl GameState {
     let mut phase = state.phase;
 
     if platform::random() > 0.5 {
-      println!("The {} attacks!", state.enemy);
+      wrapln!("The {} attacks!", state.enemy);
     } else {
-      println!("You attack!");
+      wrapln!("You attack!");
     }
     Self::pause();
     if platform::random() > 0.5 {
-      println!("\nYou manage to wound it!");
+      wrapln!("\nYou manage to wound it!");
       ff = 5 * ff / 6;
       Self::pause();
     }
     if platform::random() > 0.5 {
       self.strength -= 5;
       if self.strength > 0 {
-        println!("\nThe monster wounds you!");
+        wrapln!("\nThe monster wounds you!");
       } else {
-        println!("\nThe monster lands a killing blow!");
+        wrapln!("\nThe monster lands a killing blow!");
       }
       Self::pause();
     }
@@ -168,18 +168,18 @@ impl GameState {
 
   fn tick_aftermath_phase(&mut self, state: &CombatState) {
     if platform::random_i32(0, 16) > state.ff {
-      println!("\nWounded and ashamed, the {} scurries off.",
-               state.enemy);
-      println!("\nYou are victorious!");
+      wrapln!("\nWounded and ashamed, the {} scurries off.",
+              state.enemy);
+      wrapln!("\nYou are victorious!");
       self.monsters_killed += 1;
     } else {
-      println!("\nThe {} knocks you down!", state.enemy);
-      println!("\nYou are at its mercy!");
+      wrapln!("\nThe {} knocks you down!", state.enemy);
+      wrapln!("\nYou are at its mercy!");
       Self::pause();
-      println!("\nIt appears to be in a generous mood and wanders off.");
+      wrapln!("\nIt appears to be in a generous mood and wanders off.");
       self.strength /= 2;
     }
-    println!("\n");
+    wrapln!("\n");
     Self::pause();
     self.map.mut_room(self.curr_room).contents = None;
     self.set_mode(GameMode::Primary);

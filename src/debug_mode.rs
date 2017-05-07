@@ -19,20 +19,20 @@ impl GameState {
     if let Ok(number) = args[0].parse::<usize>() {
       if let Some(room_id) = RoomId::from_usize(number) {
         self.curr_room = room_id;
-        println!("Teleported to {:?}.", room_id);
+        wrapln!("Teleported to {:?}.", room_id);
         return;
       }
     }
-    println!("Unknown room id.");
+    wrapln!("Unknown room id.");
   }
 
   fn list_rooms(&self) {
     for i in 0..RoomId::size() {
       RoomId::from_usize(i).map(|room_id| {
         let room = self.map.room(room_id);
-        println!("Room {} - {:?}", i, room_id);
+        wrapln!("Room {} - {:?}", i, room_id);
         if let Some(contents) = room.contents {
-          println!("  Contains {:?}", contents);
+          wrapln!("  Contains {:?}", contents);
         }
       });
     }
@@ -49,9 +49,9 @@ impl GameState {
       } else if input.starts_with("goto ") {
         state.goto_room(input.split_whitespace().skip(1).collect());
       } else if input == "version" {
-        println!("{} {}", env!("CARGO_PKG_NAME"), env!("CARGO_PKG_VERSION"));
+        wrapln!("{} {}", env!("CARGO_PKG_NAME"), env!("CARGO_PKG_VERSION"));
       } else if input.len() > 0 {
-        println!("Unrecognized command. Type ? for help.");
+        wrapln!("Unrecognized command. Type ? for help.");
       }
     });
   }

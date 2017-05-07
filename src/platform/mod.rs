@@ -13,6 +13,18 @@ use std::io::{self, Write};
 #[cfg(not(target_os = "emscripten"))]
 extern crate rand;
 
+macro_rules! wrapln {
+  ( ) => {
+    ::platform::writeln_with_wrapping("");
+  };
+  ( $fmt:expr ) => {
+    ::platform::writeln_with_wrapping($fmt);
+  };
+  ( $fmt:expr, $($arg:tt)* ) => {
+    ::platform::writeln_with_wrapping(format!($fmt, $($arg)*));
+  }
+}
+
 #[cfg(target_os = "emscripten")]
 pub fn show_prompt(prompt: &str) {
   let script = format!("set_prompt({:?});", prompt);
@@ -100,12 +112,12 @@ pub fn clear_screen() {
 }
 
 #[cfg(not(target_os = "emscripten"))]
-pub fn writeln_with_wrapping(s: &str) {
-  word_wrap::writeln_with_wrapping(s)
+pub fn writeln_with_wrapping<T: AsRef<str>>(s: T) {
+  word_wrap::writeln_with_wrapping(s.as_ref())
 }
 
 #[cfg(target_os = "emscripten")]
-pub fn writeln_with_wrapping(s: &str) {
+pub fn writeln_with_wrapping<T: AsRef<str>>(s: T) {
   // The browser will take care of line-wrapping for us.
-  println!("{}", s)
+  println!("{}", s.as_ref())
 }
