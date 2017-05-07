@@ -1,6 +1,6 @@
 [package]
 name = "werewolves-and-wanderer"
-version = "0.3.0"
+version = "0.4.0"
 authors = ["Atul Varma <varmaa@gmail.com>"]
 
 [lib]
