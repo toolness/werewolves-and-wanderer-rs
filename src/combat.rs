@@ -120,13 +120,20 @@ impl GameState {
   fn tick_preparation_phase(&mut self, state: &CombatState) {
     let state = *state;
     self.ask("Will you run away like a coward? ", move |game_state, input| {
-      if input.to_lowercase().starts_with('y') {
+      let lower_input = input.to_lowercase();
+      if lower_input.starts_with('y') {
         if platform::random() <= CHANCE_TO_RUN {
           game_state.set_mode(GameMode::Primary);
           game_state.ask_direction_to_run();
           return;
         }
         wrapln!("Your craven attempt to escape has failed.");
+      } else if lower_input.starts_with('n') {
+        wrapln!("Awesome.");
+      } else {
+        wrapln!("Please answer 'yes' or 'no'.");
+        game_state.ask_again();
+        return;
       }
       game_state.press_enter_to_fight(state);
     });
