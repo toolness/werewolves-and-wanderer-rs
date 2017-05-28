@@ -12,16 +12,16 @@ mod word_wrap;
 
 macro_rules! wrapln {
   ( ) => {{
-    use ::platform::AbstractPlatform;
-    ::platform::Platform::writeln_with_wrapping("");
+    use ::platform::*;
+    Platform::writeln_with_wrapping("");
   }};
   ( $fmt:expr ) => {{
-    use ::platform::AbstractPlatform;
-    ::platform::Platform::writeln_with_wrapping($fmt);
+    use ::platform::*;
+    Platform::writeln_with_wrapping($fmt);
   }};
   ( $fmt:expr, $($arg:tt)* ) => {{
-    use ::platform::AbstractPlatform;
-    ::platform::Platform::writeln_with_wrapping(format!($fmt, $($arg)*));
+    use ::platform::*;
+    Platform::writeln_with_wrapping(format!($fmt, $($arg)*));
   }}
 }
 
