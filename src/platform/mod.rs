@@ -1,123 +1,57 @@
 #[cfg(target_os = "emscripten")]
-pub mod emscripten;
-
-#[cfg(target_os = "windows")]
-pub mod windows;
+mod emscripten;
 
 #[cfg(not(target_os = "emscripten"))]
-pub mod word_wrap;
-
-#[cfg(not(target_os = "emscripten"))]
-use std::io::{self, Write};
-
-#[cfg(not(target_os = "emscripten"))]
-extern crate rand;
+mod stdio;
 
 macro_rules! wrapln {
-  ( ) => {
-    ::platform::writeln_with_wrapping("");
-  };
-  ( $fmt:expr ) => {
-    ::platform::writeln_with_wrapping($fmt);
-  };
-  ( $fmt:expr, $($arg:tt)* ) => {
-    ::platform::writeln_with_wrapping(format!($fmt, $($arg)*));
+  ( ) => {{
+    use ::platform::*;
+    Platform::writeln_with_wrapping("");
+  }};
+  ( $fmt:expr ) => {{
+    use ::platform::*;
+    Platform::writeln_with_wrapping($fmt);
+  }};
+  ( $fmt:expr, $($arg:tt)* ) => {{
+    use ::platform::*;
+    Platform::writeln_with_wrapping(format!($fmt, $($arg)*));
+  }}
+}
+
+pub trait AbstractPlatform {
+  fn init() {
   }
-}
 
-#[cfg(target_os = "emscripten")]
-pub fn show_prompt(prompt: &str) {
-  let script = format!("set_prompt({:?});", prompt);
-  emscripten::run_script(script.as_str());
-}
+  fn show_prompt(prompt: &str);
 
-#[cfg(not(target_os = "emscripten"))]
-pub fn show_prompt(prompt: &str) {
-  io::stdout().write(prompt.as_bytes()).unwrap();
-  io::stdout().flush().unwrap();
-}
-
-pub fn hide_prompt() {
-  show_prompt("");
-}
-
-#[cfg(target_os = "emscripten")]
-pub fn read_input() -> Option<String> {
-  if emscripten::run_script_int("has_input()") == 0 {
-    None
-  } else {
-    Some(emscripten::run_script_string("get_input()"))
+  fn hide_prompt() {
+    Self::show_prompt("");
   }
-}
 
-#[cfg(not(target_os = "emscripten"))]
-pub fn read_input() -> Option<String> {
-  let mut input = String::new();
+  fn read_input() -> Option<String>;
 
-  match io::stdin().read_line(&mut input) {
-    Ok(_) => { Some(String::from(input.trim())) },
-    Err(error) => {
-      println!("Error reading input: {}", error);
-      None
-    },
+  fn sleep(ms: u64);
+
+  fn random() -> f32;
+
+  fn random_i32(min: i32, max: i32) -> i32 {
+    let range = max - min;
+
+    min + (Self::random() * range as f32) as i32
   }
+
+  fn clear_screen();
+
+  fn writeln_with_wrapping<T: AsRef<str>>(s: T);
+
+  fn terminate_program();
+
+  fn set_main_loop_callback<F: FnMut()>(callback: F);
 }
 
 #[cfg(target_os = "emscripten")]
-pub fn sleep(ms: u64) {
-  let script = format!("sleep({});", ms);
-  emscripten::run_script(script.as_str());
-}
+pub type Platform = emscripten::EmscriptenPlatform;
 
 #[cfg(not(target_os = "emscripten"))]
-pub fn sleep(ms: u64) {
-  let dur = ::std::time::Duration::from_millis(ms);
-  ::std::thread::sleep(dur);
-}
-
-#[cfg(not(target_os = "emscripten"))]
-pub fn random() -> f32 {
-  rand::random::<f32>()
-}
-
-#[cfg(target_os = "emscripten")]
-pub fn random() -> f32 {
-  emscripten::random()
-}
-
-pub fn random_i32(min: i32, max: i32) -> i32 {
-  let range = max - min;
-
-  min + (random() * range as f32) as i32
-}
-
-#[cfg(not(target_os = "emscripten"))]
-pub fn is_browser() -> bool { false }
-
-#[cfg(target_os = "emscripten")]
-pub fn is_browser() -> bool { true }
-
-#[cfg(not(target_os = "emscripten"))]
-pub fn clear_screen() {
-  // Clear the screen.
-  print!("{}[2J", 27 as char);
-
-  // Move the cursor to the home position.
-  print!("{}[H", 27 as char);
-}
-
-#[cfg(target_os = "emscripten")]
-pub fn clear_screen() {
-  emscripten::run_script("clear_screen()");
-}
-
-#[cfg(not(target_os = "emscripten"))]
-pub fn writeln_with_wrapping<T: AsRef<str>>(s: T) {
-  word_wrap::writeln_with_wrapping(s.as_ref())
-}
-
-#[cfg(target_os = "emscripten")]
-pub fn writeln_with_wrapping<T: AsRef<str>>(s: T) {
-  // The browser will take care of line-wrapping for us.
-  println!("{}", s.as_ref())
-}
+pub type Platform = stdio::StdioPlatform;

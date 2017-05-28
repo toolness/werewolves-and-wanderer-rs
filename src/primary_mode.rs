@@ -4,7 +4,7 @@ use direction::Direction;
 use game_state::{GameState, GameMode};
 use command::CommandInfo;
 use items::Item::*;
-use platform;
+use platform::*;
 use util;
 
 use self::PrimaryCommand::*;
@@ -156,7 +156,7 @@ impl GameState {
           return;
         },
         _ => {
-          platform::clear_screen();
+          Platform::clear_screen();
           self.print_status_report();
           wrapln!();
           if !self.can_player_see() {
