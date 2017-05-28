@@ -4,12 +4,6 @@ mod emscripten;
 #[cfg(not(target_os = "emscripten"))]
 mod stdio;
 
-#[cfg(target_os = "windows")]
-mod windows;
-
-#[cfg(not(target_os = "emscripten"))]
-mod word_wrap;
-
 macro_rules! wrapln {
   ( ) => {{
     use ::platform::*;

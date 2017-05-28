@@ -1,17 +1,18 @@
+#[cfg(target_os = "windows")]
+mod windows;
+
+mod word_wrap;
+
 use std::io::{self, Write};
 
 use platform::AbstractPlatform;
-use platform::word_wrap;
 extern crate rand;
 
 pub struct StdioPlatform;
 
 impl AbstractPlatform for StdioPlatform {
+  #[cfg(target_os = "windows")]
   fn init() {
-    #[cfg(target_os = "windows")]
-    use platform::windows;
-
-    #[cfg(target_os = "windows")]
     windows::enable_ansi();
   }
 
