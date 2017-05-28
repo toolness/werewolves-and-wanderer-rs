@@ -54,4 +54,14 @@ impl AbstractPlatform for StdioPlatform {
   fn writeln_with_wrapping<T: AsRef<str>>(s: T) {
     word_wrap::writeln_with_wrapping(s.as_ref())
   }
+
+  fn terminate_program() {
+    ::std::process::exit(0);
+  }
+
+  fn set_main_loop_callback<F>(mut callback: F) where F: FnMut() {
+    loop {
+      callback();
+    }
+  }
 }

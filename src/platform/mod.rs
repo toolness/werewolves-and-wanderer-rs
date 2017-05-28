@@ -52,6 +52,10 @@ pub trait AbstractPlatform {
   fn clear_screen();
 
   fn writeln_with_wrapping<T: AsRef<str>>(s: T);
+
+  fn terminate_program();
+
+  fn set_main_loop_callback<F: FnMut()>(callback: F);
 }
 
 #[cfg(target_os = "emscripten")]

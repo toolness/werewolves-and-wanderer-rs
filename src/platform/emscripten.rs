@@ -1,4 +1,4 @@
-// This file is based on:
+// A lot of this file is based on:
 // https://github.com/Gigoteur/PX8/blob/master/src/px8/emscripten.rs
 
 use std::ffi::{CString, CStr};
@@ -47,28 +47,6 @@ fn run_script_string(script: &str) -> String {
 
 pub struct EmscriptenPlatform;
 
-impl EmscriptenPlatform {
-  pub fn terminate_program() {
-    run_script("terminate_program()");
-    unsafe { emscripten_cancel_main_loop() }    
-  }
-
-  pub fn set_main_loop_callback<F>(callback: F) where F: FnMut() {
-    MAIN_LOOP_CALLBACK.with(|log| {
-      *log.borrow_mut() = &callback as *const _ as *mut c_void;
-    });
-
-    unsafe { emscripten_set_main_loop(wrapper::<F>, FPS, 1); }
-
-    unsafe extern "C" fn wrapper<F>() where F: FnMut() {
-      MAIN_LOOP_CALLBACK.with(|z| {
-        let closure = *z.borrow_mut() as *mut F;
-        (*closure)();
-      });
-    }
-  }
-}
-
 impl AbstractPlatform for EmscriptenPlatform {
   fn show_prompt(prompt: &str) {
     let script = format!("set_prompt({:?});", prompt);
@@ -103,5 +81,25 @@ impl AbstractPlatform for EmscriptenPlatform {
   fn writeln_with_wrapping<T: AsRef<str>>(s: T) {
     // The browser will take care of line-wrapping for us.
     println!("{}", s.as_ref())
+  }
+
+  fn terminate_program() {
+    run_script("terminate_program()");
+    unsafe { emscripten_cancel_main_loop() }
+  }
+
+  fn set_main_loop_callback<F>(callback: F) where F: FnMut() {
+    MAIN_LOOP_CALLBACK.with(|log| {
+      *log.borrow_mut() = &callback as *const _ as *mut c_void;
+    });
+
+    unsafe { emscripten_set_main_loop(wrapper::<F>, FPS, 1); }
+
+    unsafe extern "C" fn wrapper<F>() where F: FnMut() {
+      MAIN_LOOP_CALLBACK.with(|z| {
+        let closure = *z.borrow_mut() as *mut F;
+        (*closure)();
+      });
+    }
   }
 }
