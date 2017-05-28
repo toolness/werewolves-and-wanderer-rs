@@ -3,7 +3,7 @@ use combat::CombatState;
 use inventory::Inventory;
 use direction::Direction;
 use items::Item::*;
-use platform;
+use platform::*;
 
 const PAUSE_MS: u64 = 2500;
 const CHEATING_FOOD_DIVISOR: i32 = 4;
@@ -76,7 +76,7 @@ impl GameState {
 
   pub fn show_prompt(&mut self, prompt: &str) {
     self.last_input_prompt = String::from(prompt);
-    platform::show_prompt(prompt);
+    Platform::show_prompt(prompt);
   }
 
   pub fn ask_again(&mut self) {
@@ -173,7 +173,7 @@ impl GameState {
   }
 
   pub fn pause() {
-    platform::sleep(PAUSE_MS);
+    Platform::sleep(PAUSE_MS);
   }
 
   fn die(&mut self) {
@@ -250,9 +250,9 @@ impl GameState {
 
     if let Some(ref cb) = input_cb {
       self.is_processing_input = true;
-      match platform::read_input() {
+      match Platform::read_input() {
         Some(input) => {
-          platform::hide_prompt();
+          Platform::hide_prompt();
           cb(self, input);
           // Note that at this point, self.input_callback may be
           // set again, if the callback asked for input again.
@@ -275,7 +275,7 @@ impl GameState {
                  *and* run a new input callback simultaneously");
         self.read_input_again = false;
         self.input_callback = input_cb;
-        platform::show_prompt(self.last_input_prompt.as_str());
+        Platform::show_prompt(self.last_input_prompt.as_str());
       }
 
       return;

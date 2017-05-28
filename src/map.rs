@@ -1,4 +1,4 @@
-use platform::random_i32;
+use platform::*;
 use direction::Direction;
 use direction::Direction::*;
 use monsters::MonsterId;
@@ -273,7 +273,8 @@ impl Map {
 }
 
 fn random_treasure_amount() -> u8 {
-  random_i32(MIN_TREASURE_AMOUNT as i32, MAX_TREASURE_AMOUNT as i32) as u8
+  Platform::random_i32(MIN_TREASURE_AMOUNT as i32,
+                       MAX_TREASURE_AMOUNT as i32) as u8
 }
 
 #[derive(Debug, Clone)]

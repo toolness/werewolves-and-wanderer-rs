@@ -1,7 +1,7 @@
 use std::marker::PhantomData;
 use enum_primitive::FromPrimitive;
 
-use platform::random_i32;
+use platform::*;
 
 // There doesn't seem to be a convenient way to get the "size" or
 // "range" of an enum's possible values, so we'll make a trait for
@@ -18,7 +18,7 @@ pub trait SizedEnum : FromPrimitive {
 
   fn random() -> Self {
     loop {
-      let r = random_i32(0, Self::size() as i32);
+      let r = Platform::random_i32(0, Self::size() as i32);
       match Self::from_i32(r) {
         Some(t) => { return t; },
         None => {}

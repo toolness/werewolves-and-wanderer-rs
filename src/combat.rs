@@ -5,7 +5,7 @@ use command::CommandInfo;
 use items::Item::*;
 use direction::Direction;
 use sized_enum::SizedEnum;
-use platform;
+use platform::*;
 
 use self::FleeCommand::*;
 use self::CombatPhase::*;
@@ -122,7 +122,7 @@ impl GameState {
     self.ask("Will you run away like a coward? ", move |game_state, input| {
       let lower_input = input.to_lowercase();
       if lower_input.starts_with('y') {
-        if platform::random() <= CHANCE_TO_RUN {
+        if Platform::random() <= CHANCE_TO_RUN {
           game_state.set_mode(GameMode::Primary);
           game_state.ask_direction_to_run();
           return;
@@ -143,18 +143,18 @@ impl GameState {
     let mut ff = state.ff;
     let mut phase = state.phase;
 
-    if platform::random() > 0.5 {
+    if Platform::random() > 0.5 {
       wrapln!("The {} attacks!", state.enemy);
     } else {
       wrapln!("You attack!");
     }
     Self::pause();
-    if platform::random() > 0.5 {
+    if Platform::random() > 0.5 {
       wrapln!("\nYou manage to wound it!");
       ff = 5 * ff / 6;
       Self::pause();
     }
-    if platform::random() > 0.5 {
+    if Platform::random() > 0.5 {
       self.strength -= 5;
       if self.strength > 0 {
         wrapln!("\nThe monster wounds you!");
@@ -163,7 +163,7 @@ impl GameState {
       }
       Self::pause();
     }
-    if platform::random() <= 0.35 {
+    if Platform::random() <= 0.35 {
       phase = Aftermath;
     }
     self.curr_mode = GameMode::Combat(CombatState {
@@ -174,7 +174,7 @@ impl GameState {
   }
 
   fn tick_aftermath_phase(&mut self, state: &CombatState) {
-    if platform::random_i32(0, 16) > state.ff {
+    if Platform::random_i32(0, 16) > state.ff {
       wrapln!("\nWounded and ashamed, the {} scurries off.",
               state.enemy);
       wrapln!("\nYou are victorious!");

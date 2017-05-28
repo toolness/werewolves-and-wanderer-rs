@@ -2,7 +2,7 @@ extern crate ww;
 
 use std::cell::RefCell;
 
-use ww::platform;
+use ww::platform::*;
 use ww::game_state::GameState;
 
 thread_local!(static GAME_STATE: RefCell<GameState> = {
@@ -14,13 +14,12 @@ thread_local!(static GAME_STATE: RefCell<GameState> = {
 });
 
 fn main() {
-  #[cfg(target_os = "windows")]
-  platform::windows::enable_ansi();
+  Platform::init();
 
-  platform::clear_screen();
+  Platform::clear_screen();
 
   #[cfg(target_os = "emscripten")]
-  platform::emscripten::set_main_loop_callback(|| game_state_tick());
+  Platform::set_main_loop_callback(|| game_state_tick());
 
   #[cfg(not(target_os = "emscripten"))]
   GAME_STATE.with(|refcell| {
@@ -42,7 +41,7 @@ pub extern fn game_state_tick() {
     while !state.is_waiting_for_input() {
       state.tick();
       if state.is_finished() {
-        platform::emscripten::terminate_program();
+        Platform::terminate_program();
         return;
       }
     }
