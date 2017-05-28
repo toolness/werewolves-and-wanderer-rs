@@ -42,8 +42,6 @@ impl AbstractPlatform for StdioPlatform {
     rand::random::<f32>()
   }
 
-  fn is_browser() -> bool { false }
-
   fn clear_screen() {
     // Clear the screen.
     print!("{}[2J", 27 as char);

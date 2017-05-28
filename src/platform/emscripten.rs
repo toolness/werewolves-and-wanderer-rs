@@ -72,8 +72,6 @@ impl AbstractPlatform for EmscriptenPlatform {
     }
   }
 
-  fn is_browser() -> bool { true }
-
   fn clear_screen() {
     run_script("clear_screen()");
   }

@@ -41,8 +41,6 @@ pub trait AbstractPlatform {
     min + (Self::random() * range as f32) as i32
   }
 
-  fn is_browser() -> bool;
-
   fn clear_screen();
 
   fn writeln_with_wrapping<T: AsRef<str>>(s: T);
